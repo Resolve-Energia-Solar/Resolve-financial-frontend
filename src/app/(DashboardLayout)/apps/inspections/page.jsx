@@ -9,7 +9,7 @@ import { TableHeader } from "@/app/components/TableHeader";
 import StatusChip from '@/utils/status/DocumentStatusIcon';
 import { FilterAlt } from '@mui/icons-material';
 import ProjectDetailDrawer from '@/app/components/apps/project/Costumer-journey/Project-Detail/ProjectDrawer';
-import { Chip, Box, Typography, Skeleton } from '@mui/material';
+import { Chip, Box, Typography } from '@mui/material';
 import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
@@ -19,6 +19,7 @@ import { formatDate } from '@/utils/dateUtils';
 import ScheduleOpinionChip from '@/app/components/apps/inspections/schedule/StatusChip/ScheduleOpinionChip';
 import { FilterContext } from '@/context/FilterContext';
 import UserCard from '@/app/components/apps/users/userCard';
+import { KPICard } from '@/app/components/charts/KPICard';
 
 const InspectionsDashboard = () => {
   const [loading, setLoading] = useState(true);
@@ -64,7 +65,7 @@ const InspectionsDashboard = () => {
   const fetchProjects = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await projectService.index({ fields: 'id,project_number,sale.customer.complete_name,sale.signature_date,sale.status,sale.treadmill_counter,sale.branch.name,inspection.schedule_date,inspection.final_service_opinion.name,inspection.final_service_opinion_date,inspection.final_service_opinion_user', expand: 'sale,sale.customer,sale.branch,inspection,inspection.final_service_opinion,inspection.final_service_opinion_date,inspection', metrics: '', page: page + 1, limit: rowsPerPage, remove_termination_cancelled_and_pre_sale: true, ...filters });
+      const response = await projectService.index({ fields: 'id,project_number,sale.customer.complete_name,sale.signature_date,sale.status,sale.treadmill_counter,sale.branch.name,inspection.schedule_date,inspection.final_service_opinion.name,inspection.final_service_opinion_date,inspection.final_service_opinion_user', expand: 'sale,sale.customer,sale.branch,inspection', metrics: '', page: page + 1, limit: rowsPerPage, remove_termination_cancelled_and_pre_sale: true, ...filters });
       setProjects(response.results);
       setTotalRows(response.meta.pagination.total_count);
     } catch (error) {
@@ -164,7 +165,7 @@ const InspectionsDashboard = () => {
     setOpenDrawer(true);
   };
 
-  const handlePageChange = useCallback((event, newPage) => {
+  const handlePageChange = useCallback((_, newPage) => {
     setPage(newPage);
   }, []);
 
@@ -180,79 +181,30 @@ const InspectionsDashboard = () => {
       {/* Indicadores */}
       <Box sx={{ width: '100%', mb: 2 }}>
         <Typography variant="h6">Indicadores</Typography>
-        {loadingIndicators ? (
-          <Box sx={{ width: '100%', display: 'flex', justifyContent: 'space-evenly', gap: 2, flexWrap: 'wrap', mt: 1, mb: 4, background: '#f5f5f5', p: 2 }}>
-            {Array.from({ length: stats.length }).map((_, index) => (
-              <Skeleton
-                key={index}
-                variant="rectangular"
-                width="100%"
-                height={120}
-                sx={{
-                  flex: '1 1 150px',
-                  p: 2,
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  backgroundColor: 'grey.300',
-                  borderRadius: 1,
-                  maxWidth: '200px',
-                  aspectRatio: '4 / 2.5',
-                  textAlign: 'center',
-                  '&:hover': { transform: 'scale(1.05)', transition: 'transform 0.2s' },
-                }}
+        <Box sx={{
+          width: '100%', display: 'flex', justifyContent: 'space-evenly',
+          gap: 2, flexWrap: 'wrap', mt: 1, mb: 4, background: '#f5f5f5', p: 2,
+        }}>
+          {stats.map(({ key, label, value, icon, color, filter, format }) => {
+            const isActive = filter && Object.entries(filter).some(
+              ([filterKey, filterValue]) => filters?.[filterKey] === filterValue
+            );
+            
+            return (
+              <KPICard
+                key={key}
+                label={label}
+                value={value}
+                icon={icon}
+                color={color}
+                active={isActive}
+                format={format}
+                onClick={() => handleKPIClick(key)}
+                loading={loadingIndicators}
               />
-            ))}
-          </Box>
-        ) : (
-          <Box
-            sx={{
-              width: '100%',
-              display: 'flex',
-              justifyContent: 'space-evenly',
-              gap: 2,
-              flexWrap: 'wrap',
-              mt: 1,
-              mb: 4,
-              background: '#f5f5f5',
-              p: 2,
-            }}
-          >
-            {stats.map(({ key, label, value, icon, color, filter, format }) => {
-              const isActive = filters && Object.keys(filters).some((filterKey) => filterKey in filter);
-              return (
-                <Box
-                  key={key}
-                  sx={{
-                    flex: '1 1 150px',
-                    p: 2,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    backgroundColor: color,
-                    borderRadius: 1,
-                    maxWidth: '200px',
-                    aspectRatio: '4 / 2.5',
-                    textAlign: 'center',
-                    '&:hover': { transform: 'scale(1.05)', transition: 'transform 0.2s' },
-                    border: isActive ? '2px solid green' : 'none',
-                  }}
-                  onClick={() => handleKPIClick(key)}
-                >
-                  {icon}
-                  <Typography variant="subtitle2" sx={{ mt: 1 }}>
-                    {label}
-                  </Typography>
-                  <Typography variant="h6">
-                    {format ? format(value) : value}
-                  </Typography>
-                </Box>
-              )
-            })}
-          </Box>
-        )}
+            );
+          })}
+        </Box>
       </Box>
 
       {/* Filtros */}

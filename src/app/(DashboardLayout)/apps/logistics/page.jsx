@@ -1,34 +1,41 @@
 'use client';
+// React and hooks
 import { useState, useEffect, useCallback } from 'react';
-import PageContainer from '@/app/components/container/PageContainer';
-import Breadcrumb from '@/app/(DashboardLayout)/layout/shared/breadcrumb/Breadcrumb';
 import { useSnackbar } from 'notistack';
-import projectService from '@/services/projectService';
+
+// Material UI Components
+import { Box, Chip, Typography } from '@mui/material';
+
+// Material UI Icons
+import { 
+  FilterAlt, 
+  LockOpen, 
+  RemoveCircleOutline,
+  AccessTime as AccessTimeIcon,
+  Block as BlockIcon,
+  Cancel as CancelIcon,
+  CheckCircle as CheckCircleIcon,
+  CreditCard as CreditCardIcon,
+  Event as EventIcon,
+  HourglassEmpty as HourglassEmptyIcon
+} from '@mui/icons-material';
+
+// App components
+import Breadcrumb from '@/app/(DashboardLayout)/layout/shared/breadcrumb/Breadcrumb';
+import PageContainer from '@/app/components/container/PageContainer';
 import { Table } from "@/app/components/Table";
 import { TableHeader } from "@/app/components/TableHeader";
-import StatusChip from '@/utils/status/DocumentStatusIcon';
-import { FilterAlt, LockOpen } from '@mui/icons-material';
-import ProjectDetailDrawer from '@/app/components/apps/project/Costumer-journey/Project-Detail/ProjectDrawer';
-import { Chip, Box, Typography, Skeleton } from '@mui/material';
-import BlockIcon from '@mui/icons-material/Block';
-import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import CancelIcon from '@mui/icons-material/Cancel';
-import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
-import AccessTimeIcon from '@mui/icons-material/AccessTime';
-import CreditCardIcon from '@mui/icons-material/CreditCard';
-import EventIcon from '@mui/icons-material/Event';
+import { KPICard } from '@/app/components/charts/KPICard';
 import GenericFilterDrawer from '@/app/components/filters/GenericFilterDrawer';
-import filterConfig from './filterConfig';
+import ProjectDetailDrawer from '@/app/components/apps/project/Costumer-journey/Project-Detail/ProjectDrawer';
+
+// Services and utilities
+import projectService from '@/services/projectService';
+import StatusChip from '@/utils/status/DocumentStatusIcon';
 import { formatDate } from '@/utils/dateUtils';
 
-const INDICATORS_STATUS_COLORS = {
-  error: { bg: '#F8D7DA', text: '#721C24' },
-  warning: { bg: '#FFF3CD', text: '#856404' },
-  success: { bg: '#D4EDDA', text: '#155724' },
-  info: { bg: '#D1ECF1', text: '#0C5460' },
-  grey: { bg: '#E2E3E5', text: '#41464B' }
-};
+// Filter Config
+import filterConfig from './filterConfig';
 
 const LogisticsDashboard = () => {
   const [loading, setLoading] = useState(true);
@@ -124,6 +131,79 @@ const LogisticsDashboard = () => {
     }
   };
 
+  // Build purchase indicators with vivid icon colors
+  const purchaseStats = Object.entries(indicators.purchase_status).map(([status, count]) => {
+    let icon;
+    switch (status) {
+      case 'Bloqueado':
+        icon = <BlockIcon sx={{ color: '#dc3545' }} />;
+        break;
+      case 'Liberado':
+        icon = <LockOpen sx={{ color: '#17a2b8' }} />;
+        break;
+      case 'Pendente':
+        icon = <HourglassEmptyIcon sx={{ color: '#ffc107' }} />;
+        break;
+      case 'Compra Realizada':
+        icon = <CheckCircleIcon sx={{ color: '#28a745' }} />;
+        break;
+      case 'Cancelado':
+        icon = <CancelIcon sx={{ color: '#dc3545' }} />;
+        break;
+      case 'Distrato':
+        icon = <RemoveCircleOutline sx={{ color: '#6c757d' }} />;
+        break;
+      case 'Aguardando Previsão de Entrega':
+        icon = <AccessTimeIcon sx={{ color: '#007bff' }} />;
+        break;
+      case 'Aguardando Pagamento':
+        icon = <CreditCardIcon sx={{ color: '#fd7e14' }} />;
+        break;
+      default:
+        icon = <BuildCircleIcon sx={{ color: '#6f42c1' }} />;
+    }
+    return {
+      key: status,
+      label: status,
+      value: count,
+      icon,
+      color: '',
+      filter: { purchase_status: status }
+    };
+  });
+
+  // Build delivery indicators with vivid icon colors
+  const deliveryStats = Object.entries(indicators.delivery_status).map(([status, count]) => {
+    let icon;
+    switch (status) {
+      case 'Bloqueado':
+        icon = <BlockIcon sx={{ color: '#dc3545' }} />;
+        break;
+      case 'Liberado':
+        icon = <LockOpen sx={{ color: '#17a2b8' }} />;
+        break;
+      case 'Agendado':
+        icon = <EventIcon sx={{ color: '#007bff' }} />;
+        break;
+      case 'Entregue':
+        icon = <CheckCircleIcon sx={{ color: '#28a745' }} />;
+        break;
+      case 'Cancelado':
+        icon = <CancelIcon sx={{ color: '#dc3545' }} />;
+        break;
+      default:
+        icon = <BuildCircleIcon sx={{ color: '#6f42c1' }} />;
+    }
+    return {
+      key: status,
+      label: status,
+      value: count,
+      icon,
+      color: '',
+      filter: { delivery_status: status }
+    };
+  });
+
   const columns = [
     {
       field: 'project_number',
@@ -184,126 +264,42 @@ const LogisticsDashboard = () => {
       {/* Indicadores */}
       <Box sx={{ width: '100%', mb: 2 }}>
         <Typography variant="h6">Indicadores de Compra</Typography>
-        {loadingIndicators ? (
-          <Box sx={{ width: '100%', display: 'flex', justifyContent: 'space-evenly', gap: 2, flexWrap: 'wrap', mt: 1, mb: 4, background: '#f5f5f5', p: 2 }}>
-            {Array.from({ length: 7 }).map((_, index) => (
-              <Skeleton
-                key={index}
-                variant="rectangular"
-                width="100%"
-                height={120}
-                sx={{
-                  flex: '1 1 150px',
-                  p: 2,
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  backgroundColor: '#E2E3E5',
-                  borderRadius: 1,
-                  maxWidth: '170px',
-                  aspectRatio: '4 / 3',
-                  textAlign: 'center',
-                  '&:hover': { transform: 'scale(1.05)', transition: 'transform 0.2s' }
-                }}
+        <Box sx={{ width: '100%', display: 'flex', justifyContent: 'space-evenly', gap: 2, flexWrap: 'wrap', mt: 1, mb: 4, background: '#f5f5f5', p: 2 }}>
+          {purchaseStats.map(({ key, label, value, icon, color, filter }) => {
+            const isActive = filters.purchase_status === filter.purchase_status;
+            return (
+              <KPICard
+                key={key}
+                label={label}
+                value={value}
+                icon={icon}
+                color={color}
+                active={isActive}
+                loading={loadingIndicators}
+                onClick={() => handleKpiClick('purchase_status', filter.purchase_status)}
               />
-            ))}
-          </Box>
-        ) : (
-          <Box sx={{ width: '100%', display: 'flex', justifyContent: 'space-evenly', gap: 2, flexWrap: 'wrap', mt: 1, mb: 4, background: '#f5f5f5', p: 2 }}>
-            {Object.entries(indicators.purchase_status).map(([status, count]) => {
-              const { label, color, icon } = getPurchaseChipProps(status);
-              const colors = INDICATORS_STATUS_COLORS[color] || INDICATORS_STATUS_COLORS.grey;
-              const isActive = filters.purchase_status === status;
+            );
+          })}
+        </Box>
 
-              return (
-                <Box key={status} sx={{
-                  flex: '1 1 150px',
-                  p: 2,
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  backgroundColor: colors.bg,
-                  border: isActive ? '2px solid green' : 'none',
-                  color: colors.text,
-                  borderRadius: 1,
-                  maxWidth: '170px',
-                  aspectRatio: '4 / 3',
-                  textAlign: 'center',
-                  '&:hover': { transform: 'scale(1.05)', transition: 'transform 0.2s' }
-                }}
-                  onClick={() => handleKpiClick('purchase_status', status)}
-                >
-                  {icon}
-                  <Typography variant="subtitle2" sx={{ mt: 1 }}>{label}</Typography>
-                  <Typography variant="h6">{count}</Typography>
-                </Box>
-              );
-            })}
-          </Box>
-        )}
-
-        <Typography variant="h6" sx={{ mt: 2 }}>Indicadores de Entrega</Typography>
-        {loadingIndicators ? (
-          <Box sx={{ width: '100%', display: 'flex', justifyContent: 'space-evenly', gap: 2, flexWrap: 'wrap', mt: 1, mb: 4, background: '#f5f5f5', p: 2 }}>
-            {Array.from({ length: 5 }).map((_, index) => (
-              <Skeleton
-                key={index}
-                variant="rectangular"
-                width="100%"
-                height={120}
-                sx={{
-                  flex: '1 1 150px',
-                  p: 2,
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  backgroundColor: '#E2E3E5',
-                  borderRadius: 1,
-                  maxWidth: '170px',
-                  aspectRatio: '4 / 3',
-                  textAlign: 'center',
-                  '&:hover': { transform: 'scale(1.05)', transition: 'transform 0.2s' }
-                }}
+        <Typography variant="h6">Indicadores de Entrega</Typography>
+        <Box sx={{ width: '100%', display: 'flex', justifyContent: 'space-evenly', gap: 2, flexWrap: 'wrap', mt: 1, background: '#f5f5f5', p: 2 }}>
+          {deliveryStats.map(({ key, label, value, icon, color, filter }) => {
+            const isActive = filters.delivery_status === filter.delivery_status;
+            return (
+              <KPICard
+                key={key}
+                label={label}
+                value={value}
+                icon={icon}
+                color={color}
+                active={isActive}
+                loading={loadingIndicators}
+                onClick={() => handleKpiClick('delivery_status', filter.delivery_status)}
               />
-            ))}
-          </Box>
-        ) : (
-          <Box sx={{ width: '100%', display: 'flex', justifyContent: 'space-evenly', gap: 2, flexWrap: 'wrap', mt: 1, background: '#f5f5f5', p: 2 }}>
-            {Object.entries(indicators.delivery_status).map(([status, count]) => {
-              const { label, color, icon } = getDeliveryChipProps(status);
-              const colors = INDICATORS_STATUS_COLORS[color] || INDICATORS_STATUS_COLORS.grey;
-              const isActive = filters.delivery_status === status;
-
-              return (
-                <Box key={status} sx={{
-                  flex: '1 1 150px',
-                  p: 2,
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  backgroundColor: colors.bg,
-                  border: isActive ? '2px solid green' : 'none',
-                  color: colors.text,
-                  borderRadius: 1,
-                  maxWidth: '170px',
-                  aspectRatio: '4 / 3',
-                  textAlign: 'center',
-                  '&:hover': { transform: 'scale(1.05)', transition: 'transform 0.2s' }
-                }}
-                  onClick={() => handleKpiClick('delivery_status', status)}
-                >
-                  {icon}
-                  <Typography variant="subtitle2" sx={{ mt: 1 }}>{label}</Typography>
-                  <Typography variant="h6">{count}</Typography>
-                </Box>
-              );
-            })}
-          </Box>
-        )}
+            );
+          })}
+        </Box>
       </Box>
 
       <GenericFilterDrawer

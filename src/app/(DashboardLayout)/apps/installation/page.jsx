@@ -7,18 +7,19 @@ import projectService from '@/services/projectService';
 import { Table } from '@/app/components/Table';
 import { TableHeader } from '@/app/components/TableHeader';
 import StatusChip from '@/utils/status/DocumentStatusIcon';
-import { AssignmentTurnedIn, BuildCircle, FilterAlt, HourglassTop, PendingActions } from '@mui/icons-material';
+import {
+  AssignmentTurnedIn, BuildCircle, FilterAlt, HourglassTop, PendingActions, LockOpen, Lock,
+  Cancel,
+  ConstructionRounded,
+  CheckCircle
+} from '@mui/icons-material';
 import ProjectDetailDrawer from '@/app/components/apps/project/Costumer-journey/Project-Detail/ProjectDrawer';
-import { Chip, Box, Typography, Skeleton } from '@mui/material';
-import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
+import { Chip, Box, Typography } from '@mui/material';
 import GenericFilterDrawer from '@/app/components/filters/GenericFilterDrawer';
 import filterConfig from './filterConfig';
 import { formatDate } from '@/utils/dateUtils';
-import ScheduleOpinionChip from '@/app/components/apps/inspections/schedule/StatusChip/ScheduleOpinionChip';
 import { FilterContext } from '@/context/FilterContext';
-import UserCard from '@/app/components/apps/users/userCard';
+import { KPICard } from '@/app/components/charts/KPICard';
 
 const InspectionsDashboard = () => {
   const [loading, setLoading] = useState(true);
@@ -81,7 +82,7 @@ const InspectionsDashboard = () => {
       key: 'number_of_installations',
       label: 'Número de instalações finalizadas',
       value: indicators?.number_of_installations,
-      icon: <CheckCircleIcon style={{ color: '#155724' }} />,
+      icon: <CheckCircle style={{ color: '#155724' }} />,
       color: '#d4edda',
       filter: { inspection_isnull: true },
     },
@@ -99,15 +100,66 @@ const InspectionsDashboard = () => {
     },
   ];
 
+  const statusStats = [
+    {
+      key: 'scheduled',
+      label: 'Agendado',
+      icon: <AssignmentTurnedIn />,
+      value: indicators?.installations_status_count?.Agendado || 0,
+      color: '#E3F2FD',
+      filter: { installation_status: 'Agendado' }
+    },
+    {
+      key: 'blocked',
+      label: 'Bloqueado',
+      icon: <Lock />,
+      value: indicators?.installations_status_count?.Bloqueado || 0,
+      color: '#FFEBEE',
+      filter: { installation_status: 'Bloqueado' }
+    },
+    {
+      key: 'cancelled',
+      label: 'Cancelado',
+      icon: <Cancel />,
+      value: indicators?.installations_status_count?.Cancelado || 0,
+      color: '#FFCDD2',
+      filter: { installation_status: 'Cancelado' }
+    },
+    {
+      key: 'in_construction',
+      label: 'Em obra',
+      icon: <ConstructionRounded />,
+      value: indicators?.installations_status_count?.['Em obra'] || 0,
+      color: '#FFF9C4',
+      filter: { installation_status: 'Em obra' }
+    },
+    {
+      key: 'installed',
+      label: 'Instalado',
+      icon: <CheckCircle />,
+      value: indicators?.installations_status_count?.Instalado || 0,
+      color: '#C8E6C9',
+      filter: { installation_status: 'Instalado' }
+    },
+    {
+      key: 'released',
+      label: 'Liberado',
+      icon: <LockOpen />,
+      value: indicators?.installations_status_count?.Liberado || 0,
+      color: '#E8F5E9',
+      filter: { installation_status: 'Liberado' }
+    }
+  ];
+
   const fetchProjects = useCallback(async () => {
     setLoading(true);
     try {
       const response = await projectService.index({
         fields:
-          'id,project_number,sale.customer.complete_name,sale.signature_date,sale.status,sale.treadmill_counter,sale.branch.name,inspection.schedule_date,inspection.final_service_opinion.name,inspection.final_service_opinion_date,inspection.final_service_opinion_user',
+          'id,project_number,sale.customer.complete_name,sale.signature_date,sale.status,sale.treadmill_counter,sale.branch.name,installation_status',
         expand:
-          'sale,sale.customer,sale.branch,inspection,inspection.final_service_opinion,inspection.final_service_opinion_date,inspection',
-        metrics: '',
+          'sale,sale.customer,sale.branch,inspection',
+        metrics: 'installation_status',
         page: page + 1,
         limit: rowsPerPage,
         remove_termination_cancelled_and_pre_sale: true,
@@ -132,14 +184,23 @@ const InspectionsDashboard = () => {
     } finally {
       setLoadingIndicators(false);
     }
-  }, [enqueueSnackbar]);
+  }, [enqueueSnackbar, filters]);
 
   useEffect(() => {
     fetchProjects();
     fetchIndicators();
-  }, [fetchProjects, fetchIndicators, refresh]);
+  }, [fetchProjects, fetchIndicators, filters, refresh]);
 
-  const BCrumb = [{ to: '/', title: 'Home' }, { title: 'Vistoria' }];
+  const BCrumb = [{ to: '/', title: 'Home' }, { title: 'Instalação' }];
+
+  const installationStatusChips = {
+    Agendado: <Chip label="Agendado" color="primary" icon={<AssignmentTurnedIn />} />,
+    Bloqueado: <Chip label="Bloqueado" color="error" icon={<Lock />} />,
+    Cancelado: <Chip label="Cancelado" color="error" icon={<Cancel />} />,
+    'Em obra': <Chip label="Em obra" color="warning" icon={<ConstructionRounded />} />,
+    Instalado: <Chip label="Instalado" color="success" icon={<CheckCircle />} />,
+    Liberado: <Chip label="Liberado" color="success" icon={<LockOpen />} />,
+  }
 
   const columns = [
     {
@@ -169,39 +230,9 @@ const InspectionsDashboard = () => {
       render: (r) => <Chip label={r.sale?.treadmill_counter || '-'} variant="outlined" />,
     },
     {
-      field: 'inspection.date',
-      headerName: 'Data de Vistoria',
-      render: (r) => formatDate(r.inspection?.schedule_date),
-    },
-    {
-      field: 'inspection.final_service_opinion.name',
-      headerName: 'Status de Vistoria',
-      render: (r) => <ScheduleOpinionChip status={r.inspection?.final_service_opinion?.name} />,
-    },
-    {
-      field: 'inspection.final_service_opinion_date',
-      headerName: 'Data de Finalização',
-      render: (r) =>
-        r.inspection?.final_service_opinion_date
-          ? new Date(r.inspection.final_service_opinion_date).toLocaleString('pt-BR', {
-              day: '2-digit',
-              month: '2-digit',
-              year: 'numeric',
-              hour: '2-digit',
-              minute: '2-digit',
-            })
-          : '-',
-    },
-    {
-      field: 'inspection.final_service_opinion_user',
-      headerName: 'Responsável',
-      render: (r) => {
-        return r.inspection?.final_service_opinion_user ? (
-          <UserCard userId={r.inspection?.final_service_opinion_user} />
-        ) : (
-          '-'
-        );
-      },
+      field: 'installation_status',
+      headerName: 'Status de Instalação',
+      render: (r) => installationStatusChips[r.installation_status] || <Chip label="SEM STATUS" variant="outlined" />,
     },
   ];
 
@@ -234,96 +265,75 @@ const InspectionsDashboard = () => {
   }, []);
 
   return (
-    <PageContainer title={'Vistorias'} description={'Dashboard de Vistorias'}>
+    <PageContainer title={'Instalações'} description={'Dashboard de Instalações'}>
       <Breadcrumb items={BCrumb} />
 
       {/* Indicadores */}
       <Box sx={{ width: '100%', mb: 2 }}>
         <Typography variant="h6">Indicadores</Typography>
-        {loadingIndicators ? (
-          <Box
-            sx={{
-              width: '100%',
-              display: 'flex',
-              justifyContent: 'space-evenly',
-              gap: 2,
-              flexWrap: 'wrap',
-              mt: 1,
-              mb: 4,
-              background: '#f5f5f5',
-              p: 2,
-            }}
-          >
-            {Array.from({ length: stats.length }).map((_, index) => (
-              <Skeleton
-                key={index}
-                variant="rectangular"
-                width="100%"
-                height={120}
-                sx={{
-                  flex: '1 1 150px',
-                  p: 2,
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  backgroundColor: 'grey.300',
-                  borderRadius: 1,
-                  maxWidth: '200px',
-                  aspectRatio: '4 / 2.5',
-                  textAlign: 'center',
-                  '&:hover': { transform: 'scale(1.05)', transition: 'transform 0.2s' },
-                }}
+        <Box
+          sx={{
+            width: '100%',
+            display: 'flex',
+            justifyContent: 'space-evenly',
+            gap: 2,
+            flexWrap: 'wrap',
+            mt: 1,
+            mb: 4,
+            background: '#f5f5f5',
+            p: 2,
+          }}
+        >
+          {stats.map(({ key, label, value, icon, color, filter, format }) => {
+            const isActive = filters && Object.keys(filters).some((fk) => fk in filter);
+            return (
+              <KPICard
+                key={key}
+                label={label}
+                value={value}
+                icon={icon}
+                color={color}
+                active={isActive}
+                loading={loadingIndicators}
+                format={format}
+                onClick={() => handleKPIClick(key)}
               />
-            ))}
-          </Box>
-        ) : (
-          <Box
-            sx={{
-              width: '100%',
-              display: 'flex',
-              justifyContent: 'space-evenly',
-              gap: 2,
-              flexWrap: 'wrap',
-              mt: 1,
-              mb: 4,
-              background: '#f5f5f5',
-              p: 2,
-            }}
-          >
-            {stats.map(({ key, label, value, icon, color, filter, format }) => {
-              const isActive =
-                filters && Object.keys(filters).some((filterKey) => filterKey in filter);
-              return (
-                <Box
-                  key={key}
-                  sx={{
-                    flex: '1 1 150px',
-                    p: 2,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    backgroundColor: color,
-                    borderRadius: 1,
-                    maxWidth: '200px',
-                    aspectRatio: '4 / 2.5',
-                    textAlign: 'center',
-                    '&:hover': { transform: 'scale(1.05)', transition: 'transform 0.2s' },
-                    border: isActive ? '2px solid green' : 'none',
-                  }}
-                  onClick={() => handleKPIClick(key)}
-                >
-                  {icon}
-                  <Typography variant="subtitle2" sx={{ mt: 1 }}>
-                    {label}
-                  </Typography>
-                  <Typography variant="h6">{format ? format(value) : value}</Typography>
-                </Box>
-              );
-            })}
-          </Box>
-        )}
+            );
+          })}
+        </Box>
+      </Box>
+      <Box sx={{ width: '100%', mb: 2 }}>
+        <Typography variant="h6">Status de Instalação</Typography>
+        <Box
+          sx={{
+            width: '100%',
+            display: 'flex',
+            justifyContent: 'space-evenly',
+            gap: 2,
+            flexWrap: 'wrap',
+            mt: 1,
+            mb: 4,
+            background: '#f5f5f5',
+            p: 2,
+          }}
+        >
+          {statusStats.map(({ key, label, value, icon, color, filter, format }) => {
+            const isActive = filters && Object.keys(filters).some((fk) => fk in filter);
+            return (
+              <KPICard
+                key={key}
+                label={label}
+                value={value}
+                icon={icon}
+                color={color}
+                active={isActive}
+                loading={loadingIndicators}
+                format={format}
+                onClick={() => handleKPIClick(key)}
+              />
+            );
+          })}
+        </Box>
       </Box>
 
       {/* Filtros */}
