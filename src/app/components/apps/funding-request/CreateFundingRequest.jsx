@@ -27,7 +27,10 @@ const CreateFundingRequest = ({
           <FormSelect
             name="person_type"
             label="Tipo de Pessoa *"
-            options={[{ value: 'PJ', label: 'PJ' }, { value: 'PF', label: 'PF' }]}
+            options={[
+              { value: 'PJ', label: 'PJ' },
+              { value: 'PF', label: 'PF' },
+            ]}
             value={formData?.person_type || ''}
             onChange={handleChange}
           />
@@ -43,6 +46,10 @@ const CreateFundingRequest = ({
             fullWidth
             onChange={handleChange}
             disabled={!personTypeSelected}
+            inputProps={{
+              maxLength: formData?.person_type === 'PF' ? 11 : formData?.person_type === 'PJ' ? 14 : 14,
+              inputMode: 'numeric',
+            }}
             InputProps={{
               endAdornment: loadingUser ? (
                 <InputAdornment position="end">
@@ -80,7 +87,9 @@ const CreateFundingRequest = ({
               label="Data de Nascimento *"
               name="birth_date"
               value={formData?.birth_date || null}
-              onChange={(newValue) => handleChange({ target: { name: 'birth_date', value: newValue } })}
+              onChange={(newValue) =>
+                handleChange({ target: { name: 'birth_date', value: newValue } })
+              }
               disabled={!personTypeSelected || loadingUser}
             />
           </Grid>
@@ -203,7 +212,10 @@ const CreateFundingRequest = ({
               <FormSelect
                 name="gender"
                 label="Gênero *"
-                options={[{ value: 'M', label: 'Masculino' }, { value: 'F', label: 'Feminino' }]}
+                options={[
+                  { value: 'M', label: 'Masculino' },
+                  { value: 'F', label: 'Feminino' },
+                ]}
                 value={formDataManaging?.gender || ''}
                 onChange={handleChangeManaging}
                 disabled={disabledManaging}

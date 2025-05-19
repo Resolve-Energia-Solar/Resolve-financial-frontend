@@ -58,6 +58,7 @@ export default function Sicoob() {
   const [customer, setCustomer] = useState();
   const [managingPartner, setManagingPartner] = useState();
   const [value, setValue] = useState(0);
+  const [loadingUser, setLoadingUser] = useState(false);
 
   // paginação
   const [page, setPage] = useState(0);
@@ -144,48 +145,49 @@ export default function Sicoob() {
     setPage(0);
   };
 
-  const handleChange = async (e) => {
-    const { name, value } = e.target;
-    // busca usuário ao completar CPF/CNPJ
-    if (
-      name === 'first_document' &&
-      ((value.length === 11 && formData.person_type === 'PF') ||
-        (value.length === 14 && formData.person_type === 'PJ'))
-    ) {
-      const found = await userService
-        .index({
-          first_document__icontains: value,
-          fields: [
-            'id',
-            'first_document',
-            'complete_name',
-            'email',
-            'gender',
-            'birth_date',
-          ],
-        })
-        .then((res) => res.results);
+
+// 2️⃣ Substitua seu `handleChange` por este:
+const handleChange = (e) => {
+  const { name, value } = e.target;
+  if (name === 'person_type') {
+    setFormData(payloadClear);
+    setDisabled(false);
+  }
+  setFormData((prev) => ({ ...prev, [name]: value }));
+};
+
+// 3️⃣ Acrescente este useEffect abaixo dos seus outros hooks:
+useEffect(() => {
+  const { person_type, first_document } = formData;
+  const needsLookup =
+    (person_type === 'PF' && first_document?.length === 11) ||
+    (person_type === 'PJ' && first_document?.length === 14);
+
+  if (!needsLookup) return;
+
+  setLoadingUser(true);
+  userService
+    .index({
+      first_document__icontains: first_document,
+      fields: ['id', 'first_document', 'complete_name', 'email', 'gender', 'birth_date'],
+    })
+    .then((res) => res.results)
+    .then((found) => {
       if (found.length === 0) {
-        enqueueSnackbar(
-          'Nenhum registro encontrado. Complete o cadastro.',
-          { variant: 'warning' }
-        );
+        enqueueSnackbar('Nenhum registro encontrado. Complete o cadastro.', { variant: 'warning' });
         setDisabled(false);
       } else {
-        setFormData((p) => ({ ...p, ...found[0] }));
+        setFormData((prev) => ({ ...prev, ...found[0] }));
         setCustomer(found[0]);
       }
-    }
-    if (name === 'person_type') {
-      setFormData(payloadClear);
-      setDisabled(false);
-    }
-    setFormData((p) => ({ ...p, [name]: value }));
-  };
+    })
+    .finally(() => setLoadingUser(false));
+}, [formData.first_document, formData.person_type]);
+
 
   const handleChangeManaging = async (e) => {
     const { name, value } = e.target;
-    if (name === 'first_document' && value.length === 11) {
+    if (name === 'first_document' && value.length === 12) {
       const found = await userService
         .index({
           first_document__icontains: value,
@@ -494,6 +496,7 @@ export default function Sicoob() {
           handleChangeRFormData={handleChangeRFormData}
           disabled={disabled}
           disabledManaging={disabledManaging}
+          loadingUser={loadingUser}      // ← aqui
         >
           <Stack
             direction="row"
