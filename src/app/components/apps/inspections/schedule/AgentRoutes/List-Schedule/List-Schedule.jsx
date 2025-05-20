@@ -22,8 +22,8 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-import { Circle } from '@mui/icons-material';
 import CircularProgress from '@mui/material/CircularProgress';
+import DetailsDrawer from '@/app/components/apps/schedule/DetailsDrawer';
 
 export default function ListSchedule({ form, onClose, onRefresh }) {
   const [rows, setRows] = useState([]);
@@ -34,6 +34,8 @@ export default function ListSchedule({ form, onClose, onRefresh }) {
   const [loadingConfirm, setLoadingConfirm] = useState(false);
   const [refresh, setRefresh] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
+  const [detailsDrawerOpen, setDetailsDrawerOpen] = useState(false);
+  const [selectedScheduleId, setSelectedScheduleId] = useState(null); // New state for selected schedule ID
 
   const [filters, setFilters] = useState({
     customer: null,
@@ -48,7 +50,8 @@ export default function ListSchedule({ form, onClose, onRefresh }) {
       setLoading(true);
       try {
         const response = await ScheduleService.index({
-          fields: 'id,customer,service,address,schedule_date,schedule_end_date,schedule_start_time,schedule_end_time,schedule_agent',
+          fields:
+            'id,customer,service,address,schedule_date,schedule_end_date,schedule_start_time,schedule_end_time,schedule_agent',
           expand: 'customer,address,service,schedule_agent',
           customer: filters.customer?.value,
           service: form.service,
@@ -58,6 +61,8 @@ export default function ListSchedule({ form, onClose, onRefresh }) {
           page: page + 1,
           limit: rowsPerPage,
         });
+
+        console.log('response address: ', response);
 
         setRows(response.results || []);
         setTotalRows(response.meta?.pagination?.total_count || 0);
@@ -73,7 +78,7 @@ export default function ListSchedule({ form, onClose, onRefresh }) {
 
   const handleRefresh = () => {
     setRefresh(!refresh);
-  }
+  };
 
   const handleAssociateAgent = (row) => {
     setSelectedRow(row);
@@ -145,13 +150,27 @@ export default function ListSchedule({ form, onClose, onRefresh }) {
     setPage(0);
   };
 
+  // New handler for row click
+  const handleRowClick = (row) => {
+    setSelectedScheduleId(row.id);
+    setDetailsDrawerOpen(true);
+  };
+
   if (loading) {
     return <ListScheduleSkeleton />;
   }
 
   return (
     <Paper>
-      <Grid container spacing={1} sx={{p:1}}>
+      <DetailsDrawer
+        open={detailsDrawerOpen}
+        onClose={() => {
+          setDetailsDrawerOpen(false);
+          setSelectedScheduleId(null);
+        }}
+        scheduleId={selectedScheduleId}
+      />
+      <Grid container spacing={1} sx={{ p: 1 }}>
         <Grid item xs={12} md={3}>
           <GenericAsyncAutocompleteInput
             label="Cliente"
@@ -192,6 +211,7 @@ export default function ListSchedule({ form, onClose, onRefresh }) {
               <TableCell>Data de Início</TableCell>
               <TableCell>Hora de Início</TableCell>
               <TableCell>Hora de Fim</TableCell>
+              <TableCell>Endereço</TableCell>
               <TableCell>Agente</TableCell>
               <TableCell align="center">Ações</TableCell>
             </TableRow>
@@ -200,7 +220,8 @@ export default function ListSchedule({ form, onClose, onRefresh }) {
             {rows.map((row, index) => (
               <TableRow
                 key={index}
-                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                sx={{ '&:last-child td, &:last-child th': { border: 0 }, cursor: 'pointer' }}
+                onClick={() => handleRowClick(row)} // Add onClick to open DetailsDrawer
               >
                 <TableCell>{row.customer?.complete_name || 'N/A'}</TableCell>
                 <TableCell>
@@ -214,6 +235,13 @@ export default function ListSchedule({ form, onClose, onRefresh }) {
                 <TableCell>{row.schedule_date || 'N/A'}</TableCell>
                 <TableCell>{row.schedule_start_time || 'N/A'}</TableCell>
                 <TableCell>{row.schedule_end_time || 'N/A'}</TableCell>
+                <TableCell>
+                  {row?.address
+                    ? `${row.address.street || ''} - ${row.address.neighborhood || ''}, ${
+                        row.address.state || ''
+                      }, ${row.address.country || ''}`
+                    : 'Endereço não disponível'}
+                </TableCell>
                 <TableCell>
                   {row.schedule_agent ? (
                     <Chip
@@ -233,7 +261,13 @@ export default function ListSchedule({ form, onClose, onRefresh }) {
                   )}
                 </TableCell>
                 <TableCell align="center">
-                  <IconButton color="primary" onClick={() => handleAssociateAgent(row)}>
+                  <IconButton
+                    color="primary"
+                    onClick={(e) => {
+                      e.stopPropagation(); // Prevent row click from triggering
+                      handleAssociateAgent(row);
+                    }}
+                  >
                     <ArrowForwardIosIcon sx={{ fontSize: 18 }} />
                   </IconButton>
                 </TableCell>

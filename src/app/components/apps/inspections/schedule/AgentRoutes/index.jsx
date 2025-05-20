@@ -101,9 +101,9 @@ export default function AgentRoutes() {
             const scheduleResponse = await scheduleService.index({
               schedule_agent: agent.id,
               schedule_date__range: `${dateStr},${dateStr}`,
-              expand: 'address',
+              expand: 'address,service',
               fields:
-                'id,address,schedule_date,schedule_end_date,schedule_start_time,schedule_end_time',
+                'id,address,schedule_date,schedule_end_date,schedule_start_time,schedule_end_time,service',
               ordering: 'schedule_start_time',
               limit: 5,
             });
