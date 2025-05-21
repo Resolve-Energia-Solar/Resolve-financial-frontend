@@ -71,8 +71,8 @@ const ListInspection = ({ projectId = null, product = [], customerId, saleId = n
           'id,schedule_date,schedule_start_time,schedule_end_time,status,final_service_opinion.name';
         const response = await scheduleService.index({
           project: projectId,
-          fields: 'id,schedule_date,schedule_start_time,schedule_end_time,status,final_service_opinion.name',
-          expand: 'final_service_opinion',
+          fields: 'id,schedule_date,schedule_start_time,schedule_end_time,status,final_service_opinion.name,products.id,products.name',
+          expand: 'final_service_opinion,products',
         });
 
         // Obter os detalhes do projeto para verificar a vistoria principal
@@ -109,7 +109,6 @@ const ListInspection = ({ projectId = null, product = [], customerId, saleId = n
           fields: 'id,schedule_date,schedule_start_time,schedule_end_time,status,final_service_opinion.name',
           expand: 'final_service_opinion',
         });
-        // Se necessário, você pode filtrar os resultados aqui
         setInspectionsNotAssociated(response);
       } catch (error) {
         console.error('Erro ao buscar agendamentos:', error);
@@ -221,6 +220,11 @@ const ListInspection = ({ projectId = null, product = [], customerId, saleId = n
                 </TableCell>
                 <TableCell align="center">
                   <Typography variant="h6" fontSize="14px">
+                    Produto
+                  </Typography>
+                </TableCell>
+                <TableCell align="center">
+                  <Typography variant="h6" fontSize="14px">
                     Principal
                   </Typography>
                 </TableCell>
@@ -263,6 +267,13 @@ const ListInspection = ({ projectId = null, product = [], customerId, saleId = n
                         ) : (
                           <Chip label="Em Análise" color="info" />
                         )}
+                      </Typography>
+                    </TableCell>
+                    <TableCell align="center">
+                      <Typography variant="body2">
+                        {schedule?.products && schedule.products.length > 0
+                          ? schedule.products.map((product) => product.name).join(', ')
+                          : 'Não cadastrado'}
                       </Typography>
                     </TableCell>
                     <TableCell align="center">

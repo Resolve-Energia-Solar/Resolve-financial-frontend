@@ -128,7 +128,7 @@ export default function ProjectDetailDrawer({ projectId, saleId, open, onClose, 
               <CheckListRateio
                 projectId={projectId}
                 label="Checklist de Rateio"
-                canEdit={!canEdit}
+                canEdit={canEdit}
               />
             </Box>
           ),
