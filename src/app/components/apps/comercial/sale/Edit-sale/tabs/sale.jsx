@@ -1,4 +1,6 @@
+// EditSale.jsx
 'use client';
+import React, { useEffect, useState } from 'react';
 import {
   Grid,
   Button,
@@ -11,21 +13,19 @@ import {
   CircularProgress,
   Alert,
 } from '@mui/material';
+import { useSnackbar } from 'notistack';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
 import FormSelect from '@/app/components/forms/form-custom/FormSelect';
 import CustomSwitch from '@/app/components/forms/theme-elements/CustomSwitch';
 import { useParams } from 'next/navigation';
-
 import AutoCompleteUser from '@/app/components/apps/comercial/sale/components/auto-complete/Auto-Input-User';
 import AutoCompleteBranch from '@/app/components/apps/comercial/sale/components/auto-complete/Auto-Input-Branch';
 import AutoCompleteCampaign from '@/app/components/apps/comercial/sale/components/auto-complete/Auto-Input-Campaign';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
 import useCurrencyFormatter from '@/hooks/useCurrencyFormatter';
 import { useSelector } from 'react-redux';
-
 import useSale from '@/hooks/sales/useSale';
 import useSaleForm from '@/hooks/sales/useSaleForm';
-import { useEffect, useState } from 'react';
 import HasPermission from '@/app/components/permissions/HasPermissions';
 import SaleProductItem from '@/app/components/apps/saleProduct/SaleProductItem';
 import AutoCompleteReasonMultiple from '../../components/auto-complete/Auto-Input-Reasons';
@@ -44,6 +44,7 @@ const EditSale = ({
   if (!saleId) id = params.id;
 
   const userPermissions = useSelector((state) => state.user.permissions);
+  const { enqueueSnackbar } = useSnackbar();
 
   const hasPermission = (permissions) => {
     if (!permissions) return true;
@@ -57,7 +58,6 @@ const EditSale = ({
   }, [onSubmit]);
 
   const { loading, error, saleData } = useSale(saleId);
-
   const [productNames, setProductNames] = useState({});
 
   useEffect(() => {
@@ -79,9 +79,6 @@ const EditSale = ({
     });
   }, [saleData?.sale_products]);
 
-  console.log('productNames', productNames);
-
-
   const {
     formData,
     handleChange,
@@ -92,7 +89,10 @@ const EditSale = ({
     success,
   } = useSaleForm(saleData, id);
 
-  const { formattedValue, handleValueChange } = useCurrencyFormatter(formData.totalValue);
+  const { formattedValue, handleValueChange } = useCurrencyFormatter(
+    formData.totalValue,
+    (newValue) => handleChange('totalValue', newValue)
+  );
 
   const statusOptions = [
     { value: 'P', label: 'Pendente' },
@@ -102,14 +102,23 @@ const EditSale = ({
     { value: 'D', label: 'Distrato' },
   ];
 
+  // Snackbar on success
   useEffect(() => {
     if (successData && success) {
+      enqueueSnackbar('Venda salva com sucesso!', { variant: 'success' });
       if (onClosedModal) {
         onClosedModal();
         refresh();
       }
     }
   }, [successData, success]);
+
+  // Snackbar on error
+  useEffect(() => {
+    if (Object.keys(formErrors).length > 0 && !formLoading) {
+      enqueueSnackbar('Erro ao salvar venda. Verifique os campos.', { variant: 'error' });
+    }
+  }, [formErrors, formLoading]);
 
   return (
     <Box {...props}>
@@ -188,7 +197,7 @@ const EditSale = ({
             fullWidth
             value={formattedValue}
             disabled={!hasPermission(['accounts.change_total_value_field'])}
-            onChange={(e) => handleValueChange(e, handleChange)}
+            onChange={handleValueChange}
             {...(formErrors.total_value && {
               error: true,
               helperText: formErrors.total_value,
@@ -224,13 +233,20 @@ const EditSale = ({
           permissions={['accounts.change_pre_sale_field']}
           userPermissions={userPermissions}
         >
-          <Grid item xs={12} sm={12} lg={12} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <Grid
+            item
+            xs={12}
+            sm={12}
+            lg={12}
+            sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
+          >
             <Box sx={{ margin: 0 }}>
               <CustomFormLabel>Venda</CustomFormLabel>
               <FormControlLabel
                 sx={{ margin: 0 }}
                 control={
-                  <CustomSwitch sx={{ margin: 0 }}
+                  <CustomSwitch
+                    sx={{ margin: 0 }}
                     checked={formData.isSale}
                     onChange={(e) => handleChange('isSale', e.target.checked)}
                   />
@@ -252,14 +268,13 @@ const EditSale = ({
           </Grid>
         </HasPermission>
 
-        {(saleData && saleData?.sale_products || []).map((saleProduct, index) => (
+        {saleData?.sale_products.map((saleProduct, index) => (
           <SaleProductItem
             key={saleProduct.id}
             initialData={saleProduct}
             productName={productNames[index]}
           />
         ))}
-
       </Grid>
     </Box>
   );
