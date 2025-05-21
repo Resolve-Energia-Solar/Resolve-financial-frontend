@@ -65,7 +65,7 @@ const SaleList = () => {
   const { handleRowClick, openDrawer, rowSelected, toggleDrawerClosed } = useSale();
 
   const { filters, setFilters, clearFilters, refresh } = useContext(FilterContext);
-  const activeCount = Object.keys(filters || {}).filter(key => {
+  const activeCount = Object.keys(filters || {}).filter((key) => {
     const v = filters[key];
     return v !== null && v !== undefined && !(Array.isArray(v) && v.length === 0);
   }).length;
@@ -301,7 +301,9 @@ const SaleList = () => {
         <Grid container xs={2} justifyContent="flex-end" alignItems="center">
           {activeCount > 0 && (
             <Chip
-              label={`${activeCount} filtro${activeCount > 1 ? 's' : ''} ativo${activeCount > 1 ? 's' : ''}`}
+              label={`${activeCount} filtro${activeCount > 1 ? 's' : ''} ativo${
+                activeCount > 1 ? 's' : ''
+              }`}
               onDelete={clearFilters}
               variant="outlined"
               size="small"
@@ -497,7 +499,7 @@ const SaleList = () => {
                     </TableCell>
                     <TableCell>
                       {Array.isArray(item.final_service_opinion) &&
-                        item.final_service_opinion[0].name ? (
+                      item.final_service_opinion[0].name ? (
                         <Chip
                           label={item.final_service_opinion[0].name}
                           color={

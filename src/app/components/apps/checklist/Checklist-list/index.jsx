@@ -35,6 +35,7 @@ const CheckListRateio = ({ projectId = null, canEdit = true, label }) => {
   const [unitToDelete, setUnitToDelete] = useState(null);
 
   const [reload, setReload] = useState(false);
+  const [units, setUnits] = useState([]);
 
   const reloadPage = () => {
     setReload(!reload);
@@ -57,7 +58,6 @@ const CheckListRateio = ({ projectId = null, canEdit = true, label }) => {
     fetchUnits();
   }, [projectId, reload]);
 
-  const [units, setUnits] = useState([]);
 
   const handleEdit = (unit) => {
     setSelectedUnitId(unit.id);
