@@ -108,7 +108,7 @@ export default function EditProjectTab({ projectId = null, detail = false }) {
             <AutoCompleteSale
               onChange={(id) => handleChange('sale', id)}
               value={formData.sale}
-              disabled={detail}
+              disabled={true}
               {...(formErrors.sale && { error: true, helperText: formErrors.sale })}
             />
           </Grid>
