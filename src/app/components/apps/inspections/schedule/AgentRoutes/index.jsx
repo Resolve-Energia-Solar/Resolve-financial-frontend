@@ -1,5 +1,17 @@
 'use client';
-import { Grid, TextField, Box, TablePagination, CircularProgress, Dialog, DialogTitle, DialogContent, DialogContentText, Button, DialogActions } from '@mui/material';
+import {
+  Grid,
+  TextField,
+  Box,
+  TablePagination,
+  CircularProgress,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  Button,
+  DialogActions,
+} from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
@@ -13,6 +25,8 @@ import ModalMaps from '@/app/components/apps/inspections/schedule/AgentRoutes/co
 import UpdateSchedulePage from '@/app/(DashboardLayout)/apps/schedules/[id]/update/page';
 import AddSchedulePage from '@/app/components/apps/inspections/schedule/AgentRoutes/Add-Schedule/Add-Schedule';
 import ListSchedule from '@/app/components/apps/inspections/schedule/AgentRoutes/List-Schedule/List-Schedule';
+import { IconMapUp } from '@tabler/icons-react';
+import ModalGeralMaps from './components/Maps/ModalGeralMaps';
 
 export default function AgentRoutes() {
   const [agents, setAgents] = useState([]);
@@ -31,19 +45,22 @@ export default function AgentRoutes() {
   const [modelCreateScheduleOpen, setModelCreateScheduleOpen] = useState(false);
   const [modalListScheduleOpen, setModalListScheduleOpen] = useState(false);
   const [modalMapsOpen, setModalMapsOpen] = useState(false);
+  const [modalMapGeralOpen, setModalMapGeralOpen] = useState(false);
 
   const [selectedScheduleId, setSelectedScheduleId] = useState(null);
+  const [schedules, setSchedules] = useState([]);
   const [formData, setFormData] = useState({});
+
+  console.log('schedules teste: ', schedules);
 
   const handleRefresh = () => {
     setRefresh(!refresh);
-  }
+  };
 
   const handleOpenMap = (locations) => {
-    console.log('locations teste: ', locations);
     setPoints(locations);
     setModalMapsOpen(true);
-  }
+  };
 
   const handleOpenModalListSchedule = (agentId) => {
     setModalListScheduleOpen(true);
@@ -51,8 +68,8 @@ export default function AgentRoutes() {
       schedule_agent: agentId,
       schedule_date: format(selectedDate, 'yyyy-MM-dd'),
       service: 1,
-    })
-  }
+    });
+  };
 
   const handleOpenModalCreateSchedule = (agentId) => {
     setModelCreateScheduleOpen(true);
@@ -60,8 +77,8 @@ export default function AgentRoutes() {
       schedule_agent: agentId,
       schedule_date: format(selectedDate, 'yyyy-MM-dd'),
       service: 1,
-    })
-  }
+    });
+  };
 
   const handleOpenModalSchedule = (scheduleId) => {
     setSelectedScheduleId(scheduleId);
@@ -108,9 +125,16 @@ export default function AgentRoutes() {
               limit: 5,
             });
 
+            const schedulesWithAgentName = (scheduleResponse.results || []).map((schedule) => ({
+              ...schedule,
+              agent_name: agent.complete_name,
+            }));
+
+            setSchedules((prev) => [...prev, ...schedulesWithAgentName]);
+
             return {
               ...agent,
-              schedules: scheduleResponse.results || [],
+              schedules: schedulesWithAgentName,
             };
           }),
         );
@@ -122,7 +146,7 @@ export default function AgentRoutes() {
         setLoading(false);
       }
     },
-    [rowsPerPage, page, refresh]
+    [rowsPerPage, page, refresh],
   );
 
   useEffect(() => {
@@ -162,6 +186,17 @@ export default function AgentRoutes() {
               handleNameCommit();
             }
           }}
+        />
+
+        <Button startIcon={<IconMapUp />} onClick={() => setModalMapGeralOpen(true)}>
+          Abrir Mapa
+        </Button>
+
+        <ModalGeralMaps
+          open={modalMapGeralOpen}
+          onClose={() => setModalMapGeralOpen(false)}
+          pointsData={schedules}
+          apiKey={GOOGLE_MAPS_API_KEY}
         />
       </Box>
 
@@ -207,7 +242,10 @@ export default function AgentRoutes() {
       >
         <DialogContent>
           <DialogContentText>
-            <UpdateSchedulePage scheduleId={selectedScheduleId} onClosedModal={() => setModalEditScheduleOpen(false)} />
+            <UpdateSchedulePage
+              scheduleId={selectedScheduleId}
+              onClosedModal={() => setModalEditScheduleOpen(false)}
+            />
           </DialogContentText>
         </DialogContent>
       </Dialog>
@@ -241,18 +279,18 @@ export default function AgentRoutes() {
               form={formData}
               onClose={() => setModalListScheduleOpen(false)}
               onRefresh={() => handleRefresh()}
-              />
+            />
           </DialogContentText>
         </DialogContent>
       </Dialog>
 
-        <ModalMaps
-          open={modalMapsOpen}
-          onClose={() => setModalMapsOpen(false)}
-          title="Rota Agente"
-          points={points}
-          apiKey={GOOGLE_MAPS_API_KEY}
-        />
+      <ModalMaps
+        open={modalMapsOpen}
+        onClose={() => setModalMapsOpen(false)}
+        title="Rota Agente"
+        points={points}
+        apiKey={GOOGLE_MAPS_API_KEY}
+      />
     </LocalizationProvider>
   );
 }

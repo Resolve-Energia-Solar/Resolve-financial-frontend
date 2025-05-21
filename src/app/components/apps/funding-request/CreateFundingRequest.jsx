@@ -11,6 +11,10 @@ const CreateFundingRequest = ({
   handleChangeManaging,
   rFormData,
   handleChangeRFormData,
+  formattedMonthlyIncome,
+  onMonthlyIncomeChange,
+  formattedProjectValue,
+  onProjectValueChange,
   children,
   disabled,
   disabledManaging,
@@ -22,6 +26,7 @@ const CreateFundingRequest = ({
     <Box sx={{ mb: 4, overflow: 'auto', height: '100vh', pb: 30 }}>
       <Typography variant="h5">Contratante</Typography>
       <Divider sx={{ mt: 2, mb: 3 }} />
+
       <Grid container spacing={3}>
         <Grid item xs={12} sm={6} lg={4}>
           <FormSelect
@@ -47,7 +52,8 @@ const CreateFundingRequest = ({
             onChange={handleChange}
             disabled={!personTypeSelected}
             inputProps={{
-              maxLength: formData?.person_type === 'PF' ? 11 : formData?.person_type === 'PJ' ? 14 : 14,
+              maxLength:
+                formData?.person_type === 'PF' ? 11 : formData?.person_type === 'PJ' ? 14 : 14,
               inputMode: 'numeric',
             }}
             InputProps={{
@@ -121,6 +127,8 @@ const CreateFundingRequest = ({
             />
           </Grid>
         )}
+
+        {/* Renda Comprovada / Faturamento Médio */}
         <Grid item xs={12} sm={6} lg={4}>
           <CustomFormLabel htmlFor="monthly_income">
             {formData?.person_type === 'PF' ? 'Renda Comprovada *' : 'Faturamento Médio *'}
@@ -128,31 +136,35 @@ const CreateFundingRequest = ({
           <CustomTextField
             name="monthly_income"
             variant="outlined"
-            value={rFormData?.monthly_income || ''}
+            value={formattedMonthlyIncome}
             fullWidth
-            onChange={handleChangeRFormData}
+            onChange={onMonthlyIncomeChange}
             disabled={!personTypeSelected}
           />
         </Grid>
+
+        {/* Valor do Projeto */}
         <Grid item xs={12} sm={6} lg={4}>
           <CustomFormLabel htmlFor="project_value">Valor do Projeto *</CustomFormLabel>
           <CustomTextField
             name="project_value"
             variant="outlined"
-            value={rFormData?.project_value || ''}
+            value={formattedProjectValue}
             fullWidth
-            onChange={handleChangeRFormData}
+            onChange={onProjectValueChange}
             disabled={!personTypeSelected}
           />
         </Grid>
       </Grid>
 
+      {/* Sócio Administrador (PJ) */}
       {formData?.person_type === 'PJ' && (
         <>
           <Typography variant="h5" sx={{ mt: 4 }}>
             Sócio Administrador
           </Typography>
           <Divider sx={{ mt: 2, mb: 3 }} />
+
           <Grid container spacing={3}>
             <Grid item xs={12} sm={6} lg={4}>
               <CustomFormLabel htmlFor="person_type">Natureza</CustomFormLabel>
@@ -164,6 +176,7 @@ const CreateFundingRequest = ({
                 disabled
               />
             </Grid>
+
             <Grid item xs={12} sm={6} lg={4}>
               <CustomFormLabel htmlFor="first_document">CPF *</CustomFormLabel>
               <CustomTextField
@@ -175,6 +188,7 @@ const CreateFundingRequest = ({
                 disabled={disabledManaging}
               />
             </Grid>
+
             <Grid item xs={12} sm={6} lg={4}>
               <CustomFormLabel htmlFor="complete_name">Nome Completo *</CustomFormLabel>
               <CustomTextField
@@ -186,6 +200,7 @@ const CreateFundingRequest = ({
                 disabled={disabledManaging}
               />
             </Grid>
+
             <Grid item xs={12} sm={6} lg={4}>
               <CustomFormLabel htmlFor="email">E-mail *</CustomFormLabel>
               <CustomTextField
@@ -197,6 +212,7 @@ const CreateFundingRequest = ({
                 disabled={disabledManaging}
               />
             </Grid>
+
             <Grid item xs={12} sm={6} lg={4}>
               <FormDate
                 label="Data de Nascimento *"
@@ -208,6 +224,7 @@ const CreateFundingRequest = ({
                 disabled={disabledManaging}
               />
             </Grid>
+
             <Grid item xs={12} sm={6} lg={4}>
               <FormSelect
                 name="gender"

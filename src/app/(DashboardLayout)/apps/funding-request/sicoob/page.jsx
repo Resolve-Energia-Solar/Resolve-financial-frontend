@@ -1,12 +1,19 @@
+// src/app/…/Sicoob.jsx
 'use client';
 
 import Breadcrumb from '@/app/(DashboardLayout)/layout/shared/breadcrumb/Breadcrumb';
 import CreateFundingRequest from '@/app/components/apps/funding-request/CreateFundingRequest';
 import DetailsFundingRequest from '@/app/components/apps/funding-request/DetailsFundingRequest';
-
 import BlankCard from '@/app/components/shared/BlankCard';
 import SideDrawer from '@/app/components/shared/SideDrawer';
+import AttachmentDrawer from '../../attachment/AttachmentDrawer';
+import Comment from '@/app/components/apps/comment';
 import requestSicoob from '@/services/requestSicoobService';
+import attachmentService from '@/services/attachmentService';
+import userService from '@/services/userService';
+import useCurrencyFormatter from '@/hooks/useCurrencyFormatter';
+import { enqueueSnackbar } from 'notistack';
+import { useSelector } from 'react-redux';
 import {
   Box,
   Button,
@@ -24,39 +31,25 @@ import {
   Typography,
   TablePagination,
 } from '@mui/material';
-import { enqueueSnackbar } from 'notistack';
 import { useEffect, useState } from 'react';
-import AttachmentDrawer from '../../attachment/AttachmentDrawer';
-import attachmentService from '@/services/attachmentService';
-import userService from '@/services/userService';
-import { useSelector } from 'react-redux';
-import { TabPanel } from '@/app/components/shared/TabPanel';
-import Comment from '@/app/components/apps/comment';
 
-const BCrumb = [
-  { to: '/', title: 'Home' },
-  { title: 'Solicitações de Financiamento' },
-];
+const BCrumb = [{ to: '/', title: 'Home' }, { title: 'Solicitações de Financiamento' }];
 
 export default function Sicoob() {
   const user = useSelector((state) => state.user?.user);
 
-  console.log('user', user);
-
+  // estados
   const [rows, setRows] = useState([]);
   const [row, setRow] = useState();
   const [openSideDrawer, setOpenSideDrawer] = useState(false);
   const [openSideDrawerCreate, setOpenSideDrawerCreate] = useState(false);
   const [formData, setFormData] = useState({});
   const [formDataManaging, setFormDataManaging] = useState({});
-  const [rFormData, setRFormData] = useState({});
+  const [rFormData, setRFormData] = useState({ occupation: '' });
   const [attachments, setAttachments] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [formErrors, setFormErrors] = useState({});
   const [disabled, setDisabled] = useState(true);
   const [disabledManaging, setDisabledManaging] = useState(true);
-  const [customer, setCustomer] = useState();
-  const [managingPartner, setManagingPartner] = useState();
   const [value, setValue] = useState(0);
   const [loadingUser, setLoadingUser] = useState(false);
 
@@ -74,27 +67,28 @@ export default function Sicoob() {
     birth_date: '',
   };
 
-  // formata só com separador de milhares (exibição)
-  const formatNumber = (value) => {
-    const onlyDigits = value.replace(/\D/g, '');
-    return onlyDigits.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-  };
+  // hook de formatação
+  const { formattedValue: formattedMonthlyIncome, handleValueChange: handleMonthlyIncomeChange } =
+    useCurrencyFormatter(rFormData.monthly_income, (val) =>
+      setRFormData((prev) => ({ ...prev, monthly_income: val })),
+    );
+  const { formattedValue: formattedProjectValue, handleValueChange: handleProjectValueChange } =
+    useCurrencyFormatter(rFormData.project_value, (val) =>
+      setRFormData((prev) => ({ ...prev, project_value: val })),
+    );
 
-  // converte string formatada para Number (envio)
-  const parseNumber = (value) => {
-    if (!value) return null;
-    const normalized = value.replace(/\./g, '').replace(',', '.');
-    const num = parseFloat(normalized);
-    return isNaN(num) ? null : num;
-  };
-
-  // busca lista com page e limit
+  // fetch
   const fetchRequestSicoob = async () => {
     try {
       const res = await requestSicoob.index({
         page: page + 1,
         limit,
-        expand: ['customer', 'managing_partner', 'requested_by.phone_numbers', 'requested_by.employee.branch'],
+        expand: [
+          'customer',
+          'managing_partner',
+          'requested_by.phone_numbers',
+          'requested_by.employee.branch',
+        ],
         fields: [
           '*',
           'customer.complete_name',
@@ -123,115 +117,87 @@ export default function Sicoob() {
       console.error(err);
     }
   };
-
   useEffect(() => {
     fetchRequestSicoob();
   }, [page, limit]);
 
-  const handleAddAttachment = (attachment) => {
-    setAttachments((prev) => [...prev, attachment]);
-  };
-
-  const handleChangeTab = (_, newValue) => {
-    setValue(newValue);
-  };
-
-  const handleChangePage = (_, newPage) => {
-    setPage(newPage);
-  };
-
+  const handleAddAttachment = (attachment) => setAttachments((prev) => [...prev, attachment]);
+  const handleChangeTab = (_, v) => setValue(v);
+  const handleChangePage = (_, p) => setPage(p);
   const handleChangeRowsPerPage = (e) => {
-    setLimit(parseInt(e.target.value, 10));
+    setLimit(+e.target.value);
     setPage(0);
   };
 
+  // formData
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    if (name === 'person_type') {
+      setFormData(payloadClear);
+      setDisabled(false);
+    }
+    setFormData((p) => ({ ...p, [name]: value }));
+  };
+  useEffect(() => {
+    const { person_type, first_document } = formData;
+    const needsLookup =
+      (person_type === 'PF' && first_document?.length === 11) ||
+      (person_type === 'PJ' && first_document?.length === 14);
+    if (!needsLookup) return;
+    setLoadingUser(true);
+    userService
+      .index({
+        first_document__icontains: first_document,
+        fields: ['id', 'first_document', 'complete_name', 'email', 'gender', 'birth_date'],
+      })
+      .then((r) => r.results)
+      .then((found) => {
+        if (!found.length) {
+          enqueueSnackbar('Nenhum registro encontrado. Complete o cadastro.', {
+            variant: 'warning',
+          });
+          setDisabled(false);
+        } else {
+          setFormData((p) => ({ ...p, ...found[0] }));
+        }
+      })
+      .finally(() => setLoadingUser(false));
+  }, [formData.first_document, formData.person_type]);
 
-// 2️⃣ Substitua seu `handleChange` por este:
-const handleChange = (e) => {
-  const { name, value } = e.target;
-  if (name === 'person_type') {
-    setFormData(payloadClear);
-    setDisabled(false);
-  }
-  setFormData((prev) => ({ ...prev, [name]: value }));
-};
-
-// 3️⃣ Acrescente este useEffect abaixo dos seus outros hooks:
-useEffect(() => {
-  const { person_type, first_document } = formData;
-  const needsLookup =
-    (person_type === 'PF' && first_document?.length === 11) ||
-    (person_type === 'PJ' && first_document?.length === 14);
-
-  if (!needsLookup) return;
-
-  setLoadingUser(true);
-  userService
-    .index({
-      first_document__icontains: first_document,
-      fields: ['id', 'first_document', 'complete_name', 'email', 'gender', 'birth_date'],
-    })
-    .then((res) => res.results)
-    .then((found) => {
-      if (found.length === 0) {
-        enqueueSnackbar('Nenhum registro encontrado. Complete o cadastro.', { variant: 'warning' });
-        setDisabled(false);
-      } else {
-        setFormData((prev) => ({ ...prev, ...found[0] }));
-        setCustomer(found[0]);
-      }
-    })
-    .finally(() => setLoadingUser(false));
-}, [formData.first_document, formData.person_type]);
-
-
+  // managing partner
   const handleChangeManaging = async (e) => {
     const { name, value } = e.target;
-    if (name === 'first_document' && value.length === 12) {
-      const found = await userService
-        .index({
-          first_document__icontains: value,
-          fields: [
-            'id',
-            'first_document',
-            'complete_name',
-            'email',
-            'gender',
-            'birth_date',
-          ],
-        })
-        .then((res) => res.results);
-      if (found.length === 0) {
-        enqueueSnackbar(
-          'Nenhum registro encontrado. Complete o cadastro.',
-          { variant: 'warning' }
-        );
-        setDisabledManaging(false);
-      } else {
-        setFormDataManaging((p) => ({ ...p, ...found[0] }));
-        setManagingPartner(found[0]);
-      }
-    }
     if (name === 'person_type') {
       setFormDataManaging(payloadClear);
       setDisabledManaging(false);
     }
+    if (name === 'first_document' && value.length >= 11) {
+      const found = await userService
+        .index({
+          first_document__icontains: value,
+          fields: ['id', 'first_document', 'complete_name', 'email', 'gender', 'birth_date'],
+        })
+        .then((r) => r.results);
+      if (!found.length) {
+        enqueueSnackbar('Nenhum registro encontrado. Complete o cadastro.', { variant: 'warning' });
+        setDisabledManaging(false);
+      } else {
+        setFormDataManaging((p) => ({ ...p, ...found[0] }));
+      }
+    }
     setFormDataManaging((p) => ({ ...p, [name]: value }));
   };
 
+  // rFormData: occupation + numéricos
   const handleChangeRFormData = (e) => {
     const { name, value } = e.target;
-    if (name === 'monthly_income' || name === 'project_value') {
-      setRFormData((p) => ({ ...p, [name]: formatNumber(value) }));
-    } else {
-      setRFormData((p) => ({ ...p, [name]: value }));
-    }
+    setRFormData((p) => ({ ...p, [name]: value }));
   };
 
+  // submit
   const handleSubmit = async () => {
     setLoading(true);
     try {
-      // 1. cria/atualiza customer
       const custBody = {
         complete_name: formData.complete_name,
         email: formData.email,
@@ -243,16 +209,11 @@ useEffect(() => {
         }),
         user_types: [2],
       };
-      const newCustomer = await userService.upInsert(
-        formData.id ?? null,
-        custBody
-      );
-      setCustomer(newCustomer);
+      const newCustomer = await userService.upInsert(formData.id ?? null, custBody);
 
-      // 2. cria/atualiza managing partner (PJ)
       let newManaging = null;
       if (formData.person_type === 'PJ') {
-        const mpBody = {
+        const mp = {
           complete_name: formDataManaging.complete_name,
           email: formDataManaging.email,
           first_document: formDataManaging.first_document,
@@ -261,69 +222,41 @@ useEffect(() => {
           birth_date: formDataManaging.birth_date,
           user_types: [2],
         };
-        newManaging = await userService.upInsert(
-          formDataManaging.id ?? null,
-          mpBody
-        );
-        setManagingPartner(newManaging);
+        newManaging = await userService.upInsert(formDataManaging.id ?? null, mp);
       }
 
-      // 3. monta payload e converte valores numéricos
       const payload = {
-        occupation:
-          formData.person_type === 'PJ'
-            ? 'Empresa'
-            : rFormData.occupation,
-        monthly_income: parseNumber(rFormData.monthly_income),
-        project_value: parseNumber(rFormData.project_value),
+        occupation: rFormData.occupation,
+        monthly_income: rFormData.monthly_income,
+        project_value: rFormData.project_value,
         customer: newCustomer.id,
         managing_partner: newManaging?.id ?? null,
         requested_by: user.id,
         branch: user?.employee?.branch || null,
       };
       if (payload.project_value == null) {
-        enqueueSnackbar('Valor do projeto inválido.', {
-          variant: 'error',
-        });
+        enqueueSnackbar('Valor do projeto inválido.', { variant: 'error' });
         setLoading(false);
         return;
       }
 
-      // 4. cria a solicitação
-      const { id: recordId } = await requestSicoob.create(payload);
-
-      // 5. envia anexos
+      const { id: recId } = await requestSicoob.create(payload);
       await Promise.all(
         attachments.map(({ file, description }) => {
           const fd = new FormData();
           fd.append('file', file);
           fd.append('description', description);
-          fd.append('object_id', recordId);
+          fd.append('object_id', recId);
           fd.append('content_type', 121);
-          fd.append('document_type', '');
-          fd.append('document_subtype', '');
-          fd.append('status', '');
           return attachmentService.create(fd);
-        })
+        }),
       );
 
       setOpenSideDrawerCreate(false);
       fetchRequestSicoob();
     } catch (err) {
       console.error(err);
-      if (err.response?.data) {
-        setFormErrors(err.response.data);
-        Object.entries(err.response.data).forEach(([field, msgs]) => {
-          enqueueSnackbar(
-            `Erro no campo ${field}: ${msgs.join(', ')}`,
-            { variant: 'error' }
-          );
-        });
-      } else {
-        enqueueSnackbar(`Erro ao salvar: ${err.message}`, {
-          variant: 'error',
-        });
-      }
+      enqueueSnackbar(`Erro ao salvar: ${err?.message || err}`, { variant: 'error' });
     } finally {
       setLoading(false);
     }
@@ -333,18 +266,14 @@ useEffect(() => {
     try {
       await requestSicoob.update(id, { status });
       fetchRequestSicoob();
-      enqueueSnackbar('Salvo com sucesso', {
-        variant: 'success',
-      });
+      enqueueSnackbar('Salvo com sucesso', { variant: 'success' });
     } catch (err) {
-      enqueueSnackbar(`Erro ao salvar: ${err}`, {
-        variant: 'error',
-      });
+      enqueueSnackbar(`Erro ao salvar: ${err}`, { variant: 'error' });
     }
   };
 
-  const getStatus = (status) => {
-    switch (status) {
+  const getStatus = (s) => {
+    switch (s) {
       case 'A':
         return <Chip label="Aprovado" color="success" />;
       case 'P':
@@ -367,35 +296,27 @@ useEffect(() => {
     setOpenSideDrawerCreate(false);
     setFormData({});
     setFormDataManaging({});
-    setRFormData({});
+    setRFormData({ occupation: '' });
     setAttachments([]);
     setDisabled(true);
     setDisabledManaging(true);
   };
 
-  console.log('rows', rows);
-
   return (
     <Box>
       <Breadcrumb items={BCrumb} />
 
-      <Box
-        sx={{
-          p: 2,
-          display: 'flex',
-          justifyContent: 'flex-end',
-        }}
-      >
-        <Button onClick={() => setOpenSideDrawerCreate(true)}>
-          Nova Solicitação
-        </Button>
+      <Box sx={{ p: 2, display: 'flex', justifyContent: 'flex-end' }}>
+        <Button onClick={() => setOpenSideDrawerCreate(true)}>Nova Solicitação</Button>
       </Box>
 
       <BlankCard>
+        {/* tabela… */}
         <TableContainer>
           <Table>
             <TableHead>
               <TableRow>
+                {/* cabeçalhos… */}
                 <TableCell>
                   <Typography variant="h6">Contratante</Typography>
                 </TableCell>
@@ -419,15 +340,13 @@ useEffect(() => {
                 </TableCell>
               </TableRow>
             </TableHead>
-
             <TableBody>
               {rows.map((r) => (
                 <TableRow key={r.id} hover onClick={() => itemSelected(r)}>
                   <TableCell>{r.customer.complete_name}</TableCell>
                   <TableCell>{r.customer.person_type}</TableCell>
                   <TableCell>
-                    {r.project_value &&
-                      `R$ ${formatNumber(r.project_value.toString())}`}
+                    {r.project_value != null && `R$ ${r.project_value.toLocaleString('pt-BR')}`}
                   </TableCell>
                   <TableCell>{r.managing_partner?.complete_name || 'Não Possui'}</TableCell>
                   <TableCell>{r.requested_by?.complete_name}</TableCell>
@@ -438,7 +357,6 @@ useEffect(() => {
             </TableBody>
           </Table>
         </TableContainer>
-
         <TablePagination
           component="div"
           count={count}
@@ -450,60 +368,40 @@ useEffect(() => {
         />
       </BlankCard>
 
-      {/* Detalhes / Comentários */}
-      <SideDrawer
-        open={openSideDrawer}
-        onClose={() => setOpenSideDrawer(false)}
-        title="Detalhes"
-      >
+      <SideDrawer open={openSideDrawer} onClose={() => setOpenSideDrawer(false)} title="Detalhes">
         {row && (
           <>
             <Tabs value={value} onChange={handleChangeTab}>
               <Tab label="Solicitação" value={0} />
               <Tab label="Comentários" value={1} />
             </Tabs>
-
             <TabPanel value={value} index={0}>
-              <DetailsFundingRequest
-                data={row}
-                handleChangeStatus={handleChangeStatus}
-              />
+              <DetailsFundingRequest data={row} handleChangeStatus={handleChangeStatus} />
             </TabPanel>
-
             <TabPanel value={value} index={1}>
-              <Comment
-                appLabel="contracts"
-                model="sicoobrequest"
-                objectId={row.id}
-              />
+              <Comment appLabel="contracts" model="sicoobrequest" objectId={row.id} />
             </TabPanel>
           </>
         )}
       </SideDrawer>
 
-      {/* Criar nova solicitação */}
-      <SideDrawer
-        open={openSideDrawerCreate}
-        onClose={onCloseDrawer}
-        title="Nova Solicitação"
-      >
+      <SideDrawer open={openSideDrawerCreate} onClose={onCloseDrawer} title="Nova Solicitação">
         <CreateFundingRequest
           formData={formData}
-          formDataManaging={formDataManaging}
-          rFormData={rFormData}
           handleChange={handleChange}
+          formDataManaging={formDataManaging}
           handleChangeManaging={handleChangeManaging}
+          rFormData={rFormData}
           handleChangeRFormData={handleChangeRFormData}
+          formattedMonthlyIncome={formattedMonthlyIncome}
+          onMonthlyIncomeChange={handleMonthlyIncomeChange}
+          formattedProjectValue={formattedProjectValue}
+          onProjectValueChange={handleProjectValueChange}
           disabled={disabled}
           disabledManaging={disabledManaging}
-          loadingUser={loadingUser}      // ← aqui
+          loadingUser={loadingUser}
         >
-          <Stack
-            direction="row"
-            spacing={2}
-            justifyContent="space-between"
-            mt={2}
-          >
+          <Stack direction="row" spacing={2} justifyContent="space-between" mt={2}>
             <AttachmentDrawer
               objectId={null}
               attachments={attachments}
@@ -511,12 +409,7 @@ useEffect(() => {
               appLabel="contracts"
               model="sicoobrequest"
             />
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleSubmit}
-              disabled={loading}
-            >
+            <Button variant="contained" color="primary" onClick={handleSubmit} disabled={loading}>
               {loading ? <CircularProgress size={24} /> : 'Criar'}
             </Button>
           </Stack>
