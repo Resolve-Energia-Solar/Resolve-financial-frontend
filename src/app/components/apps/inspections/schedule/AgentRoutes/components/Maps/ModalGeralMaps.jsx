@@ -115,7 +115,10 @@ const ModalGeralMaps = ({ open, onClose, pointsData, apiKey }) => {
                               maxWidth: 250,
                             }}
                           >
-                            <Box fontWeight="bold" fontSize="1rem" color="primary.main" mb={0.5}>
+                            <Box fontWeight="bold" fontSize="1rem" color="secondary.main" mb={0.5}>
+                              {point.agent_name}
+                            </Box>
+                            <Box fontWeight="bold" fontSize="1rem" color="primary.main" mb={0.2}>
                               {point.service.name}
                             </Box>
                             <Box fontSize="0.875rem" mb={0.25}>

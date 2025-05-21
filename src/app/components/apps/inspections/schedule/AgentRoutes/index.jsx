@@ -51,6 +51,7 @@ export default function AgentRoutes() {
   const [schedules, setSchedules] = useState([]);
   const [formData, setFormData] = useState({});
 
+  console.log('schedules teste: ', schedules);
 
   const handleRefresh = () => {
     setRefresh(!refresh);
@@ -99,7 +100,6 @@ export default function AgentRoutes() {
       try {
         const agentResponse = await userService.index({
           name: nameFilter,
-          role: 'vistoriador',
           category: 1,
           limit: rowsPerPage,
           page: page + 1,
@@ -125,11 +125,16 @@ export default function AgentRoutes() {
               limit: 5,
             });
 
-            setSchedules((prev) => [...prev, ...scheduleResponse.results]);
+            const schedulesWithAgentName = (scheduleResponse.results || []).map((schedule) => ({
+              ...schedule,
+              agent_name: agent.complete_name,
+            }));
+
+            setSchedules((prev) => [...prev, ...schedulesWithAgentName]);
 
             return {
               ...agent,
-              schedules: scheduleResponse.results || [],
+              schedules: schedulesWithAgentName,
             };
           }),
         );
