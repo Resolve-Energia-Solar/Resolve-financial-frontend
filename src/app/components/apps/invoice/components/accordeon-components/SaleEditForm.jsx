@@ -46,7 +46,7 @@ const SaleEditForm = ({ id_sale }) => {
 
   const { formattedValue, handleValueChange } = useCurrencyFormatter(
     formData.total_value,
-    (newValue) => handleChange('total_value', newValue)
+    (newValue) => handleChange('total_value', newValue),
   );
 
   const statusOptions = [
@@ -112,85 +112,116 @@ const SaleEditForm = ({ id_sale }) => {
     }
   }, [id_sale, formData, enqueueSnackbar]);
 
-
   const customerExtraParams = useMemo(() => ({ fields: 'id,complete_name' }), []);
-  const mapCustomerResponse = useCallback((data) =>
-    data.results.map((item) => ({
-      label: item.complete_name,
-      value: item.id,
-    })), []
+  const mapCustomerResponse = useCallback(
+    (data) =>
+      data.results.map((item) => ({
+        label: item.complete_name,
+        value: item.id,
+      })),
+    [],
   );
-  const handleCustomerChange = useCallback((option) => {
-    handleChange('customer', option ? option.value : '');
-  }, [handleChange]);
+  const handleCustomerChange = useCallback(
+    (option) => {
+      handleChange('customer', option ? option.value : '');
+    },
+    [handleChange],
+  );
 
   // Franquia
   const branchExtraParams = useMemo(() => ({ fields: 'id,name' }), []);
-  const mapBranchResponse = useCallback((data) =>
-    data.results.map((item) => ({
-      label: item.name,
-      value: item.id,
-    })), []
+  const mapBranchResponse = useCallback(
+    (data) =>
+      data.results.map((item) => ({
+        label: item.name,
+        value: item.id,
+      })),
+    [],
   );
-  const handleBranchChange = useCallback((option) => {
-    handleChange('branch', option ? option.value : '');
-  }, [handleChange]);
+  const handleBranchChange = useCallback(
+    (option) => {
+      handleChange('branch', option ? option.value : '');
+    },
+    [handleChange],
+  );
 
   // Vendedor
   const sellerExtraParams = useMemo(() => ({ fields: 'id,complete_name' }), []);
-  const mapSellerResponse = useCallback((data) =>
-    data.results.map((item) => ({
-      label: item.complete_name,
-      value: item.id,
-    })), []
+  const mapSellerResponse = useCallback(
+    (data) =>
+      data.results.map((item) => ({
+        label: item.complete_name,
+        value: item.id,
+      })),
+    [],
   );
-  const handleSellerChange = useCallback((option) => {
-    handleChange('seller', option ? option.value : '');
-  }, [handleChange]);
+  const handleSellerChange = useCallback(
+    (option) => {
+      handleChange('seller', option ? option.value : '');
+    },
+    [handleChange],
+  );
 
   // Supervisor de Vendas
   const supervisorExtraParams = useMemo(() => ({ fields: 'id,complete_name' }), []);
-  const mapSupervisorResponse = useCallback((data) =>
-    data.results.map((item) => ({
-      label: item.complete_name,
-      value: item.id,
-    })), []
+  const mapSupervisorResponse = useCallback(
+    (data) =>
+      data.results.map((item) => ({
+        label: item.complete_name,
+        value: item.id,
+      })),
+    [],
   );
-  const handleSupervisorChange = useCallback((option) => {
-    handleChange('sales_supervisor', option ? option.value : '');
-  }, [handleChange]);
+  const handleSupervisorChange = useCallback(
+    (option) => {
+      handleChange('sales_supervisor', option ? option.value : '');
+    },
+    [handleChange],
+  );
 
   // Gerente de Vendas
   const managerExtraParams = useMemo(() => ({ fields: 'id,complete_name' }), []);
-  const mapManagerResponse = useCallback((data) =>
-    data.results.map((item) => ({
-      label: item.complete_name,
-      value: item.id,
-    })), []
+  const mapManagerResponse = useCallback(
+    (data) =>
+      data.results.map((item) => ({
+        label: item.complete_name,
+        value: item.id,
+      })),
+    [],
   );
-  const handleManagerChange = useCallback((option) => {
-    handleChange('sales_manager', option ? option.value : '');
-  }, [handleChange]);
+  const handleManagerChange = useCallback(
+    (option) => {
+      handleChange('sales_manager', option ? option.value : '');
+    },
+    [handleChange],
+  );
 
   // Campanha de Marketing
   const campaignExtraParams = useMemo(() => ({ fields: 'id,name' }), []);
-  const mapCampaignResponse = useCallback((data) =>
-    data.results.map((item) => ({
-      label: item.name,
-      value: item.id,
-    })), []
+  const mapCampaignResponse = useCallback(
+    (data) =>
+      data.results.map((item) => ({
+        label: item.name,
+        value: item.id,
+      })),
+    [],
   );
-  const handleCampaignChange = useCallback((option) => {
-    handleChange('marketing_campaign', option ? option.value : '');
-  }, [handleChange]);
+  const handleCampaignChange = useCallback(
+    (option) => {
+      handleChange('marketing_campaign', option ? option.value : '');
+    },
+    [handleChange],
+  );
 
   // Motivo do Cancelamento/Distrato
   const cancellationExtraParams = useMemo(() => ({}), []);
-  const mapCancellationResponse = useCallback((data) =>
-    data.results.map((item) => ({
-      label: item.reason,
-      value: item.id,
-    })), []
+  const mapCancellationResponse = useCallback(
+    (data) =>
+      data.results.map((item) => ({
+        label: item.reason,
+        value: item.id,
+      })),
+    [],
   );
   const handleCancellationChange = useCallback((option) => {
     setFormData((prev) => ({
@@ -246,7 +277,10 @@ const SaleEditForm = ({ id_sale }) => {
         </Grid>
 
         {/* Vendedor */}
-        <HasPermission permissions={['accounts.change_seller_field']} userPermissions={userPermissions}>
+        <HasPermission
+          permissions={['accounts.change_seller_field']}
+          userPermissions={userPermissions}
+        >
           <Grid item xs={12} sm={12} lg={4}>
             <CustomFormLabel htmlFor="seller">Vendedor</CustomFormLabel>
             <GenericAsyncAutocompleteInput
@@ -275,7 +309,10 @@ const SaleEditForm = ({ id_sale }) => {
             value={formData.sales_supervisor}
             onChange={handleSupervisorChange}
             mapResponse={mapSupervisorResponse}
-            {...(formErrors.sales_supervisor_id && { error: true, helperText: formErrors.sales_supervisor_id })}
+            {...(formErrors.sales_supervisor_id && {
+              error: true,
+              helperText: formErrors.sales_supervisor_id,
+            })}
           />
         </Grid>
 
@@ -291,7 +328,10 @@ const SaleEditForm = ({ id_sale }) => {
             value={formData.sales_manager}
             onChange={handleManagerChange}
             mapResponse={mapManagerResponse}
-            {...(formErrors.sales_manager_id && { error: true, helperText: formErrors.sales_manager_id })}
+            {...(formErrors.sales_manager_id && {
+              error: true,
+              helperText: formErrors.sales_manager_id,
+            })}
           />
         </Grid>
 
@@ -307,7 +347,10 @@ const SaleEditForm = ({ id_sale }) => {
             value={formData.marketing_campaign}
             onChange={handleCampaignChange}
             mapResponse={mapCampaignResponse}
-            {...(formErrors.marketing_campaign_id && { error: true, helperText: formErrors.marketing_campaign_id })}
+            {...(formErrors.marketing_campaign_id && {
+              error: true,
+              helperText: formErrors.marketing_campaign_id,
+            })}
           />
         </Grid>
 
@@ -340,9 +383,7 @@ const SaleEditForm = ({ id_sale }) => {
                 ...prev,
                 status: e.target.value,
                 cancellation_reasons:
-                  e.target.value !== 'C' && e.target.value !== 'D'
-                    ? []
-                    : prev.cancellation_reasons,
+                  e.target.value !== 'C' && e.target.value !== 'D' ? [] : prev.cancellation_reasons,
               }))
             }
             disabled={!hasPermission(['accounts.change_status_sale_field'])}
@@ -355,9 +396,7 @@ const SaleEditForm = ({ id_sale }) => {
             label="Status Financeiro"
             options={financialOptions}
             value={formData.payment_status}
-            onChange={(e) =>
-              setFormData((prev) => ({ ...prev, payment_status: e.target.value }))
-            }
+            onChange={(e) => setFormData((prev) => ({ ...prev, payment_status: e.target.value }))}
             disabled={!hasPermission(['financial.change_status_financial'])}
           />
         </Grid>
@@ -371,9 +410,7 @@ const SaleEditForm = ({ id_sale }) => {
             variant="outlined"
             fullWidth
             value={formData.billing_date}
-            onChange={(e) =>
-              setFormData((prev) => ({ ...prev, billing_date: e.target.value }))
-            }
+            onChange={(e) => setFormData((prev) => ({ ...prev, billing_date: e.target.value }))}
             disabled={!hasPermission(['resolve_crm.can_change_billing_date'])}
             {...(formErrors.billing_date && { error: true, helperText: formErrors.billing_date })}
           />
@@ -395,7 +432,10 @@ const SaleEditForm = ({ id_sale }) => {
               value={formData.cancellation_reasons}
               onChange={handleCancellationChange}
               mapResponse={mapCancellationResponse}
-              {...(formErrors.cancellation_reasons && { error: true, helperText: formErrors.cancellation_reasons })}
+              {...(formErrors.cancellation_reasons && {
+                error: true,
+                helperText: formErrors.cancellation_reasons,
+              })}
             />
           </Grid>
         )}
@@ -425,7 +465,10 @@ const SaleEditForm = ({ id_sale }) => {
         </Grid>
 
         {/* Pré-Venda / Venda */}
-        <HasPermission permissions={['accounts.change_pre_sale_field']} userPermissions={userPermissions}>
+        <HasPermission
+          permissions={['accounts.change_pre_sale_field']}
+          userPermissions={userPermissions}
+        >
           <Grid item xs={12} sm={12} lg={12}>
             <CustomFormLabel>Venda</CustomFormLabel>
             <FormControlLabel
@@ -446,7 +489,7 @@ const SaleEditForm = ({ id_sale }) => {
       {/* Botão de Salvar */}
       <Box sx={{ mt: 3, display: 'flex', justifyContent: 'flex-end' }}>
         <Button variant="contained" color="primary" onClick={handleSave} disabled={saveLoading}>
-          {saveLoading ? "Salvando..." : "Salvar"}
+          {saveLoading ? 'Salvando...' : 'Salvar'}
         </Button>
       </Box>
     </Box>

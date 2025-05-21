@@ -7,7 +7,6 @@ import { enqueueSnackbar } from 'notistack';
 
 const useSaleForm = (initialData, id) => {
   const user = useSelector((state) => state.user);
-
   const [formData, setFormData] = useState({
     customerId: null,
     sellerId: null,
@@ -24,8 +23,6 @@ const useSaleForm = (initialData, id) => {
     billing_date: null,
     cancellationReasonsIds: [],
     reference_table: null,
-    // sale_products: [],
-    // product: null,
   });
 
   const [formErrors, setFormErrors] = useState({});
@@ -56,34 +53,13 @@ const useSaleForm = (initialData, id) => {
       });
     }
   }, [initialData]);
-  
 
   const handleChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  // const handleSaleProductsChange = (index, field, value) => {
-  //   const updatedSaleProducts = [...formData.sale_products];
-  //   const fieldPath = field.replace('sale_products.', '');
-    
-  //   if (fieldPath.includes('.')) {
-  //     // Handle nested fields if needed
-  //     const [parent, child] = fieldPath.split('.');
-  //     updatedSaleProducts[index][parent][child] = value;
-  //   } else {
-  //     updatedSaleProducts[index][fieldPath] = value;
-  //   }
-  
-  //   setFormData(prev => ({
-  //     ...prev,
-  //     sale_products: updatedSaleProducts
-  //   }));
-  // };
-  
-
   const handleSave = async () => {
     setLoading(true);
-
     let errors = { ...formErrors };
 
     if (
@@ -97,6 +73,7 @@ const useSaleForm = (initialData, id) => {
 
     if (Object.keys(errors).length > 0) {
       setFormErrors(errors);
+      enqueueSnackbar('Erro ao salvar venda. Verifique os campos.', { variant: 'error' });
       setLoading(false);
       return;
     }
@@ -107,9 +84,7 @@ const useSaleForm = (initialData, id) => {
       sales_supervisor: formData.salesSupervisorId,
       sales_manager: formData.salesManagerId,
       branch: formData.branchId,
-      marketing_campaign: formData.marketingCampaignId
-        ? formData.marketingCampaignId
-        : undefined,
+      marketing_campaign: formData.marketingCampaignId || undefined,
       payment_status: formData.payment_status,
       products_ids: formData.productIds,
       is_pre_sale: formData.isSale,
@@ -119,71 +94,30 @@ const useSaleForm = (initialData, id) => {
       billing_date: formData.billing_date || null,
       cancellation_reasons: formData.cancellationReasonsIds,
       reference_table: formData.reference_table,
-      // sale_products: formData.sale_products.map((sale_product) => ({
-      //   id: sale_product.id,
-      //   value: sale_product.value,
-      //   cost_value: sale_product.cost_value,
-      //   reference_value: sale_product.reference_value,
-      // })),
     };
 
     try {
-      let response;
-      if (id) {
-        response = await saleService.update(id, dataToSend);
-      } else {
-        response = await saleService.create(dataToSend);
-      }
+      const response = id
+        ? await saleService.update(id, dataToSend)
+        : await saleService.create(dataToSend);
+
       setFormErrors({});
       setSuccess(true);
       setSuccessData(response);
+      enqueueSnackbar(`Venda ${id ? 'atualizada' : 'criada'} com sucesso!`, { variant: 'success' });
     } catch (err) {
-      setSuccess(false);
-      setSuccessData(null);
-      setFormErrors(err.response?.data || {});
-      console.log(err.response?.data || err);
+      const apiErrors = err.response?.data || {};
+      setFormErrors(apiErrors);
+      enqueueSnackbar('Erro ao salvar venda. Verifique os campos.', { variant: 'error' });
     } finally {
       setLoading(false);
     }
   };
 
-  // const handleSaveSaleProducts = async () => {
-  //   console.log('Current formData:', formData);
-  //   setLoading(true);
-  
-  //   try {
-  //     const dataToSend = {
-  //       sale_products: formData.sale_products.map(product => ({
-  //         value: product.value,
-  //         cost_value: product.cost_value,
-  //         reference_value: product.reference_value
-  //       }))
-  //     };
-  
-  //     console.log('data being sent:', dataToSend); 
-      
-  //     const response = await saleProductsService.update(id, dataToSend);
-  //     console.log('response:', response);
-      
-  //     setFormErrors({});
-  //     enqueueSnackbar('Informações atualizadas com sucesso!', { variant: 'success' });
-  //     return response;
-  //   } catch (err) {
-  //     console.error('Erro ao salvar alterações:', err);
-  //     setFormErrors(err.response?.data || {});
-  //     enqueueSnackbar('Erro ao salvar alterações', { variant: 'error' });
-  //     throw err;
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // }
-
   return {
     formData,
     handleChange,
-    // handleSaleProductsChange,
     handleSave,
-    // handleSaveSaleProducts,
     formErrors,
     success,
     loading,
