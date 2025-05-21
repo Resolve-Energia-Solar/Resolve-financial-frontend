@@ -9,10 +9,11 @@ import {
   CircularProgress,
 } from '@mui/material';
 import { LoadScript, GoogleMap, Marker, InfoWindow } from '@react-google-maps/api';
+import DetailsDrawer from '@/app/components/apps/schedule/DetailsDrawer';
 
 const containerStyle = {
   width: '100%',
-  height: '500px'
+  height: '500px',
 };
 
 const ModalGeralMaps = ({ open, onClose, pointsData, apiKey }) => {
@@ -20,12 +21,18 @@ const ModalGeralMaps = ({ open, onClose, pointsData, apiKey }) => {
   const [loading, setLoading] = useState(true);
   const [center, setCenter] = useState({ lat: -23.5505, lng: -46.6333 });
   const [hoveredMarkerId, setHoveredMarkerId] = useState(null);
+  const [selectedScheduleId, setSelectedScheduleId] = useState(null);
+  const [detailsDrawerOpen, setDetailsDrawerOpen] = useState(false);
 
   useEffect(() => {
     if (pointsData && pointsData.length > 0) {
-      const validPoints = pointsData.filter(p => p.address?.latitude && p.address?.longitude);
-      const avgLat = validPoints.reduce((sum, p) => sum + parseFloat(p.address.latitude), 0) / validPoints.length;
-      const avgLng = validPoints.reduce((sum, p) => sum + parseFloat(p.address.longitude), 0) / validPoints.length;
+      const validPoints = pointsData.filter((p) => p.address?.latitude && p.address?.longitude);
+      const avgLat =
+        validPoints.reduce((sum, p) => sum + parseFloat(p.address.latitude), 0) /
+        validPoints.length;
+      const avgLng =
+        validPoints.reduce((sum, p) => sum + parseFloat(p.address.longitude), 0) /
+        validPoints.length;
       setCenter({ lat: avgLat, lng: avgLng });
     }
   }, [pointsData]);
@@ -80,34 +87,67 @@ const ModalGeralMaps = ({ open, onClose, pointsData, apiKey }) => {
               onLoad={onLoad}
               onUnmount={onUnmount}
             >
-              {pointsData && pointsData.map((point) => {
-                const lat = parseFloat(point.address.latitude);
-                const lng = parseFloat(point.address.longitude);
-                const id = point.id;
+              {pointsData &&
+                pointsData.map((point) => {
+                  const lat = parseFloat(point.address.latitude);
+                  const lng = parseFloat(point.address.longitude);
+                  const id = point.id;
 
-                return (
-                  <Marker
-                    key={id}
-                    position={{ lat, lng }}
-                    onMouseOver={() => setHoveredMarkerId(id)}
-                    onMouseOut={() => setHoveredMarkerId(null)}
-                  >
-                    {hoveredMarkerId === id && (
-                      <InfoWindow onCloseClick={() => setHoveredMarkerId(null)}>
-                        <div>
-                          <strong>Serviço:</strong> {point.service.name}<br />
-                          <strong>Data:</strong> {point.schedule_date}<br />
-                          <strong>Hora:</strong> {point.schedule_start_time} - {point.schedule_end_time}<br />
-                          <strong>Endereço:</strong><br /> {point.address.complete_address}
-                        </div>
-                      </InfoWindow>
-                    )}
-                  </Marker>
-                );
-              })}
+                  return (
+                    <Marker
+                      key={id}
+                      position={{ lat, lng }}
+                      onMouseOver={() => setHoveredMarkerId(id)}
+                      onMouseOut={() => setHoveredMarkerId(null)}
+                      onClick={() => {
+                        setSelectedScheduleId(id);
+                        setDetailsDrawerOpen(true);
+                      }}
+                    >
+                      {hoveredMarkerId === id && (
+                        <InfoWindow onCloseClick={() => setHoveredMarkerId(null)}>
+                          <Box
+                            sx={{
+                              p: 1.5,
+                              borderRadius: 2,
+                              boxShadow: 3,
+                              backgroundColor: '#fff',
+                              maxWidth: 250,
+                            }}
+                          >
+                            <Box fontWeight="bold" fontSize="1rem" color="primary.main" mb={0.5}>
+                              {point.service.name}
+                            </Box>
+                            <Box fontSize="0.875rem" mb={0.25}>
+                              <strong>Data:</strong> {point.schedule_date}
+                            </Box>
+                            <Box fontSize="0.875rem" mb={0.25}>
+                              <strong>Hora:</strong> {point.schedule_start_time} -{' '}
+                              {point.schedule_end_time}
+                            </Box>
+                            <Box fontSize="0.875rem">
+                              <strong>Endereço:</strong>
+                              <br />
+                              {point.address.complete_address}
+                            </Box>
+                          </Box>
+                        </InfoWindow>
+                      )}
+                    </Marker>
+                  );
+                })}
             </GoogleMap>
           </LoadScript>
         </Box>
+
+        <DetailsDrawer
+          open={detailsDrawerOpen}
+          onClose={() => {
+            setDetailsDrawerOpen(false);
+            setSelectedScheduleId(null);
+          }}
+          scheduleId={selectedScheduleId}
+        />
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose} color="primary">

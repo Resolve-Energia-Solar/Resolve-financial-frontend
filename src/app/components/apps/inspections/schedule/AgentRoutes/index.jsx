@@ -51,14 +51,12 @@ export default function AgentRoutes() {
   const [schedules, setSchedules] = useState([]);
   const [formData, setFormData] = useState({});
 
-  console.log('schedules teste: ', schedules);
 
   const handleRefresh = () => {
     setRefresh(!refresh);
   };
 
   const handleOpenMap = (locations) => {
-    console.log('locations teste: ', locations);
     setPoints(locations);
     setModalMapsOpen(true);
   };

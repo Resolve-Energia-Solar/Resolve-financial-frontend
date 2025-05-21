@@ -35,7 +35,7 @@ export default function ListSchedule({ form, onClose, onRefresh }) {
   const [refresh, setRefresh] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
   const [detailsDrawerOpen, setDetailsDrawerOpen] = useState(false);
-  const [selectedScheduleId, setSelectedScheduleId] = useState(null); // New state for selected schedule ID
+  const [selectedScheduleId, setSelectedScheduleId] = useState(null);
 
   const [filters, setFilters] = useState({
     customer: null,
@@ -264,7 +264,7 @@ export default function ListSchedule({ form, onClose, onRefresh }) {
                   <IconButton
                     color="primary"
                     onClick={(e) => {
-                      e.stopPropagation(); // Prevent row click from triggering
+                      e.stopPropagation();
                       handleAssociateAgent(row);
                     }}
                   >
