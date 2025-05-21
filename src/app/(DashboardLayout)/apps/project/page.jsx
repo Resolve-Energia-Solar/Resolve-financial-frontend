@@ -10,15 +10,11 @@ import SideDrawer from '@/app/components/shared/SideDrawer';
 import useProject from '@/hooks/projects/useProject';
 import ProjectDetailDrawer from '@/app/components/apps/project/Costumer-journey/Project-Detail/ProjectDrawer';
 
-const ProjectListing = ({
-  fields = 'id,product.id,sale.id,sale.customer.id',
-  expand = 'product,sale,sale.customer,',
-}) => {
+const ProjectListing = () => {
   const { openDrawer, toggleDrawerClosed, handleRowClick, rowSelected } = useProject();
 
   const projectId = rowSelected?.id || null;
-
-  const { projectData } = useProject(projectId, { fields, expand });
+  const saleId = rowSelected?.sale?.id || null;
 
   const BCrumb = [{ to: '/', title: 'Home' }, { title: 'Projetos' }];
 
@@ -30,7 +26,12 @@ const ProjectListing = ({
       <BlankCard>
         <CardContent>
           <ProjectList onClick={onRowClick} />
-          <ProjectDetailDrawer projectId={projectId} open={openDrawer} onClose={toggleDrawerClosed} />
+          <ProjectDetailDrawer
+            projectId={projectId}
+            saleId={saleId}
+            open={openDrawer}
+            onClose={toggleDrawerClosed}
+          />
         </CardContent>
       </BlankCard>
     </PageContainer>

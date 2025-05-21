@@ -21,7 +21,6 @@ const ModalMaps = ({ open, onClose, points, apiKey }) => {
   const [loading, setLoading] = useState(true);
   const [center, setCenter] = useState({ lat: -23.5505, lng: -46.6333 });
 
-  // Efeito para calcular o centro
   useEffect(() => {
     if (points && points.length > 0) {
       const avgLat = points.reduce((sum, point) => sum + point.lat, 0) / points.length;
@@ -30,7 +29,6 @@ const ModalMaps = ({ open, onClose, points, apiKey }) => {
     }
   }, [points]);
 
-  // Função para calcular rota
   const calculateRoute = useCallback(() => {
     if (!points || points.length < 2 || !window.google) {
       setLoading(false);

@@ -158,7 +158,7 @@ const DetailsDrawer = ({ open, onClose, scheduleId, dialogMode = false }) => {
 
   if (loading) {
     return (
-      <Drawer anchor="right" open={open} onClose={onClose}>
+      <Drawer anchor="right" open={open} onClose={onClose} sx={{zIndex: 1400}}>
         <Box
           sx={{
             width: 500,
@@ -166,6 +166,7 @@ const DetailsDrawer = ({ open, onClose, scheduleId, dialogMode = false }) => {
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
+            zIndex: 1400
           }}
         >
           <CircularProgress />
@@ -413,6 +414,7 @@ const DetailsDrawer = ({ open, onClose, scheduleId, dialogMode = false }) => {
       PaperProps={{
         sx: { width: { xs: '100vw', sm: '70vw' } },
       }}
+      sx={{ zIndex: 1400 }}
     >
       {content}
     </Drawer>

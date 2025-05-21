@@ -43,6 +43,7 @@ export default function ConstructionFormModal({
         status: 'P',
         deadline: null,
         work_responsibility: 'C',
+        is_customer_aware: false,
         repass_value: '',
         budget_value: '',
         service_description: '',
@@ -70,6 +71,7 @@ export default function ConstructionFormModal({
 
     const handleChange = (field, value) => {
         setForm(prev => ({ ...prev, [field]: value }));
+        console.log('Form updated:', { ...form, [field]: value });
     };
 
     const handleSubmit = async () => {
@@ -128,6 +130,26 @@ export default function ConstructionFormModal({
                                     label={opt.label}
                                 />
                             ))}
+                        </RadioGroup>
+                    </FormControl>
+
+                    <FormControl component="fieldset">
+                        <FormLabel sx={{ fontWeight: 'bold' }}>Cliente ciente da obra?</FormLabel>
+                        <RadioGroup
+                            row
+                            value={form.is_customer_aware}
+                            onChange={e => handleChange('is_customer_aware', e.target.value === 'true')}
+                        >
+                            <FormControlLabel
+                                value={true}
+                                control={<Radio />}
+                                label="Sim"
+                            />
+                            <FormControlLabel
+                                value={false}
+                                control={<Radio />}
+                                label="Não"
+                            />
                         </RadioGroup>
                     </FormControl>
 

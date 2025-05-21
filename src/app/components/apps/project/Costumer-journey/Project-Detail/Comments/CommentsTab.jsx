@@ -1,19 +1,22 @@
-import Comment from "@/app/components/apps/comment";
-import { Grid, Typography } from "@mui/material";
-import { useState } from "react";
+import Comment from '@/app/components/apps/comment';
+import { Grid, Typography } from '@mui/material';
+import { useState } from 'react';
 
-export default function CommentsTab({ projectId }) {
-
-    return (
-        <Grid container spacing={2} sx={{ padding: 2 }}>
-            <Grid item xs={6}>
-                <Typography fontSize={16} fontWeight={400} sx={{ my: 1 }}>Comentários do <strong>Projeto</strong></Typography>
-                <Comment appLabel="resolve_crm" model="project" objectId={projectId} />
-            </Grid> 
-            <Grid item xs={6}>
-                <Typography fontSize={16} fontWeight={400} sx={{ my: 1 }}>Comentários da <strong>Venda</strong></Typography>
-                <Comment appLabel="resolve_crm" model="sale" objectId={projectId} />
-            </Grid>
-        </Grid>
-    );
+export default function CommentsTab({ projectId, saleId }) {
+  return (
+    <Grid container spacing={2} sx={{ padding: 2 }}>
+      <Grid item xs={6}>
+        <Typography fontSize={16} fontWeight={400} sx={{ my: 1 }}>
+          Comentários do <strong>Projeto</strong>
+        </Typography>
+        <Comment appLabel="resolve_crm" model="project" objectId={projectId} />
+      </Grid>
+      <Grid item xs={6}>
+        <Typography fontSize={16} fontWeight={400} sx={{ my: 1 }}>
+          Comentários da <strong>Venda</strong>
+        </Typography>
+        <Comment appLabel="resolve_crm" model="sale" objectId={saleId} />
+      </Grid>
+    </Grid>
+  );
 }

@@ -39,7 +39,7 @@ function TabPanel({ children, value, index }) {
   );
 }
 
-export default function ProjectDetailDrawer({ projectId, open, onClose, refresh }) {
+export default function ProjectDetailDrawer({ projectId, saleId, open, onClose, refresh }) {
   const { enqueueSnackbar } = useSnackbar();
   const [project, setProject] = useState(null);
   const [processId, setProcessId] = useState(null);
@@ -195,7 +195,7 @@ export default function ProjectDetailDrawer({ projectId, open, onClose, refresh 
         },
         {
           label: 'Comentários',
-          content: <CommentsTab projectId={projectId} userPermissions={userPermissions} />,
+          content: <CommentsTab projectId={projectId} saleId={saleId} userPermissions={userPermissions} />,
         },
       ].filter(Boolean),
     [project, projectId, hasConstructionTab],

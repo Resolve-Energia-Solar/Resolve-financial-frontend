@@ -7,7 +7,17 @@ import {
   TimelineContent,
   TimelineDot,
 } from '@mui/lab';
-import { Card, CardContent, CardHeader, Typography, Button, Box, IconButton, Menu, MenuItem } from '@mui/material';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  Typography,
+  Button,
+  Box,
+  IconButton,
+  Menu,
+  MenuItem,
+} from '@mui/material';
 import { timelineItemClasses } from '@mui/lab/TimelineItem';
 
 import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
@@ -16,11 +26,22 @@ import EditIcon from '@mui/icons-material/Edit';
 import { Add, MoreVert } from '@mui/icons-material';
 import ModalChooseOption from '@/app/components/apps/inspections/schedule/AgentRoutes/components/ModalChooseOption';
 
-export default function CardAgentRoutes({ id, date, title, items = [], onItemClick, onCreateSchedule, onListSchedule, onOpenMap }) {
+export default function CardAgentRoutes({
+  id,
+  date,
+  title,
+  items = [],
+  onItemClick,
+  onCreateSchedule,
+  onListSchedule,
+  onOpenMap,
+}) {
   const [hoveredIndex, setHoveredIndex] = React.useState(null);
   const [openModal, setOpenModal] = React.useState(false);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const openMenu = Boolean(anchorEl);
+
+  console.log('item: ', items);
 
   const isDateTodayOrLater = (date) => {
     const today = new Date();
@@ -42,8 +63,8 @@ export default function CardAgentRoutes({ id, date, title, items = [], onItemCli
 
   const handleOpenMap = () => {
     const locations = items
-      .filter(item => item?.address?.latitude && item?.address?.longitude)
-      .map(item => ({
+      .filter((item) => item?.address?.latitude && item?.address?.longitude)
+      .map((item) => ({
         lat: parseFloat(item?.address?.latitude),
         lng: parseFloat(item?.address?.longitude),
       }));
@@ -55,12 +76,25 @@ export default function CardAgentRoutes({ id, date, title, items = [], onItemCli
   };
 
   // Verifica se há pelo menos um item com latitude e longitude
-  const hasLocations = items.some(item => item?.address?.latitude && item?.address?.longitude);
+  const hasLocations = items.some((item) => item?.address?.latitude && item?.address?.longitude);
 
   return (
-    <Card variant="outlined" sx={{ maxWidth: 600, margin: 'auto', display: 'flex', flexDirection: 'column', height: '100%' }}>
+    <Card
+      variant="outlined"
+      sx={{
+        maxWidth: 600,
+        margin: 'auto',
+        display: 'flex',
+        flexDirection: 'column',
+        height: '100%',
+      }}
+    >
       <CardHeader
-        title={<Typography variant="h6" sx={{ fontSize: '0.995rem' }}>{title}</Typography>}
+        title={
+          <Typography variant="h6" sx={{ fontSize: '0.995rem' }}>
+            {title}
+          </Typography>
+        }
         sx={{ pb: 0, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
         action={
           <IconButton onClick={handleMenuClick} size="small">
@@ -117,7 +151,10 @@ export default function CardAgentRoutes({ id, date, title, items = [], onItemCli
                   onClick={() => onItemClick(item.id)}
                 >
                   <Typography variant="body2" fontWeight={500}>
-                    {item.schedule_date && item.schedule_date.split('T')[0].split('-').reverse().join('/')} <br /> {item.schedule_start_time?.substring(0, 5)} - {item.schedule_end_time?.substring(0, 5)}
+                    {item.schedule_date &&
+                      item.schedule_date.split('T')[0].split('-').reverse().join('/')}{' '}
+                    <br /> {item.schedule_start_time?.substring(0, 5)} -{' '}
+                    {item.schedule_end_time?.substring(0, 5)}
                   </Typography>
                   <Typography
                     variant="body2"
@@ -133,8 +170,17 @@ export default function CardAgentRoutes({ id, date, title, items = [], onItemCli
                   >
                     {item.address.neighborhood && `${item.address.neighborhood}, `}
                     {item.address.city && `${item.address.city} - `}
-                    {item.address.zip_code && item.address.zip_code.replace(/^(\d{5})(\d{3})$/, '$1-$2')}
+                    {item.address.zip_code &&
+                      item.address.zip_code.replace(/^(\d{5})(\d{3})$/, '$1-$2')}
                   </Typography>
+                  <Box>
+                    <Typography
+                      variant="body2"
+                      sx={{ cursor: 'pointer', fontWeight: 600, '&:hover': { textDecoration: 'underline' } }}
+                    >
+                      {item.service.name}
+                    </Typography>
+                  </Box>
                 </TimelineContent>
               </TimelineItem>
             );
@@ -170,10 +216,7 @@ export default function CardAgentRoutes({ id, date, title, items = [], onItemCli
         transformOrigin={{ vertical: 'top', horizontal: 'right' }}
         anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
       >
-        <MenuItem
-          onClick={handleOpenMap}
-          disabled={!hasLocations}
-        >
+        <MenuItem onClick={handleOpenMap} disabled={!hasLocations}>
           Abrir o mapa
         </MenuItem>
       </Menu>
