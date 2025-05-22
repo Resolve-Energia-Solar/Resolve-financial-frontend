@@ -6,30 +6,29 @@ import { useSnackbar } from 'notistack';
 import projectService from '@/services/projectService';
 import { Table } from '@/app/components/Table';
 import { TableHeader } from '@/app/components/TableHeader';
-import StatusChip from '@/utils/status/DocumentStatusIcon';
+
 import {
   AssignmentTurnedIn,
   BuildCircle,
   Cancel,
   FilterAlt,
   HourglassBottom,
-  Pending,
   PendingActions,
   Person,
-  HourglassEmpty as HourglassEmptyIcon,
+  HourglassEmpty,
+  RemoveCircleOutline
 } from '@mui/icons-material';
 import ProjectDetailDrawer from '@/app/components/apps/project/Costumer-journey/Project-Detail/ProjectDrawer';
-import { Chip, Box, Typography, Skeleton } from '@mui/material';
+import { Chip, Tooltip } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import GenericFilterDrawer from '@/app/components/filters/GenericFilterDrawer';
 import filterConfig from './filterConfig';
 import { formatDate } from '@/utils/dateUtils';
-import ScheduleOpinionChip from '@/app/components/apps/inspections/schedule/StatusChip/ScheduleOpinionChip';
 import { FilterContext } from '@/context/FilterContext';
 import { IconBuilding, IconTools, IconUserBolt } from '@tabler/icons-react';
 
 const CONSTRUCTION_STATUS_MAP = {
-  P: { label: 'Pendente', color: 'default', icon: <HourglassEmptyIcon /> },
+  P: { label: 'Pendente', color: 'default', icon: <HourglassEmpty /> },
   F: { label: 'Finalizada', color: 'success', icon: <CheckCircleIcon /> },
   C: { label: 'Cancelada', color: 'error', icon: <Cancel /> },
   EA: { label: 'Em Andamento', color: 'warning', icon: <HourglassBottom /> },
@@ -37,20 +36,16 @@ const CONSTRUCTION_STATUS_MAP = {
 
 const WORK_RESPONSIBILITY_MAP = {
   C: { label: 'Cliente', color: 'success', icon: <Person /> },
-  F: { label: 'Franquia', color: 'primary', icon: <IconUserBolt /> },
-  O: { label: 'Centro de Operações', color: 'warning', icon: <IconBuilding /> },
+  F: { label: 'Franquia', color: 'primary', icon: <IconBuilding /> },
+  O: { label: 'Centro de Operações', color: 'warning', icon: <IconUserBolt /> },
 };
 
 
 const ConstructionsDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [projects, setProjects] = useState([]);
-  const [indicators, setIndicators] = useState({
-    purchase_status: {},
-    delivery_status: {},
-    total_count: 0,
-  });
-  const [loadingIndicators, setLoadingIndicators] = useState(true);
+  // const [indicators, setIndicators] = useState({});
+  // const [loadingIndicators, setLoadingIndicators] = useState(true);
   const { filters, setFilters, clearFilters, refresh } = useContext(FilterContext);
   const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
   const [page, setPage] = useState(0);
@@ -60,64 +55,64 @@ const ConstructionsDashboard = () => {
   const [selectedRow, setSelectedRow] = useState(null);
   const { enqueueSnackbar } = useSnackbar();
 
-  const stats = [
-    {
-      key: 'pending',
-      label: 'Pendente',
-      value: indicators.total_pending,
-      icon: <PendingActions />,
-      color: '#fff3cd',
-      filter: { inspection_is_pending: false },
-    },
-    {
-      key: 'scheduled_construction',
-      label: 'Obra agendada',
-      value: indicators.scheduled_construction,
-      icon: <AssignmentTurnedIn />,
-      color: '#d1ecf1',
-      filter: { construction_scheduled: false },
-    },
-    {
-      key: 'in_progress',
-      label: 'Em Andamento',
-      value: indicators.in_progress,
-      icon: <HourglassBottom />,
-      color: '#d1ecf1',
-      filter: { inspection_in_progress: true },
-    },
-    {
-      key: 'finished',
-      label: 'Finalizado',
-      value: indicators.total_finished,
-      icon: <CheckCircleIcon />,
-      color: '#d4edda',
-      filter: { inspection_is_finished: true },
-    },
-    {
-      key: 'with_construction',
-      label: 'Vistoria com obra',
-      value: indicators.with_construction,
-      icon: <BuildCircle />,
-      color: '#e2e3e5',
-      filter: { has_construction: true },
-    },
-    {
-      key: 'with_construction_shade',
-      label: 'Vistoria com obra e sombreamento',
-      value: indicators.with_construction_and_shade,
-      icon: <IconTools />,
-      color: '#e2e3e5',
-      filter: { has_construction: true, has_shade: true },
-    },
-    {
-      key: 'cancelled',
-      label: 'Cancelado',
-      value: indicators.cancelled,
-      icon: <Cancel />,
-      color: '#f8d7da',
-      filter: { inspection_is_cancelled: true },
-    },
-  ];
+  // const stats = [
+  //   {
+  //     key: 'pending',
+  //     label: 'Pendente',
+  //     value: indicators.total_pending,
+  //     icon: <PendingActions />,
+  //     color: '#fff3cd',
+  //     filter: { inspection_is_pending: false },
+  //   },
+  //   {
+  //     key: 'scheduled_construction',
+  //     label: 'Obra agendada',
+  //     value: indicators.scheduled_construction,
+  //     icon: <AssignmentTurnedIn />,
+  //     color: '#d1ecf1',
+  //     filter: { construction_scheduled: false },
+  //   },
+  //   {
+  //     key: 'in_progress',
+  //     label: 'Em Andamento',
+  //     value: indicators.in_progress,
+  //     icon: <HourglassBottom />,
+  //     color: '#d1ecf1',
+  //     filter: { inspection_in_progress: true },
+  //   },
+  //   {
+  //     key: 'finished',
+  //     label: 'Finalizado',
+  //     value: indicators.total_finished,
+  //     icon: <CheckCircleIcon />,
+  //     color: '#d4edda',
+  //     filter: { inspection_is_finished: true },
+  //   },
+  //   {
+  //     key: 'with_construction',
+  //     label: 'Vistoria com obra',
+  //     value: indicators.with_construction,
+  //     icon: <BuildCircle />,
+  //     color: '#e2e3e5',
+  //     filter: { has_construction: true },
+  //   },
+  //   {
+  //     key: 'with_construction_shade',
+  //     label: 'Vistoria com obra e sombreamento',
+  //     value: indicators.with_construction_and_shade,
+  //     icon: <IconTools />,
+  //     color: '#e2e3e5',
+  //     filter: { has_construction: true, has_shade: true },
+  //   },
+  //   {
+  //     key: 'cancelled',
+  //     label: 'Cancelado',
+  //     value: indicators.cancelled,
+  //     icon: <Cancel />,
+  //     color: '#f8d7da',
+  //     filter: { inspection_is_cancelled: true },
+  //   },
+  // ];
 
   const fetchProjects = useCallback(async () => {
     setLoading(true);
@@ -137,31 +132,31 @@ const ConstructionsDashboard = () => {
       setProjects(response.results);
       setTotalRows(response.meta.pagination.total_count);
     } catch (error) {
-      enqueueSnackbar('Erro ao carregar Projetos', { variant: 'error' });
+      enqueueSnackbar('Erro ao carregar projetos', { variant: 'error' });
     } finally {
       setLoading(false);
     }
   }, [page, rowsPerPage, filters, enqueueSnackbar]);
 
-  const fetchIndicators = useCallback(async () => {
-    setLoadingIndicators(true);
-    try {
-      const { indicators } = await projectService.inspectionsIndicators({
-        remove_termination_cancelled_and_pre_sale: true,
-        ...filters,
-      });
-      setIndicators(indicators);
-    } catch {
-      enqueueSnackbar('Erro ao carregar indicadores', { variant: 'error' });
-    } finally {
-      setLoadingIndicators(false);
-    }
-  }, [enqueueSnackbar, filters]);
+  // const fetchIndicators = useCallback(async () => {
+  //   setLoadingIndicators(true);
+  //   try {
+  //     const { indicators } = await projectService.constructionsIndicators({
+  //       remove_termination_cancelled_and_pre_sale: true,
+  //       ...filters,
+  //     });
+  //     setIndicators(indicators);
+  //   } catch {
+  //     enqueueSnackbar('Erro ao carregar indicadores', { variant: 'error' });
+  //   } finally {
+  //     setLoadingIndicators(false);
+  //   }
+  // }, [enqueueSnackbar, filters]);
 
   useEffect(() => {
     fetchProjects();
-    fetchIndicators();
-  }, [fetchProjects, fetchIndicators, refresh, filters]);
+    // fetchIndicators();
+  }, [fetchProjects, /* fetchIndicators */, refresh, filters]);
 
   const BCrumb = [{ to: '/', title: 'Home' }, { title: 'Obras' }];
 
@@ -175,7 +170,16 @@ const ConstructionsDashboard = () => {
     {
       field: 'inspection.final_service_opinion.name',
       headerName: 'Parecer da vistoria',
-      render: (r) =>  <Chip label={r.inspection?.final_service_opinion?.name || '-'}  />,
+      render: (r) => {
+        const text = r.inspection?.final_service_opinion?.name || '-';
+        return (
+          <Tooltip title={text.length > 25 ? text : ''} arrow>
+            <Chip
+              label={text.length > 25 ? `${text.substring(0, 25)}...` : text}
+            />
+          </Tooltip>
+        );
+      },
     },
     {
       field: 'civil_constructions.work_responsibility',
@@ -188,12 +192,12 @@ const ConstructionsDashboard = () => {
             icon={WORK_RESPONSIBILITY_MAP[r.civil_construction[0]?.work_responsibility].icon}
           />
         ) : (
-          ' - '
+          <Chip label="Responsabilidade Indefinida" color="default" icon={<RemoveCircleOutline />} />
         ),
     },
     {
       field: 'ciivil_construction.is_customer_aware',
-      headerName: 'Cliente ciente',
+      headerName: 'Cliente ciente?',
       render: (r) => (
         <Chip
           label={r.civil_construction[0]?.is_customer_aware ? 'Sim' : 'Não'}
@@ -209,11 +213,6 @@ const ConstructionsDashboard = () => {
       ),
     },
     {
-      field: 'civil_construction.deadline',
-      headerName: 'Prazo',
-      render: (r) => formatDate(r?.civil_construction[0]?.deadline),
-    },
-    {
       field: 'civil_construction.status',
       headerName: 'Status da obra',
       render: (r) =>
@@ -224,24 +223,29 @@ const ConstructionsDashboard = () => {
             icon={CONSTRUCTION_STATUS_MAP[r.civil_construction[0].status].icon}
           />
         ) : (
-          <Chip label="Sem Obra" color="default"/>
+          <Chip label="Sem Obra" color="default" icon={<RemoveCircleOutline />} />
         ),
     },
+    {
+      field: 'civil_construction.deadline',
+      headerName: 'Prazo',
+      render: (r) => formatDate(r?.civil_construction[0]?.deadline),
+    }
   ];
 
-  const handleKPIClick = (kpiType) => {
-    const kpiFilter = stats.find((stat) => stat.key === kpiType)?.filter;
+  // const handleKPIClick = (kpiType) => {
+  //   const kpiFilter = stats.find((stat) => stat.key === kpiType)?.filter;
 
-    if (kpiFilter && Object.keys(kpiFilter).length > 0) {
-      clearFilters();
-      setFilters((prevFilters) => ({
-        ...prevFilters,
-        ...kpiFilter,
-      }));
-    } else {
-      clearFilters();
-    }
-  };
+  //   if (kpiFilter && Object.keys(kpiFilter).length > 0) {
+  //     clearFilters();
+  //     setFilters((prevFilters) => ({
+  //       ...prevFilters,
+  //       ...kpiFilter,
+  //     }));
+  //   } else {
+  //     clearFilters();
+  //   }
+  // };
 
   const handleRowClick = (row) => {
     setSelectedRow(row.id);
