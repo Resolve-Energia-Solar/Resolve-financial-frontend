@@ -27,8 +27,9 @@ import AddSchedulePage from '@/app/components/apps/inspections/schedule/AgentRou
 import ListSchedule from '@/app/components/apps/inspections/schedule/AgentRoutes/List-Schedule/List-Schedule';
 import { IconMapUp } from '@tabler/icons-react';
 import ModalGeralMaps from './components/Maps/ModalGeralMaps';
+import { useSelector } from 'react-redux';
 
-export default function AgentRoutes() {
+export default function AgentRoutes({ projectId = null }) {
   const [agents, setAgents] = useState([]);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [name, setName] = useState('');
@@ -51,7 +52,8 @@ export default function AgentRoutes() {
   const [schedules, setSchedules] = useState([]);
   const [formData, setFormData] = useState({});
 
-  console.log('schedules teste: ', schedules);
+  const permissions = useSelector((state) => state.user.permissions);
+  const canEdit = permissions.includes('field_services.can_see_admin_schedules');
 
   const handleRefresh = () => {
     setRefresh(!refresh);
@@ -68,6 +70,7 @@ export default function AgentRoutes() {
       schedule_agent: agentId,
       schedule_date: format(selectedDate, 'yyyy-MM-dd'),
       service: 1,
+      project: projectId || null,
     });
   };
 
@@ -77,6 +80,7 @@ export default function AgentRoutes() {
       schedule_agent: agentId,
       schedule_date: format(selectedDate, 'yyyy-MM-dd'),
       service: 1,
+      project: projectId || null,
     });
   };
 
@@ -217,6 +221,7 @@ export default function AgentRoutes() {
                 onCreateSchedule={handleOpenModalCreateSchedule}
                 onListSchedule={handleOpenModalListSchedule}
                 onOpenMap={handleOpenMap}
+                canEdit={canEdit}
               />
             </Grid>
           ))}
