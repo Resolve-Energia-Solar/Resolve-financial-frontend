@@ -76,11 +76,12 @@ const SalePaymentList = ({ onClick }) => {
         const response = await saleService.index({
           page: page + 1,
           limit: rowsPerPage,
-          expand: 'customer,payments.borrower,payments,sale,payments.financier',
+          expand: 'customer,payments.borrower,payments,sale,payments.financier,projects',
           fields:
-            'id,total_value,payments.payment_type,payments.is_paid,customer.complete_name,signature_date,payments.borrower.complete_name,payments.installments,payments.invoice_status,status,payment_status,payments.financier.name,is_pre_sale,customer.id',
+            'id,total_value,payments.payment_type,payments.is_paid,customer.complete_name,signature_date,payments.borrower.complete_name,payments.installments,payments.invoice_status,status,payment_status,payments.financier.name,is_pre_sale,customer.id,projects.delivery_type,projects.id',
           ...filters,
         });
+        console.log('Pagamentos:', response);
         setPaymentsList(response.results);
         setTotalCount(response.meta.pagination.total_count || 0);
       } catch (err) {
@@ -90,6 +91,8 @@ const SalePaymentList = ({ onClick }) => {
         setLoading(false);
       }
     };
+
+    console.log('paymentsList', paymentsList);
 
     const fetchIndicators = async () => {
       setLoadingIndicators(true);
@@ -165,6 +168,11 @@ const SalePaymentList = ({ onClick }) => {
     } finally {
       setOpen(false);
     }
+  };
+
+  const deliveryTypeMap = {
+    'D': 'Entrega Direta',
+    'C': 'Entrega CD'
   };
 
   return (
@@ -310,6 +318,26 @@ const SalePaymentList = ({ onClick }) => {
                           style: 'currency',
                           currency: 'BRL',
                         })}
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography fontSize="14px">
+                        {Array.isArray(item?.projects) && item.projects.length > 0 ? (
+                          <>
+                            {item.projects
+                              .map((p) => deliveryTypeMap[p?.delivery_type] || p?.delivery_type)
+                              .filter(Boolean)
+                              .slice(0, 2)
+                              .join(', ')}
+                            {item.projects.filter((p) => p?.delivery_type).length > 2 && (
+                              <Typography component="span" fontSize="14px" ml={1}>
+                                +{item.projects.filter((p) => p?.delivery_type).length - 2}
+                              </Typography>
+                            )}
+                          </>
+                        ) : (
+                          '-'
+                        )}
                       </Typography>
                     </TableCell>
                   </TableRow>
