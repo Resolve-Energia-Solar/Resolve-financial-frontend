@@ -134,6 +134,10 @@ const projectService = {
     const response = await apiClient.get(`${DEFAULT_ROUTER}/inspections-indicators/`, { params });
     return response.data;
   },
+  constructionsIndicators: async (params) => {
+    const response = await apiClient.get(`${DEFAULT_ROUTER}/constructions-indicators/`, { params });
+    return response.data;
+  },
   installationIndicators: async (params) => {
     const response = await apiClient.get(`${DEFAULT_ROUTER}/installations-indicators/`, { params });
     return response.data;
