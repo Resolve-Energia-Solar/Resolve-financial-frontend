@@ -95,7 +95,7 @@ export default function LogisticsTab({ projectId, viewOnly = false }) {
             try {
                 const response = await purchaseService.index(
                     {
-                        fields: "id,purchase_date,status,delivery_number,project,supplier.complete_name,project.product.description,delivery_type",
+                        fields: "id,purchase_date,status,delivery_number,project,supplier.complete_name,project.product.description,project.delivery_type",
                         expand: "supplier,project.product",
                         project__in: projectId,
                     }
@@ -132,7 +132,7 @@ export default function LogisticsTab({ projectId, viewOnly = false }) {
         { field: 'delivery_number', headerName: 'Nº de Entrega', render: r => r.delivery_number },
         { field: 'supplier', headerName: 'Fornecedor', render: r => r.supplier.complete_name },
         { field: 'product', headerName: 'Produto', render: r => r.project?.product?.description },
-        { field: 'delivery_type', headerName: 'Tipo de Entrega', render: r => r.delivery_type },
+        { field: 'delivery_type', headerName: 'Tipo de Entrega', render: r => r.project?.delivery_type },
     ]
 
     return (
@@ -296,7 +296,7 @@ export default function LogisticsTab({ projectId, viewOnly = false }) {
                             'D': 'Entrega Direta',
                             'C': 'Entrega CD'
                         };
-                        return deliveryTypeMap[row.delivery_type] || row.delivery_type || '-';
+                        return deliveryTypeMap[row.project?.delivery_type] || '-';
                     }} sx={{ opacity: 0.7 }} />
 
                     {!viewOnly && (
