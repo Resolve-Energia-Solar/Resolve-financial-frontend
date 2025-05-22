@@ -19,6 +19,8 @@ import {
 } from '@mui/material';
 import civilConstructionService from '@/services/constructionService';
 import FormDate from '@/app/components/forms/form-custom/FormDate';
+import { useSnackbar } from 'notistack';
+
 const statusOptions = [
     { value: 'P', label: 'Pendente' },
     { value: 'EA', label: 'Em Andamento' },
@@ -38,7 +40,9 @@ export default function ConstructionFormModal({
     constructionId = null,
     onSave
 }) {
+    const { enqueueSnackbar } = useSnackbar();
     const [loading, setLoading] = useState(false);
+    const [formErrors, setFormErrors] = useState({});
     const [form, setForm] = useState({
         status: 'P',
         deadline: null,
@@ -71,7 +75,6 @@ export default function ConstructionFormModal({
 
     const handleChange = (field, value) => {
         setForm(prev => ({ ...prev, [field]: value }));
-        console.log('Form updated:', { ...form, [field]: value });
     };
 
     const handleSubmit = async () => {
@@ -86,6 +89,16 @@ export default function ConstructionFormModal({
                 : await civilConstructionService.create(payload);
             onSave(res);
             onClose();
+        }
+        catch (error) {
+            if (error.response) {
+                setFormErrors(error.response.data || error.response.data.error);
+                if (error.response.data.error) {
+                    enqueueSnackbar(error.response.data.error, { variant: 'error' });
+                }
+            } else {
+                console.error('Error saving construction:', error);
+            }
         } finally {
             setLoading(false);
         }
@@ -113,6 +126,8 @@ export default function ConstructionFormModal({
                         label="Prazo"
                         value={form.deadline}
                         onChange={date => handleChange('deadline', date)}
+                        error={!!formErrors.deadline}
+                        helperText={formErrors.deadline?.[0]}
                     />
 
                     <FormControl component="fieldset">
@@ -121,6 +136,8 @@ export default function ConstructionFormModal({
                             row
                             value={form.work_responsibility}
                             onChange={e => handleChange('work_responsibility', e.target.value)}
+                            error={!!formErrors.work_responsibility}
+                            helperText={formErrors.work_responsibility?.[0]}
                         >
                             {responsibilityOptions.map(opt => (
                                 <FormControlLabel
@@ -139,6 +156,8 @@ export default function ConstructionFormModal({
                             row
                             value={form.is_customer_aware}
                             onChange={e => handleChange('is_customer_aware', e.target.value === 'true')}
+                            error={!!formErrors.is_customer_aware}
+                            helperText={formErrors.is_customer_aware?.[0]}
                         >
                             <FormControlLabel
                                 value={true}
@@ -159,6 +178,8 @@ export default function ConstructionFormModal({
                         fullWidth
                         value={form.repass_value}
                         onChange={e => handleChange('repass_value', e.target.value)}
+                        error={!!formErrors.value}
+                        helperText={formErrors.value?.[0]}
                     />
 
                     <TextField
@@ -167,6 +188,8 @@ export default function ConstructionFormModal({
                         fullWidth
                         value={form.budget_value}
                         onChange={e => handleChange('budget_value', e.target.value)}
+                        error={!!formErrors.budget_value}
+                        helperText={formErrors.budget_value?.[0]}
                     />
 
                     <TextField
@@ -176,6 +199,8 @@ export default function ConstructionFormModal({
                         fullWidth
                         value={form.service_description}
                         onChange={e => handleChange('service_description', e.target.value)}
+                        error={!!formErrors.service_description}
+                        helperText={formErrors.service_description?.[0]}
                     />
 
                     <TextField
@@ -184,6 +209,8 @@ export default function ConstructionFormModal({
                         fullWidth
                         value={form.shading_percentage}
                         onChange={e => handleChange('shading_percentage', e.target.value)}
+                        error={!!formErrors.shading_percentage}
+                        helperText={formErrors.shading_percentage?.[0]}
                     />
                 </Stack>
             </DialogContent>
