@@ -18,7 +18,6 @@ import 'slick-carousel/slick/slick-theme.css';
 import { formatDateTime, formatDate, formatTime } from '@/utils/inspectionFormatDate';
 import answerService from '@/services/answerService';
 import { ArrowBack, ArrowForward } from '@mui/icons-material';
-import heic2any from 'heic2any';
 
 const AnswerForm = ({ answerData }) => {
   const sliderRef = useRef(null);
