@@ -333,7 +333,9 @@ const ConstructionsDashboard = () => {
           >
             {stats.map(({ key, label, value, icon, color, filter, format }) => {
               const isActive =
-                filters && Object.keys(filters).some((filterKey) => filterKey in filter);
+                filters &&
+                Object.keys(filter).length === Object.keys(filters).length &&
+                Object.entries(filter).every(([key, value]) => filters[key] === value);
               return (
                 <Box
                   key={key}
