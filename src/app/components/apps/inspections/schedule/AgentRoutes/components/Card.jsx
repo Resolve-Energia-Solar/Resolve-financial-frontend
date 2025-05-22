@@ -35,13 +35,12 @@ export default function CardAgentRoutes({
   onCreateSchedule,
   onListSchedule,
   onOpenMap,
+  canEdit = false,
 }) {
   const [hoveredIndex, setHoveredIndex] = React.useState(null);
   const [openModal, setOpenModal] = React.useState(false);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const openMenu = Boolean(anchorEl);
-
-  console.log('item: ', items);
 
   const isDateTodayOrLater = (date) => {
     const today = new Date();
@@ -122,11 +121,12 @@ export default function CardAgentRoutes({
         >
           {items.map((item, index) => {
             const isHovered = hoveredIndex === index;
-            const IconComponent = isHovered ? (
+            const IconComponent = canEdit && isHovered ? (
               <EditIcon fontSize="small" />
             ) : (
               <DirectionsCarIcon fontSize="small" />
             );
+
             return (
               <TimelineItem
                 key={index}
@@ -136,10 +136,10 @@ export default function CardAgentRoutes({
                 <TimelineSeparator>
                   <TimelineDot
                     color="primary"
-                    onClick={() => onItemClick(item.id)}
+                    onClick={canEdit ? () => onItemClick(item.id) : undefined}
                     sx={{
-                      cursor: 'pointer',
-                      bgcolor: isHovered ? 'lightgreen' : 'primary.main',
+                      cursor: canEdit ? 'pointer' : 'default',
+                      bgcolor: isHovered && canEdit ? 'lightgreen' : 'primary.main',
                     }}
                   >
                     {IconComponent}
@@ -147,8 +147,8 @@ export default function CardAgentRoutes({
                   {index < items.length - 1 && <TimelineConnector />}
                 </TimelineSeparator>
                 <TimelineContent
-                  sx={{ py: '8px', px: 2, cursor: 'pointer' }}
-                  onClick={() => onItemClick(item.id)}
+                  onClick={canEdit ? () => onItemClick(item.id) : undefined}
+                  sx={{ py: '8px', px: 2, cursor: canEdit ? 'pointer' : 'default' }}
                 >
                   <Typography variant="body2" fontWeight={500}>
                     {item.schedule_date &&
@@ -176,7 +176,11 @@ export default function CardAgentRoutes({
                   <Box>
                     <Typography
                       variant="body2"
-                      sx={{ cursor: 'pointer', fontWeight: 600, '&:hover': { textDecoration: 'underline' } }}
+                      sx={{
+                        cursor: 'pointer',
+                        fontWeight: 600,
+                        '&:hover': { textDecoration: 'underline' },
+                      }}
                     >
                       {item.service.name}
                     </Typography>

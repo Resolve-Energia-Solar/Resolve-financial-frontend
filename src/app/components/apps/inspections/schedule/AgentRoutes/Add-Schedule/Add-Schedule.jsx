@@ -14,9 +14,7 @@ import { useSelector } from 'react-redux';
 import CreateAddressPage from '@/app/components/apps/address/Add-address';
 import { formatDate } from '@/utils/dateUtils';
 import AddUser from '@/app/components/apps/users/Add-user/addUser';
-
-
-
+import projectService from '@/services/projectService';
 
 import { IconAlarm } from '@tabler/icons-react';
 import GenericAsyncAutocompleteInput from '@/app/components/filters/GenericAsyncAutocompleteInput';
@@ -26,6 +24,11 @@ function AddSchedulePage({ form = null, onRefresh = null, onClose = null}) {
   const userPermissions = useSelector((state) => state.user.permissions);
   const theme = useTheme();
   const [isProject, setIsProject] = useState(false);
+  useEffect(() => {
+    if (form?.project) {
+      setIsProject(true);
+    }
+  }, [form?.project]);
 
   const { enqueueSnackbar } = useSnackbar();
 
@@ -34,8 +37,57 @@ function AddSchedulePage({ form = null, onRefresh = null, onClose = null}) {
   form.service ? (formData.service = form.service) : null;
   form.schedule_agent ? (formData.schedule_agent = form.schedule_agent) : null;
   form.schedule_date ? (formData.schedule_date = form.schedule_date) : null;
+  form.project ? (formData.project = form.project) : null;
+  
   console.log('formData: ', formData)
-  console.log('formErrors: ', formErrors)
+  useEffect(() => {
+  const loadProjectData = async () => {
+    if (form?.project) {
+      try {
+        const project = await projectService.find(form.project, {
+          expand: ['sale.customer', 'sale.branch', 'product'],
+          fields: ['id', 'sale.customer', 'sale.branch', 'product', 'address'],
+        });
+
+        if (!project.address) {
+          enqueueSnackbar(
+            'É necessário cadastrar o endereço da unidade Geradora na aba "CheckList".',
+            { variant: 'error' }
+          );
+        }
+
+        setFormData((prev) => ({
+          ...prev,
+          project: {
+            label: `${project.project_number} - ${project.sale?.customer?.complete_name || ''}`,
+            value: project.id,
+          },
+          customer: {
+            label: project.sale?.customer?.complete_name || '',
+            value: project.sale?.customer?.id || null,
+          },
+          branch: {
+            label: project.sale?.branch?.name || '',
+            value: project.sale?.branch?.id || null,
+          },
+          address: {
+            label: project.address?.complete_address || '',
+            value: project.address?.id || null,
+          },
+          products: {
+            label: project.product?.name || '',
+            value: project.product?.id || null,
+          },
+          value: 100,
+        }));
+      } catch (error) {
+        console.error('Erro ao carregar dados do projeto:', error);
+      }
+    }
+  };
+
+  loadProjectData();
+}, [form?.project]);
 
 
   const timeOptions = [
@@ -113,6 +165,23 @@ function AddSchedulePage({ form = null, onRefresh = null, onClose = null}) {
     try {
       setFormErrors({});
       setFormLoading(true);
+      formData.value = 100;
+
+      if (isProject && (!formData.address || !formData.address.value)) {
+        setFormErrors((prev) => ({
+          ...prev,
+          address: ['Endereço obrigatório para projetos.'],
+        }));
+
+        enqueueSnackbar(
+          'O projeto selecionado não possui endereço. Cadastre o endereço na aba "checklist".',
+          { variant: 'error' }
+        );
+
+        setFormLoading(false);
+        return;
+      }
+
       const requiredFields = [
         'schedule_date',
         'schedule_start_time',
@@ -125,7 +194,6 @@ function AddSchedulePage({ form = null, onRefresh = null, onClose = null}) {
       ];
 
       const newErrors = {};
-
       for (const field of requiredFields) {
         if (!formData[field]) {
           newErrors[field] = ['Este campo não pode ser nulo.'];
@@ -140,8 +208,8 @@ function AddSchedulePage({ form = null, onRefresh = null, onClose = null}) {
 
       const response = await handleSave();
       if (response) {
-        if (onRefresh) onRefresh()
-        if(onClose) onClose()
+        if (onRefresh) onRefresh();
+        if (onClose) onClose();
       }
     } catch (error) {
       console.error('Error saving form:', error);
@@ -149,7 +217,6 @@ function AddSchedulePage({ form = null, onRefresh = null, onClose = null}) {
       setFormLoading(false);
     }
   };
-
 
   return (
     <Grid container spacing={0}>
@@ -184,18 +251,21 @@ function AddSchedulePage({ form = null, onRefresh = null, onClose = null}) {
           )}
         </Grid>
 
-        <Grid item xs={12} sm={12} lg={12}>
-          <CustomFormLabel>Este agendamento possui projeto?</CustomFormLabel>
-          <FormControlLabel
-            control={
-              <CustomSwitch
-                checked={isProject}
-                onChange={(e) => setIsProject(!isProject)}
-              />
-            }
-            label={isProject ? 'Sim' : 'Não'}
-          />
-        </Grid>
+        {!form?.project && (
+          <Grid item xs={12} sm={12} lg={12}>
+            <CustomFormLabel>Este agendamento possui projeto?</CustomFormLabel>
+            <FormControlLabel
+              control={
+                <CustomSwitch
+                  checked={isProject}
+                  onChange={(e) => setIsProject(e.target.checked)}
+                />
+              }
+              label={isProject ? 'Sim' : 'Não'}
+            />
+          </Grid>
+        )}
+
 
         <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3, alignItems: "center", justifyContent: "center" }}>
           {isProject && (
@@ -203,6 +273,7 @@ function AddSchedulePage({ form = null, onRefresh = null, onClose = null}) {
             <GenericAsyncAutocompleteInput
               label="Projeto"
               value={formData.project}
+              disabled={!!form?.project}
               onChange={(newValue) => {
                 if (newValue) {
                   setFormData({
@@ -211,7 +282,7 @@ function AddSchedulePage({ form = null, onRefresh = null, onClose = null}) {
                     customer: newValue.customer,
                     branch: newValue.branch,
                     address: newValue.address,
-                    product: newValue.product,
+                    products: newValue.product,
                   });
                 } else {
                   setFormData({
@@ -220,7 +291,7 @@ function AddSchedulePage({ form = null, onRefresh = null, onClose = null}) {
                     customer: null,
                     branch: null,
                     address: null,
-                    product: null,
+                    products: null,
                   });
                 }
               }}
@@ -256,27 +327,28 @@ function AddSchedulePage({ form = null, onRefresh = null, onClose = null}) {
               }}
               mapResponse={(data) =>
                 data.results.map((p) => ({
-                  label: `${p.project_number} - ${p.sale.customer.complete_name}`,
+                  label: `${p.project_number} - ${p.sale?.customer?.complete_name || 'Cliente Desconhecido'}`,
                   value: p.id,
                   project_number: p.project_number,
-                  total_value: p.sale.total_value,
-                  customer: {
-                    label: p.sale.customer.complete_name,
-                    value: p.sale.customer.id,
-                  },
-                  branch: { label: p.sale.branch.name, value: p.sale.branch.id },
-                  address: {
-                    label: p.address?.complete_address || '',
-                    value: p.address?.id || null,
-                  },
-                  product: { label: p.product.name, value: p.product.id },
-                  contract_number: p.sale.contract_number,
-                  homologator: {
-                    label: p.sale.homologator?.complete_name || 'Homologador não disponível',
-                    value: p.sale.homologator?.id || null,
-                  },
-                  signature_date: p.sale.signature_date,
-                  status: p.sale.status,
+                  total_value: p.sale?.total_value || 0,
+                  customer: p.sale?.customer
+                    ? { label: p.sale.customer.complete_name, value: p.sale.customer.id }
+                    : null,
+                  branch: p.sale?.branch
+                    ? { label: p.sale.branch.name, value: p.sale.branch.id }
+                    : null,
+                  address: p.address
+                    ? { label: p.address.complete_address || '', value: p.address.id }
+                    : null,
+                  product: p.product
+                    ? { label: p.product?.name, value: p.product.id }
+                    : null,
+                  contract_number: p.sale?.contract_number || '',
+                  homologator: p.sale?.homologator
+                    ? { label: p.sale?.homologator?.complete_name, value: p.sale?.homologator?.id }
+                    : { label: 'Homologador não disponível', value: null },
+                  signature_date: p.sale?.signature_date || '',
+                  status: p.sale?.status || '',
                 }))
               }
               fullWidth
@@ -290,7 +362,7 @@ function AddSchedulePage({ form = null, onRefresh = null, onClose = null}) {
                     </Typography>
                     <Typography variant="body2">
                       <strong>Cliente:</strong>{' '}
-                      {option.customer.label || 'Cliente não Disponível'}
+                      {option.customer?.label || 'Cliente não Disponível'}
                     </Typography>
                     <Typography variant="body2">
                       <strong>Valor total:</strong>{' '}
@@ -312,7 +384,7 @@ function AddSchedulePage({ form = null, onRefresh = null, onClose = null}) {
                     </Typography>
                     <Typography variant="body2">
                       <strong>Endereço:</strong>{' '}
-                      {option.address.label || 'Endereço não Disponível'}
+                      {option.address?.label || 'Endereço não Disponível'}
                     </Typography>
                     <Typography variant="body2">
                       <strong>Status da Venda:</strong>{' '}
@@ -328,7 +400,7 @@ function AddSchedulePage({ form = null, onRefresh = null, onClose = null}) {
                     </Typography>
                     <Typography variant="body2">
                       <strong>Produto:</strong>{' '}
-                      {option.product.label || 'Produto não Disponível'}
+                      {option.product?.label || 'Produto não Disponível'}
                     </Typography>
                   </Box>
                 </li>
@@ -386,11 +458,11 @@ function AddSchedulePage({ form = null, onRefresh = null, onClose = null}) {
               <Grid item xs={12} sm={6}>
                 <GenericAsyncAutocompleteInput
                   label="Produto"
-                  value={formData.product}
-                  onChange={(newValue) => setFormData({ ...formData, product: newValue })}
+                  value={formData.products}
+                  onChange={(newValue) => setFormData({ ...formData, products: newValue })}
                   endpoint="/api/products/"
                   queryParam="name__icontains"
-                  extraParams={{ fields: ['id', 'description', 'name'] }}
+                  extraParams={{ fields: ['id', 'description', 'name'], default__in: 'S' }}
                   mapResponse={(data) =>
                     data.results.map((p) => ({ label: p.description || p.name, value: p.id }))
                   }

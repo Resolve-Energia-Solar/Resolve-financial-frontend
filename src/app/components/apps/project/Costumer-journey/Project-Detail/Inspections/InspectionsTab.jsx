@@ -206,6 +206,7 @@ export default function InspectionsTab({ projectId, viewOnly = false }) {
 
                 <Table.Body
                     loading={loading}
+                    columns={columns.length}
                     onRowClick={handleRowClick}
                     sx={{
                         cursor: "pointer",

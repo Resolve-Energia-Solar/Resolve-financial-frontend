@@ -349,6 +349,7 @@ const LogisticsDashboard = () => {
 
         <Table.Body
           loading={loading}
+          columns={columns.length}
           onRowClick={handleRowClick}
           sx={{ cursor: "pointer", '&:hover': { backgroundColor: 'rgba(236, 242, 255, 0.35)' } }}
         >
