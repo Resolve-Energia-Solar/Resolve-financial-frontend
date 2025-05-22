@@ -238,10 +238,19 @@ export default function ConstructionsTab({ projectId, viewOnly = false }) {
                                     )}
                                     <Grid item xs={6}>
                                         <Typography variant="h6" color="textSecondary">
-                                            Prazo
+                                            Data de Previsão de Início
                                         </Typography>
                                         <Typography variant="body1">
-                                            {formatDate(c.deadline)}
+                                            {formatDate(c.start_date)}
+                                        </Typography>
+                                    </Grid>
+
+                                    <Grid item xs={6}>
+                                        <Typography variant="h6" color="textSecondary">
+                                            Data de Previsão de Fim
+                                        </Typography>
+                                        <Typography variant="body1">
+                                            {formatDate(c.end_date)}
                                         </Typography>
                                     </Grid>
 

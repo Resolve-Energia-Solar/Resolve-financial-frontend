@@ -149,6 +149,14 @@ export default function SaleProductItem({ initialData, productName, onUpdated = 
                     value={projectData.delivery_type || ''}
                     label="Tipo de Entrega"
                     onChange={(e) => handleProjectChange('delivery_type', e.target.value)}
+                    sx={{
+                      input: { fontSize: 12, padding: '12px' },
+                      '& .MuiOutlinedInput-root': {
+                        border: '1px solid #3E3C41',
+                        borderRadius: '9px',
+                      },
+                      '& .MuiInputBase-input': { padding: '12px' },
+                    }}
                   >
                     <MenuItem value="C">Entrega CD</MenuItem>
                     <MenuItem value="D">Entrega Direta</MenuItem>

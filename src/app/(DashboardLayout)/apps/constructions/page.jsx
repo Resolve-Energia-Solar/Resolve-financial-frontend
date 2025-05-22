@@ -9,23 +9,23 @@ import { TableHeader } from '@/app/components/TableHeader';
 
 import {
   AssignmentTurnedIn,
-  BuildCircle,
   Cancel,
   FilterAlt,
   HourglassBottom,
   PendingActions,
   Person,
   HourglassEmpty,
-  RemoveCircleOutline
+  RemoveCircleOutline,
 } from '@mui/icons-material';
 import ProjectDetailDrawer from '@/app/components/apps/project/Costumer-journey/Project-Detail/ProjectDrawer';
-import { Chip, Tooltip } from '@mui/material';
+import { Chip, Tooltip, Button, Box, Typography, Skeleton } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import GenericFilterDrawer from '@/app/components/filters/GenericFilterDrawer';
 import filterConfig from './filterConfig';
 import { formatDate } from '@/utils/dateUtils';
 import { FilterContext } from '@/context/FilterContext';
 import { IconBuilding, IconTools, IconUserBolt } from '@tabler/icons-react';
+import { KPICard } from '@/app/components/charts/KPICard';
 
 const CONSTRUCTION_STATUS_MAP = {
   P: { label: 'Pendente', color: 'default', icon: <HourglassEmpty /> },
@@ -40,12 +40,11 @@ const WORK_RESPONSIBILITY_MAP = {
   O: { label: 'Centro de Operações', color: 'warning', icon: <IconUserBolt /> },
 };
 
-
 const ConstructionsDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [projects, setProjects] = useState([]);
-  // const [indicators, setIndicators] = useState({});
-  // const [loadingIndicators, setLoadingIndicators] = useState(true);
+  const [indicators, setIndicators] = useState({});
+  const [loadingIndicators, setLoadingIndicators] = useState(true);
   const { filters, setFilters, clearFilters, refresh } = useContext(FilterContext);
   const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
   const [page, setPage] = useState(0);
@@ -56,75 +55,61 @@ const ConstructionsDashboard = () => {
   const [selectedSaleId, setSelectedSaleId] = useState(null);
   const { enqueueSnackbar } = useSnackbar();
 
-  // const stats = [
-  //   {
-  //     key: 'pending',
-  //     label: 'Pendente',
-  //     value: indicators.total_pending,
-  //     icon: <PendingActions />,
-  //     color: '#fff3cd',
-  //     filter: { inspection_is_pending: false },
-  //   },
-  //   {
-  //     key: 'scheduled_construction',
-  //     label: 'Obra agendada',
-  //     value: indicators.scheduled_construction,
-  //     icon: <AssignmentTurnedIn />,
-  //     color: '#d1ecf1',
-  //     filter: { construction_scheduled: false },
-  //   },
-  //   {
-  //     key: 'in_progress',
-  //     label: 'Em Andamento',
-  //     value: indicators.in_progress,
-  //     icon: <HourglassBottom />,
-  //     color: '#d1ecf1',
-  //     filter: { inspection_in_progress: true },
-  //   },
-  //   {
-  //     key: 'finished',
-  //     label: 'Finalizado',
-  //     value: indicators.total_finished,
-  //     icon: <CheckCircleIcon />,
-  //     color: '#d4edda',
-  //     filter: { inspection_is_finished: true },
-  //   },
-  //   {
-  //     key: 'with_construction',
-  //     label: 'Vistoria com obra',
-  //     value: indicators.with_construction,
-  //     icon: <BuildCircle />,
-  //     color: '#e2e3e5',
-  //     filter: { has_construction: true },
-  //   },
-  //   {
-  //     key: 'with_construction_shade',
-  //     label: 'Vistoria com obra e sombreamento',
-  //     value: indicators.with_construction_and_shade,
-  //     icon: <IconTools />,
-  //     color: '#e2e3e5',
-  //     filter: { has_construction: true, has_shade: true },
-  //   },
-  //   {
-  //     key: 'cancelled',
-  //     label: 'Cancelado',
-  //     value: indicators.cancelled,
-  //     icon: <Cancel />,
-  //     color: '#f8d7da',
-  //     filter: { inspection_is_cancelled: true },
-  //   },
-  // ];
+  console.log('indicators', indicators);
+
+  const stats = [
+    {
+      key: 'total_pending',
+      label: 'Pendente',
+      value: indicators.total_pending,
+      icon: <PendingActions />,
+      color: '#fff3cd',
+      filter: { construction_status__in: 'P' },
+    },
+    {
+      key: 'total_in_progress',
+      label: 'Em Andamento',
+      value: indicators.total_in_progress,
+      icon: <HourglassBottom />,
+      color: '#d1ecf1',
+      filter: { construction_status__in: 'EA' },
+    },
+    {
+      key: 'total_finished',
+      label: 'Finalizada',
+      value: indicators.total_finished,
+      icon: <CheckCircleIcon />,
+      color: '#d4edda',
+      filter: { construction_status__in: 'F' },
+    },
+    {
+      key: 'total_canceled',
+      label: 'Cancelada',
+      value: indicators.total_canceled,
+      icon: <Cancel />,
+      color: '#f8d7da',
+      filter: { construction_status__in: 'C' },
+    },
+    {
+      key: 'total_without_construction',
+      label: 'Sem Obras Cadastradas',
+      value: indicators.total_without_construction,
+      icon: <AssignmentTurnedIn />,
+      color: '#d1ecf1',
+      filter: { construction_status__in: 'S' },
+    },
+  ];
 
   const fetchProjects = useCallback(async () => {
     setLoading(true);
     try {
       const response = await projectService.index({
         fields:
-          'id,project_number,sale.customer.complete_name,sale.signature_date,sale.status,sale.treadmill_counter,sale.branch.name,inspection.status,inspection.service_opinion,inspection.schedule_date,inspection.final_service_opinion.name,inspection.final_service_opinion_date,inspection.final_service_opinion_user,civil_construction.work_responsibility,civil_construction.status,civil_construction.is_customer_aware,civil_construction.deadline,sale.id',
+          'id,project_number,sale.customer.complete_name,sale.signature_date,sale.status,sale.treadmill_counter,sale.branch.name,inspection.status,inspection.service_opinion,inspection.schedule_date,inspection.final_service_opinion.name,inspection.final_service_opinion_date,inspection.final_service_opinion_user,civil_construction.work_responsibility,civil_construction.status,civil_construction.is_customer_aware,civil_construction.start_date,civil_construction.end_date,constructions-indicators.total_pending,constructions-indicators.total_in_progress,constructions-indicators.total_finished,constructions-indicators.total_canceld,constructions-indicators.total_without_construction,constructions-indicators.total_not_applicable',
         expand:
-          'sale,sale.customer,sale.branch,inspection,inspection.final_service_opinion,inspection.final_service_opinion_date,inspection,civil_construction',
+          'sale,sale.customer,sale.branch,inspection,inspection.final_service_opinion,inspection.final_service_opinion_date,inspection,civil_construction,constructions-indicators',
         in_construction: true,
-        metrics: 'in_construction',
+        metrics: 'in_construction,construction_status',
         page: page + 1,
         limit: rowsPerPage,
         remove_termination_cancelled_and_pre_sale: true,
@@ -139,25 +124,25 @@ const ConstructionsDashboard = () => {
     }
   }, [page, rowsPerPage, filters, enqueueSnackbar]);
 
-  // const fetchIndicators = useCallback(async () => {
-  //   setLoadingIndicators(true);
-  //   try {
-  //     const { indicators } = await projectService.constructionsIndicators({
-  //       remove_termination_cancelled_and_pre_sale: true,
-  //       ...filters,
-  //     });
-  //     setIndicators(indicators);
-  //   } catch {
-  //     enqueueSnackbar('Erro ao carregar indicadores', { variant: 'error' });
-  //   } finally {
-  //     setLoadingIndicators(false);
-  //   }
-  // }, [enqueueSnackbar, filters]);
+  const fetchIndicators = useCallback(async () => {
+    setLoadingIndicators(true);
+    try {
+      const { indicators } = await projectService.constructionsIndicators({
+        remove_termination_cancelled_and_pre_sale: true,
+        ...filters,
+      });
+      setIndicators(indicators);
+    } catch {
+      enqueueSnackbar('Erro ao carregar indicadores', { variant: 'error' });
+    } finally {
+      setLoadingIndicators(false);
+    }
+  }, [enqueueSnackbar, filters]);
 
   useEffect(() => {
     fetchProjects();
-    // fetchIndicators();
-  }, [fetchProjects, /* fetchIndicators */, refresh, filters]);
+    fetchIndicators();
+  }, [fetchProjects, fetchIndicators, refresh, filters]);
 
   const BCrumb = [{ to: '/', title: 'Home' }, { title: 'Obras' }];
 
@@ -175,9 +160,7 @@ const ConstructionsDashboard = () => {
         const text = r.inspection?.final_service_opinion?.name || '-';
         return (
           <Tooltip title={text.length > 25 ? text : ''} arrow>
-            <Chip
-              label={text.length > 25 ? `${text.substring(0, 25)}...` : text}
-            />
+            <Chip label={text.length > 25 ? `${text.substring(0, 25)}...` : text} />
           </Tooltip>
         );
       },
@@ -193,7 +176,11 @@ const ConstructionsDashboard = () => {
             icon={WORK_RESPONSIBILITY_MAP[r.civil_construction[0]?.work_responsibility].icon}
           />
         ) : (
-          <Chip label="Responsabilidade Indefinida" color="default" icon={<RemoveCircleOutline />} />
+          <Chip
+            label="Responsabilidade Indefinida"
+            color="default"
+            icon={<RemoveCircleOutline />}
+          />
         ),
     },
     {
@@ -214,6 +201,30 @@ const ConstructionsDashboard = () => {
       ),
     },
     {
+      field: 'civil_constructions.work_responsibility',
+      headerName: 'Responsabilidade da obra',
+      render: (r) =>
+        r.civil_construction[0]?.work_responsibility ? (
+          <Chip
+            label={WORK_RESPONSIBILITY_MAP[r.civil_construction[0]?.work_responsibility].label}
+            color={WORK_RESPONSIBILITY_MAP[r.civil_construction[0]?.work_responsibility].color}
+            icon={WORK_RESPONSIBILITY_MAP[r.civil_construction[0]?.work_responsibility].icon}
+          />
+        ) : (
+          ' - '
+        ),
+    },
+    {
+      field: 'civil_construction.start_date',
+      headerName: 'Previsão de início',
+      render: (r) => formatDate(r?.civil_construction[0]?.start_date),
+    },
+    {
+      field: 'civil_construction.end_date',
+      headerName: 'Previsão de término',
+      render: (r) => formatDate(r?.civil_construction[0]?.end_date),
+    },
+    {
       field: 'civil_construction.status',
       headerName: 'Status da obra',
       render: (r) =>
@@ -231,22 +242,22 @@ const ConstructionsDashboard = () => {
       field: 'civil_construction.deadline',
       headerName: 'Prazo',
       render: (r) => formatDate(r?.civil_construction[0]?.deadline),
-    }
+    },
   ];
 
-  // const handleKPIClick = (kpiType) => {
-  //   const kpiFilter = stats.find((stat) => stat.key === kpiType)?.filter;
+  const handleKPIClick = (kpiType) => {
+    const kpiFilter = stats.find((stat) => stat.key === kpiType)?.filter;
 
-  //   if (kpiFilter && Object.keys(kpiFilter).length > 0) {
-  //     clearFilters();
-  //     setFilters((prevFilters) => ({
-  //       ...prevFilters,
-  //       ...kpiFilter,
-  //     }));
-  //   } else {
-  //     clearFilters();
-  //   }
-  // };
+    if (kpiFilter && Object.keys(kpiFilter).length > 0) {
+      clearFilters();
+      setFilters((prevFilters) => ({
+        ...prevFilters,
+        ...kpiFilter,
+      }));
+    } else {
+      clearFilters();
+    }
+  };
 
   const handleRowClick = (row) => {
     setSelectedRow(row.id);
@@ -268,93 +279,44 @@ const ConstructionsDashboard = () => {
       <Breadcrumb items={BCrumb} />
 
       {/* Indicadores */}
-      {/* <Box sx={{ width: '100%', mb: 2 }}>
-        <Typography variant="h6">Indicadores</Typography>
-        {loadingIndicators ? (
-          <Box
-            sx={{
-              width: '100%',
-              display: 'flex',
-              justifyContent: 'space-evenly',
-              gap: 2,
-              flexWrap: 'wrap',
-              mt: 1,
-              mb: 4,
-              background: '#f5f5f5',
-              p: 2,
-            }}
-          >
-            {Array.from({ length: stats.length }).map((_, index) => (
-              <Skeleton
-                key={index}
-                variant="rectangular"
-                width="100%"
-                height={120}
+      <Box sx={{ width: '100%', mb: 2 }}>
+              <Typography variant="h6">Indicadores</Typography>
+              <Box
                 sx={{
-                  flex: '1 1 150px',
-                  p: 2,
+                  width: '100%',
                   display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  backgroundColor: 'grey.300',
-                  borderRadius: 1,
-                  maxWidth: '200px',
-                  aspectRatio: '4 / 2.5',
-                  textAlign: 'center',
-                  '&:hover': { transform: 'scale(1.05)', transition: 'transform 0.2s' },
+                  justifyContent: 'space-evenly',
+                  gap: 2,
+                  flexWrap: 'wrap',
+                  mt: 1,
+                  mb: 4,
+                  background: '#f5f5f5',
+                  p: 2,
                 }}
-              />
-            ))}
-          </Box>
-        ) : (
-          <Box
-            sx={{
-              width: '100%',
-              display: 'flex',
-              justifyContent: 'space-evenly',
-              gap: 2,
-              flexWrap: 'wrap',
-              mt: 1,
-              mb: 4,
-              background: '#f5f5f5',
-              p: 2,
-            }}
-          >
-            {stats.map(({ key, label, value, icon, color, filter, format }) => {
-              const isActive =
-                filters && Object.keys(filters).some((filterKey) => filterKey in filter);
-              return (
-                <Box
-                  key={key}
-                  sx={{
-                    flex: '1 1 150px',
-                    p: 2,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    backgroundColor: color,
-                    borderRadius: 1,
-                    maxWidth: '200px',
-                    aspectRatio: '4 / 2.5',
-                    textAlign: 'center',
-                    '&:hover': { transform: 'scale(1.05)', transition: 'transform 0.2s' },
-                    border: isActive ? '2px solid green' : 'none',
-                  }}
-                  onClick={() => handleKPIClick(key)}
-                >
-                  {icon}
-                  <Typography variant="subtitle2" sx={{ mt: 1 }}>
-                    {label}
-                  </Typography>
-                  <Typography variant="h6">{format ? format(value) : value}</Typography>
-                </Box>
-              );
-            })}
-          </Box>
-        )}
-      </Box> */}
+              >
+                {stats.map(({ key, label, value, icon, color, filter, format }) => {
+                  const isActive =
+                    filter &&
+                    Object.entries(filter).some(
+                      ([filterKey, filterValue]) => filters?.[filterKey] === filterValue,
+                    );
+      
+                  return (
+                    <KPICard
+                      key={key}
+                      label={label}
+                      value={value}
+                      icon={icon}
+                      color={color}
+                      active={isActive}
+                      format={format}
+                      onClick={() => handleKPIClick(key)}
+                      loading={loadingIndicators}
+                    />
+                  );
+                })}
+              </Box>
+            </Box>
 
       {/* Filtros */}
       <GenericFilterDrawer

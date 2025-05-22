@@ -32,6 +32,7 @@ import TableSkeleton from '../../../comercial/sale/components/TableSkeleton';
 import projectService from '@/services/projectService';
 import useCanEditUser from '@/hooks/users/userCanEdit';
 import ScheduleStatusChip from '../../../inspections/schedule/StatusChip';
+import AgentRoutes from '../../../inspections/schedule/AgentRoutes';
 
 const SERVICE_INSPECTION_ID = process.env.NEXT_PUBLIC_SERVICE_INSPECTION_ID;
 
@@ -39,6 +40,7 @@ const ListInspection = ({ projectId = null, product = [], customerId, saleId = n
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [selectedscheduleId, setSelectedscheduleId] = useState(null);
   const [AddModalOpen, setAddModalOpen] = useState(false);
+  const [openRoutesModal, setOpenRoutesModal] = useState(false);
   const [openModelInspectionNotAssociated, setOpenModelInspectionNotAssociated] = useState(false);
   const [confirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
   const [confirmAssociateModalOpen, setConfirmAssociateModalOpen] = useState(false);
@@ -49,6 +51,7 @@ const ListInspection = ({ projectId = null, product = [], customerId, saleId = n
   const [inspectionsNotAssociated, setInspectionsNotAssociated] = useState([]);
   const [reload, setReload] = useState(false);
   const [schedules, setschedules] = useState([]);
+  const [projectIdState, setProjectIdState] = useState(projectId);
 
   const reloadPage = () => {
     setReload(!reload);
@@ -62,6 +65,8 @@ const ListInspection = ({ projectId = null, product = [], customerId, saleId = n
   useEffect(() => {
     setCustomer(customerId);
   }, [customerId]);
+
+  console.log('22projectId vistoria', projectId);
 
   useEffect(() => {
     const fetchSchedules = async () => {
@@ -304,7 +309,7 @@ const ListInspection = ({ projectId = null, product = [], customerId, saleId = n
           {canEdit && (
             <>
             <Grid container justifyContent="center" align="center" mt={1}>
-              <Button variant="contained" color="primary" onClick={handleAdd}>
+              <Button variant="contained" color="primary" onClick={() => setOpenRoutesModal(true)}>
                 Agendar Vistoria
               </Button>
             </Grid>
@@ -336,7 +341,7 @@ const ListInspection = ({ projectId = null, product = [], customerId, saleId = n
         </DialogContent>
       </Dialog>
 
-      {/* Modal de Adicionar */}
+      {/* Modal de Adicionar
       <Dialog open={AddModalOpen} onClose={() => setAddModalOpen(false)} maxWidth="md" fullWidth>
         <DialogTitle>Agendar uma Vistoria</DialogTitle>
         <DialogContent>
@@ -348,7 +353,27 @@ const ListInspection = ({ projectId = null, product = [], customerId, saleId = n
             onRefresh={reloadPage}
           />
         </DialogContent>
+      </Dialog> */}
+
+      <Dialog
+        open={openRoutesModal}
+        onClose={() => setOpenRoutesModal(false)}
+        maxWidth="xl"
+        fullWidth
+      >
+        <DialogTitle>Rotas dos Agentes</DialogTitle>
+        <DialogContent>
+          <AgentRoutes
+            projectId={projectIdState}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenRoutesModal(false)} color="primary">
+            Fechar
+          </Button>
+        </DialogActions>
       </Dialog>
+
 
       <Dialog
         open={openModelInspectionNotAssociated}

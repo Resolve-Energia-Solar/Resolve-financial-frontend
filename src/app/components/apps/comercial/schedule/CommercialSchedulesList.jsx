@@ -31,6 +31,7 @@ import CommercialScheduleDetail from './CommercialScheduleDetail';
 import SideDrawer from '@/app/components/shared/SideDrawer';
 import { useRouter } from 'next/navigation';
 import ScheduleOpinionChip from '../../inspections/schedule/StatusChip/ScheduleOpinionChip';
+import AgentRoutes from '../../inspections/schedule/AgentRoutes';
 
 const scheduleFilterConfig = [
   {
@@ -288,15 +289,16 @@ const CommercialSchedulesList = () => {
       {!loading && schedules?.meta?.pagination.total_count === 0 && (
         <Typography>Nenhum agendamento encontrado.</Typography>
       )}
-      <Dialog open={addModalOpen} onClose={handleAddModalClose} fullWidth maxWidth="md">
-        <DialogTitle>Adicionar Agendamento</DialogTitle>
-        <DialogContent>
-          <CreateCommercialSchedule onClose={handleAddModalClose} onRefresh={fetchData} />
+      <Dialog open={addModalOpen} onClose={handleAddModalClose} fullWidth maxWidth="lg">
+        <DialogTitle>Rotas do Agente</DialogTitle>
+        <DialogContent dividers>
+          <AgentRoutes projectId={null} onClose={handleAddModalClose} />
         </DialogContent>
         <DialogActions>
           <Button onClick={handleAddModalClose}>Fechar</Button>
         </DialogActions>
       </Dialog>
+
       {/* Substituímos o Drawer original pelo SideDrawer */}
       <SideDrawer
         title="Detalhes do Agendamento"
