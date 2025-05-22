@@ -459,14 +459,24 @@ const EditSaleTabs = ({
                   </Grid>
                 </HasPermission>
 
-                {(saleData.sale_products || []).map((saleProduct, index) => (
-                  <SaleProductItem
-                    key={saleProduct.id}
-                    initialData={saleProduct}
-                    productName={productNames[index]}
-                    onUpdated={fetchSale}
-                  />
-                ))}
+            {(() => {
+              const projectByProductId = {};
+              saleData.projects?.forEach((project) => {
+                if (project.product) {
+                  projectByProductId[project.product] = project;
+                }
+              });
+
+              return (saleData.sale_products || []).map((saleProduct, index) => (
+                <SaleProductItem
+                  key={saleProduct.id}
+                  initialData={saleProduct}
+                  productName={productNames[index]}
+                  onUpdated={fetchSale}
+                  project={projectByProductId[saleProduct.product] || null}
+                />
+              ));
+            })()}
 
               </Grid>
             </Box>

@@ -37,8 +37,7 @@ const useSale = (id) => {
             "contract-submissions",
             "customer.addresses",
             "customer.phone_numbers",
-            "projects.units",
-            "comments",
+            "projects",
             "sale_products",
             "product.name",
           ],
@@ -73,6 +72,9 @@ const useSale = (id) => {
             "sale_products.cost_value",
             "sale_products.reference_value",
             "sale_products.product",
+            "projects.id",
+            "projects.product",
+            "projects.delivery_type",
           ],
           format: "json"
         }

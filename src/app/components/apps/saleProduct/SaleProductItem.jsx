@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Grid,
   Button,
@@ -10,7 +10,11 @@ import {
   Typography,
   CircularProgress,
   Box,
-  useTheme
+  useTheme,
+  MenuItem,
+  Select,
+  FormControl,
+  InputLabel
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { IconTools } from '@tabler/icons-react';
@@ -19,9 +23,9 @@ import useSaleProductForm from '@/hooks/salesProducts/useSaleProductForm';
 import CustomFieldMoney from '../invoice/components/CustomFieldMoney';
 import HasPermission from '../../permissions/HasPermissions';
 import { useSelector } from 'react-redux';
-import { ca } from 'date-fns/locale';
+import projectService from '@/services/projectService';
 
-export default function SaleProductItem({ initialData, productName, onUpdated = null }) {
+export default function SaleProductItem({ initialData, productName, onUpdated = null, project }) {
   const { enqueueSnackbar } = useSnackbar();
   const theme = useTheme();
   const userPermissions = useSelector((state) => state.user.permissions);
@@ -35,6 +39,31 @@ export default function SaleProductItem({ initialData, productName, onUpdated = 
     loading
   } = useSaleProductForm(initialData, initialData.id);
 
+  // Project state (clone project for editing)
+  const [projectData, setProjectData] = useState(project || {});
+  const [projectLoading, setProjectLoading] = useState(false);
+  const [projectErrors, setProjectErrors] = useState({});
+
+  const handleProjectChange = (field, value) => {
+    setProjectData((prev) => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
+  const handleProjectSave = async () => {
+    if (!projectData?.id) return;
+    try {
+      setProjectLoading(true);
+      await projectService.update(projectData.id, projectData);
+      enqueueSnackbar('Projeto atualizado com sucesso!', { variant: 'success' });
+    } catch (err) {
+      enqueueSnackbar('Erro ao atualizar o projeto.', { variant: 'error' });
+    } finally {
+      setProjectLoading(false);
+    }
+  };
+
   useEffect(() => {
     if (!loading && Object.keys(formErrors).length === 0 && typeof onUpdated === 'function') {
       onUpdated();
@@ -43,45 +72,25 @@ export default function SaleProductItem({ initialData, productName, onUpdated = 
 
   const onClickSave = async () => {
     await handleSave();
+    await handleProjectSave(); // Salvar projeto também
 
     if (Object.keys(formErrors).length > 0) {
       const errorMessages = Object.entries(formErrors)
-        .map(
-          ([field, messages]) =>
-            `${field.replace(/_/g, ' ')}: ${messages.join(', ')}`
-        )
+        .map(([field, messages]) => `${field.replace(/_/g, ' ')}: ${messages.join(', ')}`)
         .join(' • ');
       enqueueSnackbar(errorMessages, { variant: 'error' });
-    } else {
-      enqueueSnackbar('Alterações salvas com sucesso!', {
-        variant: 'success'
-      });
     }
   };
 
   return (
     <Grid item xs={12} sm={12} lg={12}>
-      <Accordion
-        sx={{
-          borderRadius: '12px',
-          mb: 1,
-          boxShadow: 3,
-        }}
-      >
+      <Accordion sx={{ borderRadius: '12px', mb: 1, boxShadow: 3 }}>
         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
           <Box sx={{ display: 'flex', width: '100%', alignItems: 'center' }}>
-            <Grid
-              item
-              xs={1}
-              sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}
-            >
+            <Grid item xs={1} sx={{ display: 'flex', justifyContent: 'center' }}>
               <IconTools size={20} style={{ color: '#7E8388' }} />
             </Grid>
-            <Grid
-              item
-              xs={11}
-              sx={{ justifyContent: 'flex-start', display: 'flex', flexDirection: 'column', ml: 1 }}
-            >
+            <Grid item xs={11} sx={{ ml: 1 }}>
               <Typography fontWeight={700} fontSize={14}>Produto</Typography>
               <Typography fontWeight={500} fontSize={16} color={'rgba(48, 48, 48, 0.5)'}>
                 {productName || 'sem nome'}
@@ -92,13 +101,14 @@ export default function SaleProductItem({ initialData, productName, onUpdated = 
 
         <AccordionDetails>
           <Grid container spacing={2}>
+            {/* Campos de valor */}
             {['value', 'cost_value', 'reference_value'].map((field) => {
               const isCostValue = field === 'cost_value';
-              if (isCostValue && !canChangeCostValue) {
-                return null;
-              }
+              if (isCostValue && !canChangeCostValue) return null;
+
               const disabled = isCostValue && !canChangeCostValue;
               const fieldValue = disabled ? ' ' : formData[field] || '';
+
               return (
                 <Grid item xs={12} sm={12} lg={4} key={field}>
                   <Typography fontWeight={700} fontSize={14} gutterBottom>
@@ -128,7 +138,27 @@ export default function SaleProductItem({ initialData, productName, onUpdated = 
                 </Grid>
               );
             })}
+
+            {/* Campo delivery_type do projeto */}
+            {projectData?.id && (
+              <Grid item xs={12} sm={12} lg={4}>
+                <FormControl fullWidth>
+                  <InputLabel id={`delivery-type-${projectData.id}`}>Tipo de Entrega</InputLabel>
+                  <Select
+                    labelId={`delivery-type-${projectData.id}`}
+                    value={projectData.delivery_type || ''}
+                    label="Tipo de Entrega"
+                    onChange={(e) => handleProjectChange('delivery_type', e.target.value)}
+                  >
+                    <MenuItem value="C">Entrega CD</MenuItem>
+                    <MenuItem value="D">Entrega Direta</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
+            )}
           </Grid>
+
+          {/* Botão salvar */}
           <HasPermission
             permissions={['resolve_crm.can_change_fineshed_sale']}
             userPermissions={userPermissions}
@@ -138,9 +168,9 @@ export default function SaleProductItem({ initialData, productName, onUpdated = 
                 <Button
                   variant="contained"
                   onClick={onClickSave}
-                  disabled={loading}
+                  disabled={loading || projectLoading}
                   endIcon={
-                    loading ? <CircularProgress size={20} color="inherit" /> : null
+                    (loading || projectLoading) ? <CircularProgress size={20} color="inherit" /> : null
                   }
                   fullWidth
                   sx={{
@@ -152,12 +182,11 @@ export default function SaleProductItem({ initialData, productName, onUpdated = 
                     },
                   }}
                 >
-                  {loading ? 'Salvando...' : 'Salvar'}
+                  {(loading || projectLoading) ? 'Salvando...' : 'Salvar'}
                 </Button>
               </Grid>
             </Grid>
           </HasPermission>
-
         </AccordionDetails>
       </Accordion>
     </Grid>
