@@ -53,6 +53,7 @@ const ConstructionsDashboard = () => {
   const [totalRows, setTotalRows] = useState(0);
   const [openDrawer, setOpenDrawer] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
+  const [selectedSaleId, setSelectedSaleId] = useState(null);
   const { enqueueSnackbar } = useSnackbar();
 
   // const stats = [
@@ -119,7 +120,7 @@ const ConstructionsDashboard = () => {
     try {
       const response = await projectService.index({
         fields:
-          'id,project_number,sale.customer.complete_name,sale.signature_date,sale.status,sale.treadmill_counter,sale.branch.name,inspection.status,inspection.service_opinion,inspection.schedule_date,inspection.final_service_opinion.name,inspection.final_service_opinion_date,inspection.final_service_opinion_user,civil_construction.work_responsibility,civil_construction.status,civil_construction.is_customer_aware,civil_construction.deadline',
+          'id,project_number,sale.customer.complete_name,sale.signature_date,sale.status,sale.treadmill_counter,sale.branch.name,inspection.status,inspection.service_opinion,inspection.schedule_date,inspection.final_service_opinion.name,inspection.final_service_opinion_date,inspection.final_service_opinion_user,civil_construction.work_responsibility,civil_construction.status,civil_construction.is_customer_aware,civil_construction.deadline,sale.id',
         expand:
           'sale,sale.customer,sale.branch,inspection,inspection.final_service_opinion,inspection.final_service_opinion_date,inspection,civil_construction',
         in_construction: true,
@@ -249,6 +250,7 @@ const ConstructionsDashboard = () => {
 
   const handleRowClick = (row) => {
     setSelectedRow(row.id);
+    setSelectedSaleId(row.sale?.id);
     setOpenDrawer(true);
   };
 
@@ -417,6 +419,7 @@ const ConstructionsDashboard = () => {
       </Table.Root>
       <ProjectDetailDrawer
         projectId={selectedRow}
+        saleId={selectedSaleId}
         open={openDrawer}
         onClose={() => setOpenDrawer(false)}
       />

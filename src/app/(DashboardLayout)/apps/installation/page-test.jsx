@@ -51,6 +51,7 @@ const LogisticsDashboard = () => {
   const [totalRows, setTotalRows] = useState(0);
   const [openDrawer, setOpenDrawer] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
+  const [selectedSaleId, setSelectedSaleId] = useState(null);
   const { enqueueSnackbar } = useSnackbar();
 
   const fetchProjects = useCallback(async () => {
@@ -59,7 +60,7 @@ const LogisticsDashboard = () => {
       const response = await projectService.index({
         user_types: 3,
         fields:
-          'id,project_number,status,sale.customer.complete_name,sale.signature_date,product.description,address.complete_address,sale.status,purchase_status,delivery_status',
+          'id,project_number,status,sale.customer.complete_name,sale.signature_date,product.description,address.complete_address,sale.status,purchase_status,delivery_status,sale.id',
         expand: 'sale.customer,product,address,sale.signature_date',
         metrics: 'purchase_status,delivery_status',
         page: page + 1,
@@ -157,22 +158,45 @@ const LogisticsDashboard = () => {
   const getProjectChipProps = (status) => {
     switch (status) {
       case 'P':
-        return { label: 'Pendente', color: 'warning', icon: <HourglassEmptyIcon sx={{ color: '#fff' }} /> };
+        return {
+          label: 'Pendente',
+          color: 'warning',
+          icon: <HourglassEmptyIcon sx={{ color: '#fff' }} />,
+        };
       case 'CO':
-        return { label: 'Concluído', color: 'success', icon: <CheckCircleIcon sx={{ color: '#fff' }} /> };
+        return {
+          label: 'Concluído',
+          color: 'success',
+          icon: <CheckCircleIcon sx={{ color: '#fff' }} />,
+        };
       case 'EA':
-        return { label: 'Em Andamento', color: 'info', icon: <HourglassFullIcon sx={{ color: '#fff' }} /> };
+        return {
+          label: 'Em Andamento',
+          color: 'info',
+          icon: <HourglassFullIcon sx={{ color: '#fff' }} />,
+        };
       case 'C':
         return { label: 'Cancelado', color: 'error', icon: <CancelIcon sx={{ color: '#fff' }} /> };
       case 'D':
-        return { label: 'Distrato', color: 'secondary', icon: <RemoveCircleIcon sx={{ color: '#fff' }} /> };
+        return {
+          label: 'Distrato',
+          color: 'secondary',
+          icon: <RemoveCircleIcon sx={{ color: '#fff' }} />,
+        };
       case 'F':
-        return { label: 'Finalizado', color: 'success', icon: <CheckCircleIcon sx={{ color: '#fff' }} /> };
+        return {
+          label: 'Finalizado',
+          color: 'success',
+          icon: <CheckCircleIcon sx={{ color: '#fff' }} />,
+        };
       default:
-        return { label: 'Desconhecido', color: 'default', icon: <CancelIcon sx={{ color: '#fff' }} /> };
+        return {
+          label: 'Desconhecido',
+          color: 'default',
+          icon: <CancelIcon sx={{ color: '#fff' }} />,
+        };
     }
   };
-  
 
   const columns = [
     {
@@ -227,6 +251,7 @@ const LogisticsDashboard = () => {
 
   const handleRowClick = (row) => {
     setSelectedRow(row.id);
+    setSelectedSaleId(row.sale?.id);
     setOpenDrawer(true);
   };
 
@@ -392,6 +417,7 @@ const LogisticsDashboard = () => {
       </Table.Root>
       <ProjectDetailDrawer
         projectId={selectedRow}
+        saleId={selectedSaleId}
         open={openDrawer}
         onClose={() => setOpenDrawer(false)}
       />

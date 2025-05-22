@@ -26,6 +26,7 @@ export default function InspectionsTab({ projectId, viewOnly = false }) {
     const [mainId, setMainId] = useState(null)
     const [categoryId, setCategoryId] = useState(null);
     const [selectedInspection, setSelectedInspection] = useState(null);
+    const [selectedSaleId, setSelectedSaleId] = useState(null);
 
     const [openDrawer, setOpenDrawer] = useState(false);
     const [selectedProjectId, setSelectedProjectId] = useState(null);
@@ -33,6 +34,7 @@ export default function InspectionsTab({ projectId, viewOnly = false }) {
     const handleRowClick = (row) => {
         if (row.project?.id) {
             setSelectedProjectId(row.project.id);
+            setSelectedSaleId(row.project.sale?.id);
             setOpenDrawer(true);
         }
     };
@@ -83,8 +85,9 @@ export default function InspectionsTab({ projectId, viewOnly = false }) {
                     'protocol',
                     'observation',
                     'created_at',
+                    'project.sale.id',
                 ].join(','),
-                expand: 'address,products,service,final_service_opinion,observation,protocol,project',
+                expand: 'address,products,service,final_service_opinion,observation,protocol,project,project.sale',
                 project__in: projectId,
                 category__icontains: 'Vistoria'
             });
@@ -278,6 +281,7 @@ export default function InspectionsTab({ projectId, viewOnly = false }) {
                 open={openDrawer}
                 onClose={() => setOpenDrawer(false)}
                 projectId={selectedProjectId}
+                saleId={selectedSaleId}
             />
 
             {!viewOnly && (
