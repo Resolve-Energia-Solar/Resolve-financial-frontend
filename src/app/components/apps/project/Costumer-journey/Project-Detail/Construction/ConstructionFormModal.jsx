@@ -45,7 +45,8 @@ export default function ConstructionFormModal({
     const [formErrors, setFormErrors] = useState({});
     const [form, setForm] = useState({
         status: 'P',
-        deadline: null,
+        start_date: null,
+        end_date: null,
         work_responsibility: 'C',
         is_customer_aware: false,
         repass_value: '',
@@ -60,7 +61,8 @@ export default function ConstructionFormModal({
             civilConstructionService.find(constructionId).then(data => {
                 setForm({
                     status: data.status,
-                    deadline: data.deadline,
+                    start_date: data.start_date,
+                    end_date: data.end_date,
                     work_responsibility: data.work_responsibility,
                     repass_value: data.repass_value || '',
                     budget_value: data.budget_value || '',
@@ -92,7 +94,7 @@ export default function ConstructionFormModal({
         }
         catch (error) {
             if (error.response) {
-                setFormErrors(error.response.data || error.response.data.error);
+                setFormErrors(error.response.data.error || error.response.data);
                 if (error.response.data.error) {
                     enqueueSnackbar(error.response.data.error, { variant: 'error' });
                 }
@@ -115,6 +117,7 @@ export default function ConstructionFormModal({
                             value={form.status}
                             label="Status"
                             onChange={e => handleChange('status', e.target.value)}
+                            error={!!formErrors.status}
                         >
                             {statusOptions.map(opt => (
                                 <MenuItem key={opt.value} value={opt.value}>{opt.label}</MenuItem>
@@ -123,11 +126,19 @@ export default function ConstructionFormModal({
                     </FormControl>
 
                     <FormDate
-                        label="Prazo"
-                        value={form.deadline}
-                        onChange={date => handleChange('deadline', date)}
-                        error={!!formErrors.deadline}
-                        helperText={formErrors.deadline?.[0]}
+                        label="Data de Previsão de Início"
+                        value={form.start_date}
+                        onChange={date => handleChange('start_date', date)}
+                        error={!!formErrors.start_date}
+                        helperText={formErrors.start_date?.[0]}
+                    />
+
+                     <FormDate
+                        label="Data de Previsão de Fim"
+                        value={form.end_date}
+                        onChange={date => handleChange('end_date', date)}
+                        error={!!formErrors.end_date}
+                        helperText={formErrors.end_date?.[0]}
                     />
 
                     <FormControl component="fieldset">
