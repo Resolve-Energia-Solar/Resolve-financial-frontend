@@ -25,6 +25,7 @@ import filterConfig from './filterConfig';
 import { formatDate } from '@/utils/dateUtils';
 import { FilterContext } from '@/context/FilterContext';
 import { IconBuilding, IconTools, IconUserBolt } from '@tabler/icons-react';
+import { KPICard } from '@/app/components/charts/KPICard';
 
 const CONSTRUCTION_STATUS_MAP = {
   P: { label: 'Pendente', color: 'default', icon: <HourglassEmpty /> },
@@ -279,94 +280,43 @@ const ConstructionsDashboard = () => {
 
       {/* Indicadores */}
       <Box sx={{ width: '100%', mb: 2 }}>
-        <Typography variant="h6">Indicadores</Typography>
-        {loadingIndicators ? (
-          <Box
-            sx={{
-              width: '100%',
-              display: 'flex',
-              justifyContent: 'space-evenly',
-              gap: 2,
-              flexWrap: 'wrap',
-              mt: 1,
-              mb: 4,
-              background: '#f5f5f5',
-              p: 2,
-            }}
-          >
-            {Array.from({ length: stats.length }).map((_, index) => (
-              <Skeleton
-                key={index}
-                variant="rectangular"
-                width="100%"
-                height={120}
+              <Typography variant="h6">Indicadores</Typography>
+              <Box
                 sx={{
-                  flex: '1 1 150px',
-                  p: 2,
+                  width: '100%',
                   display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  backgroundColor: 'grey.300',
-                  borderRadius: 1,
-                  maxWidth: '200px',
-                  aspectRatio: '4 / 2.5',
-                  textAlign: 'center',
-                  '&:hover': { transform: 'scale(1.05)', transition: 'transform 0.2s' },
+                  justifyContent: 'space-evenly',
+                  gap: 2,
+                  flexWrap: 'wrap',
+                  mt: 1,
+                  mb: 4,
+                  background: '#f5f5f5',
+                  p: 2,
                 }}
-              />
-            ))}
-          </Box>
-        ) : (
-          <Box
-            sx={{
-              width: '100%',
-              display: 'flex',
-              justifyContent: 'space-evenly',
-              gap: 2,
-              flexWrap: 'wrap',
-              mt: 1,
-              mb: 4,
-              background: '#f5f5f5',
-              p: 2,
-            }}
-          >
-            {stats.map(({ key, label, value, icon, color, filter, format }) => {
-              const isActive =
-                filters &&
-                Object.keys(filter).length === Object.keys(filters).length &&
-                Object.entries(filter).every(([key, value]) => filters[key] === value);
-              return (
-                <Box
-                  key={key}
-                  sx={{
-                    flex: '1 1 150px',
-                    p: 2,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    backgroundColor: color,
-                    borderRadius: 1,
-                    maxWidth: '200px',
-                    aspectRatio: '4 / 2.5',
-                    textAlign: 'center',
-                    '&:hover': { transform: 'scale(1.05)', transition: 'transform 0.2s' },
-                    border: isActive ? '2px solid green' : 'none',
-                  }}
-                  onClick={() => handleKPIClick(key)}
-                >
-                  {icon}
-                  <Typography variant="subtitle2" sx={{ mt: 1 }}>
-                    {label}
-                  </Typography>
-                  <Typography variant="h6">{format ? format(value) : value}</Typography>
-                </Box>
-              );
-            })}
-          </Box>
-        )}
-      </Box>
+              >
+                {stats.map(({ key, label, value, icon, color, filter, format }) => {
+                  const isActive =
+                    filter &&
+                    Object.entries(filter).some(
+                      ([filterKey, filterValue]) => filters?.[filterKey] === filterValue,
+                    );
+      
+                  return (
+                    <KPICard
+                      key={key}
+                      label={label}
+                      value={value}
+                      icon={icon}
+                      color={color}
+                      active={isActive}
+                      format={format}
+                      onClick={() => handleKPIClick(key)}
+                      loading={loadingIndicators}
+                    />
+                  );
+                })}
+              </Box>
+            </Box>
 
       {/* Filtros */}
       <GenericFilterDrawer
