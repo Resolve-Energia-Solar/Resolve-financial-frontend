@@ -15,7 +15,7 @@ import {
   PendingActions,
   Person,
   HourglassEmpty,
-  RemoveCircleOutline
+  RemoveCircleOutline,
 } from '@mui/icons-material';
 import ProjectDetailDrawer from '@/app/components/apps/project/Costumer-journey/Project-Detail/ProjectDrawer';
 import { Chip, Tooltip, Button, Box, Typography, Skeleton } from '@mui/material';
@@ -38,7 +38,6 @@ const WORK_RESPONSIBILITY_MAP = {
   F: { label: 'Franquia', color: 'primary', icon: <IconBuilding /> },
   O: { label: 'Centro de Operações', color: 'warning', icon: <IconUserBolt /> },
 };
-
 
 const ConstructionsDashboard = () => {
   const [loading, setLoading] = useState(true);
@@ -64,7 +63,7 @@ const ConstructionsDashboard = () => {
       value: indicators.total_pending,
       icon: <PendingActions />,
       color: '#fff3cd',
-      filter: { "construction_status__in": "P" },
+      filter: { construction_status__in: 'P' },
     },
     {
       key: 'total_in_progress',
@@ -72,7 +71,7 @@ const ConstructionsDashboard = () => {
       value: indicators.total_in_progress,
       icon: <HourglassBottom />,
       color: '#d1ecf1',
-      filter: { "construction_status__in": "EA" },
+      filter: { construction_status__in: 'EA' },
     },
     {
       key: 'total_finished',
@@ -80,7 +79,7 @@ const ConstructionsDashboard = () => {
       value: indicators.total_finished,
       icon: <CheckCircleIcon />,
       color: '#d4edda',
-      filter: { "construction_status__in": "F" },
+      filter: { construction_status__in: 'F' },
     },
     {
       key: 'total_canceled',
@@ -88,7 +87,7 @@ const ConstructionsDashboard = () => {
       value: indicators.total_canceled,
       icon: <Cancel />,
       color: '#f8d7da',
-      filter: { "construction_status__in": "C" },
+      filter: { construction_status__in: 'C' },
     },
     {
       key: 'total_without_construction',
@@ -96,7 +95,7 @@ const ConstructionsDashboard = () => {
       value: indicators.total_without_construction,
       icon: <AssignmentTurnedIn />,
       color: '#d1ecf1',
-      filter: { "construction_status__in": "S" },
+      filter: { construction_status__in: 'S' },
     },
   ];
 
@@ -109,7 +108,7 @@ const ConstructionsDashboard = () => {
         expand:
           'sale,sale.customer,sale.branch,inspection,inspection.final_service_opinion,inspection.final_service_opinion_date,inspection,civil_construction,constructions-indicators',
         in_construction: true,
-        metrics: 'in_construction',
+        metrics: 'in_construction,construction_status',
         page: page + 1,
         limit: rowsPerPage,
         remove_termination_cancelled_and_pre_sale: true,
@@ -160,9 +159,7 @@ const ConstructionsDashboard = () => {
         const text = r.inspection?.final_service_opinion?.name || '-';
         return (
           <Tooltip title={text.length > 25 ? text : ''} arrow>
-            <Chip
-              label={text.length > 25 ? `${text.substring(0, 25)}...` : text}
-            />
+            <Chip label={text.length > 25 ? `${text.substring(0, 25)}...` : text} />
           </Tooltip>
         );
       },
@@ -178,7 +175,11 @@ const ConstructionsDashboard = () => {
             icon={WORK_RESPONSIBILITY_MAP[r.civil_construction[0]?.work_responsibility].icon}
           />
         ) : (
-          <Chip label="Responsabilidade Indefinida" color="default" icon={<RemoveCircleOutline />} />
+          <Chip
+            label="Responsabilidade Indefinida"
+            color="default"
+            icon={<RemoveCircleOutline />}
+          />
         ),
     },
     {
@@ -217,7 +218,7 @@ const ConstructionsDashboard = () => {
       headerName: 'Previsão de início',
       render: (r) => formatDate(r?.civil_construction[0]?.start_date),
     },
-     {
+    {
       field: 'civil_construction.end_date',
       headerName: 'Previsão de término',
       render: (r) => formatDate(r?.civil_construction[0]?.end_date),
@@ -240,7 +241,7 @@ const ConstructionsDashboard = () => {
       field: 'civil_construction.deadline',
       headerName: 'Prazo',
       render: (r) => formatDate(r?.civil_construction[0]?.deadline),
-    }
+    },
   ];
 
   const handleKPIClick = (kpiType) => {
@@ -277,7 +278,7 @@ const ConstructionsDashboard = () => {
       <Breadcrumb items={BCrumb} />
 
       {/* Indicadores */}
-    <Box sx={{ width: '100%', mb: 2 }}>
+      <Box sx={{ width: '100%', mb: 2 }}>
         <Typography variant="h6">Indicadores</Typography>
         {loadingIndicators ? (
           <Box
