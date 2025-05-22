@@ -13,16 +13,10 @@ const statusOptions = [
     { value: "F", label: "Aguardando Previsão de Entrega" },
 ];
 
-const deliveryTypeOptions = [
-    { value: "D", label: "Entrega Direta" },
-    { value: "C", label: "Entrega CD" },
-];
-
 export default function PurchaseForm({ projectId, purchaseId = null, onSave }) {
     const [formData, setFormData] = useState({
         project: projectId || null,
         supplier: null,
-        delivery_type: "C",
         status: "P",
         delivery_number: null,
         purchase_date: new Date().toISOString().split("T")[0],
@@ -91,7 +85,7 @@ export default function PurchaseForm({ projectId, purchaseId = null, onSave }) {
             </Grid>
             <Grid container spacing={4}>
                 {/* Projeto */}
-                <Grid item xs={12} sm={6} sx={{ display: 'flex', alignItems: 'center', marginBottom: '-6.5px' }}>
+                <Grid item xs={12} sx={{ display: 'flex', alignItems: 'center', marginBottom: '-6.5px' }}>
                     {!projectId ? (
                         <GenericAsyncAutocompleteInput
                             label="Projeto"
@@ -174,7 +168,7 @@ export default function PurchaseForm({ projectId, purchaseId = null, onSave }) {
                         sx={{
                             width: '100%',
                             fontSize: '1rem',
-                            marginBottom: '1.5rem',
+                            marginTop: '1rem',
                             '& .MuiInputBase-root': {
                                 height: '56px',
                             },
@@ -251,34 +245,6 @@ export default function PurchaseForm({ projectId, purchaseId = null, onSave }) {
                             },
                         }}
                     />
-                </Grid>
-
-                {/* Tipo de Entrega */}
-                <Grid item xs={12} sm={6}>
-                    <TextField
-                        select
-                        fullWidth
-                        label="Tipo de Entrega"
-                        name="delivery_type"
-                        value={formData.delivery_type}
-                        onChange={handleChange}
-                        error={!!errors?.delivery_type}
-                        helperText={errors?.delivery_type?.[0]}
-                        sx={{
-                            width: '100%',
-                            fontSize: '1rem',
-                            marginBottom: '1.5rem',
-                            '& .MuiInputBase-root': {
-                                height: '56px',
-                            },
-                        }}
-                    >
-                        {deliveryTypeOptions.map((opt) => (
-                            <MenuItem key={opt.value} value={opt.value}>
-                                {opt.label}
-                            </MenuItem>
-                        ))}
-                    </TextField>
                 </Grid>
 
                 {/* Status */}
