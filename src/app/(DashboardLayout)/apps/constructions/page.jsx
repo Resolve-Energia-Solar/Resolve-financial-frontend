@@ -13,7 +13,10 @@ import {
   Cancel,
   FilterAlt,
   HourglassBottom,
+  Pending,
   PendingActions,
+  Person,
+  HourglassEmpty as HourglassEmptyIcon,
 } from '@mui/icons-material';
 import ProjectDetailDrawer from '@/app/components/apps/project/Costumer-journey/Project-Detail/ProjectDrawer';
 import { Chip, Box, Typography, Skeleton } from '@mui/material';
@@ -23,7 +26,21 @@ import filterConfig from './filterConfig';
 import { formatDate } from '@/utils/dateUtils';
 import ScheduleOpinionChip from '@/app/components/apps/inspections/schedule/StatusChip/ScheduleOpinionChip';
 import { FilterContext } from '@/context/FilterContext';
-import { IconTools } from '@tabler/icons-react';
+import { IconBuilding, IconTools, IconUserBolt } from '@tabler/icons-react';
+
+const CONSTRUCTION_STATUS_MAP = {
+  P: { label: 'Pendente', color: 'default', icon: <HourglassEmptyIcon /> },
+  F: { label: 'Finalizada', color: 'success', icon: <CheckCircleIcon /> },
+  C: { label: 'Cancelada', color: 'error', icon: <Cancel /> },
+  EA: { label: 'Em Andamento', color: 'warning', icon: <HourglassBottom /> },
+};
+
+const WORK_RESPONSIBILITY_MAP = {
+  C: { label: 'Cliente', color: 'success', icon: <Person /> },
+  F: { label: 'Franquia', color: 'primary', icon: <IconUserBolt /> },
+  O: { label: 'Centro de Operações', color: 'warning', icon: <IconBuilding /> },
+};
+
 
 const ConstructionsDashboard = () => {
   const [loading, setLoading] = useState(true);
@@ -107,11 +124,11 @@ const ConstructionsDashboard = () => {
     try {
       const response = await projectService.index({
         fields:
-          'id,project_number,sale.customer.complete_name,sale.signature_date,sale.status,sale.treadmill_counter,sale.branch.name,created_at,inspection.status,inspection.schedule_date,inspection.final_service_opinion.name,inspection.final_service_opinion_date,inspection.final_service_opinion_user,civil_construction.work_responsibility,civil_construction.budget_value,civil_construction.status',
+          'id,project_number,sale.customer.complete_name,sale.signature_date,sale.status,sale.treadmill_counter,sale.branch.name,inspection.status,inspection.service_opinion,inspection.schedule_date,inspection.final_service_opinion.name,inspection.final_service_opinion_date,inspection.final_service_opinion_user,civil_construction.work_responsibility,civil_construction.status,civil_construction.is_customer_aware,civil_construction.deadline',
         expand:
           'sale,sale.customer,sale.branch,inspection,inspection.final_service_opinion,inspection.final_service_opinion_date,inspection,civil_construction',
-        has_construction: true,
-        metrics: 'has_construction',
+        in_construction: true,
+        metrics: 'in_construction',
         page: page + 1,
         limit: rowsPerPage,
         remove_termination_cancelled_and_pre_sale: true,
@@ -156,50 +173,59 @@ const ConstructionsDashboard = () => {
       sx: { opacity: 0.7 },
     },
     {
-      field: 'inspection.status',
-      headerName: 'Status da vistoria',
-      render: (r) => <StatusChip status={r.inspection?.status} />,
+      field: 'inspection.final_service_opinion.name',
+      headerName: 'Parecer da vistoria',
+      render: (r) =>  <Chip label={r.inspection?.final_service_opinion?.name || '-'}  />,
     },
     {
       field: 'civil_constructions.work_responsibility',
       headerName: 'Responsabilidade da obra',
+      render: (r) =>
+        r.civil_construction[0]?.work_responsibility ? (
+          <Chip
+            label={WORK_RESPONSIBILITY_MAP[r.civil_construction[0]?.work_responsibility].label}
+            color={WORK_RESPONSIBILITY_MAP[r.civil_construction[0]?.work_responsibility].color}
+            icon={WORK_RESPONSIBILITY_MAP[r.civil_construction[0]?.work_responsibility].icon}
+          />
+        ) : (
+          ' - '
+        ),
+    },
+    {
+      field: 'ciivil_construction.is_customer_aware',
+      headerName: 'Cliente ciente',
       render: (r) => (
-        <Chip label={r.civil_constructions?.work_responsibility || '-'} variant="outlined" />
+        <Chip
+          label={r.civil_construction[0]?.is_customer_aware ? 'Sim' : 'Não'}
+          color={r.civil_construction[0]?.is_customer_aware ? 'success' : 'error'}
+          icon={
+            r.civil_construction[0]?.is_customer_aware ? (
+              <CheckCircleIcon />
+            ) : (
+              <Cancel sx={{ color: 'error.main' }} />
+            )
+          }
+        />
       ),
     },
     {
-      field: 'sale.branch',
-      headerName: 'Data de início',
-      render: (r) => formatDate(r?.created_at),
-    },
-    {
-      field: 'inspection.final_service_opinion.name',
-      headerName: 'Cliente ciente',
-      render: (r) => <ScheduleOpinionChip />,
+      field: 'civil_construction.deadline',
+      headerName: 'Prazo',
+      render: (r) => formatDate(r?.civil_construction[0]?.deadline),
     },
     {
       field: 'civil_construction.status',
       headerName: 'Status da obra',
-      render: (r) => <StatusChip status={r.civil_construction?.status} />,
-    },
-    {
-      field: 'civil_construction.budget_value',
-      headerName: 'Valor do orçamento',
       render: (r) =>
-        new Intl.NumberFormat('pt-BR', {
-          style: 'currency',
-          currency: 'BRL',
-        }).format(r.civil_construction.budget_value || 0),
-    },
-    {
-      field: 'sale.signature_date',
-      headerName: 'Data de Assinatura do contrato',
-      render: (r) => formatDate(r.sale?.signature_date),
-    },
-    {
-      field: 'inspection.final_service_opinion.name',
-      headerName: 'Status da venda',
-      render: (r) => <StatusChip status={r.sale?.status} />,
+        r.civil_construction[0]?.status ? (
+          <Chip
+            label={CONSTRUCTION_STATUS_MAP[r.civil_construction[0]?.status].label}
+            color={CONSTRUCTION_STATUS_MAP[r.civil_construction[0]?.status].color}
+            icon={CONSTRUCTION_STATUS_MAP[r.civil_construction[0].status].icon}
+          />
+        ) : (
+          <Chip label="Sem Obra" color="default"/>
+        ),
     },
   ];
 
@@ -236,7 +262,7 @@ const ConstructionsDashboard = () => {
       <Breadcrumb items={BCrumb} />
 
       {/* Indicadores */}
-      <Box sx={{ width: '100%', mb: 2 }}>
+      {/* <Box sx={{ width: '100%', mb: 2 }}>
         <Typography variant="h6">Indicadores</Typography>
         {loadingIndicators ? (
           <Box
@@ -322,7 +348,7 @@ const ConstructionsDashboard = () => {
             })}
           </Box>
         )}
-      </Box>
+      </Box> */}
 
       {/* Filtros */}
       <GenericFilterDrawer
