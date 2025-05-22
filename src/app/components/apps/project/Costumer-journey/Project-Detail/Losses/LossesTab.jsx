@@ -92,7 +92,7 @@ export default function LossesTab({ projectId, viewOnly = false }) {
                     <Table.Cell align="center">Ver</Table.Cell>
                 </Table.Head>
 
-                <Table.Body loading={loading}>
+                <Table.Body loading={loading} columns={columns.length}>
                     <Table.Cell render={row => row.protocol} sx={{ opacity: 0.7 }} />
                     <Table.Cell render={row => row.client_supplier_name} sx={{ opacity: 0.7 }} />
                     <Table.Cell render={row => formatDate(row.due_date)} sx={{ opacity: 0.7 }} />

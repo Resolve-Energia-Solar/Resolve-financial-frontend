@@ -751,7 +751,7 @@ const ProjectList = ({ onClick }) => {
           </Table.Head>
 
           {/* Corpo */}
-          <Table.Body loading={loadingProjects}>
+          <Table.Body loading={loadingProjects} columns={columns.length}>
             <Table.Cell render={(row) => row.sale.customer.complete_name} sx={{ opacity: 0.7 }} />
             <Table.Cell render={(row) => row.product?.name} sx={{ opacity: 0.7 }} />
             <Table.Cell

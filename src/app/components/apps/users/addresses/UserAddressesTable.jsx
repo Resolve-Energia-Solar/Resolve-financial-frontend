@@ -117,7 +117,7 @@ export default function UserAddressesTable({
                         </Table.Cell>
                     ))}
                 </Table.Head>
-                <Table.Body>
+                <Table.Body columns={columns.length}>
                     {columns.map(c => (
                         <Table.Cell
                             key={c.field}

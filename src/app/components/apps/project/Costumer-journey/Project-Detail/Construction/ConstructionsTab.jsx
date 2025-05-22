@@ -296,7 +296,7 @@ export default function ConstructionsTab({ projectId, viewOnly = false }) {
                                                 <Table.Cell>Fornecedor/Cliente</Table.Cell>
                                             </Table.Head>
 
-                                            <Table.Body loading={false}>
+                                            <Table.Body loading={false} columns={4}>
                                                 <Table.Cell
                                                     render={fr => fr.protocol}
                                                     sx={{ fontSize: '14px' }}
@@ -376,6 +376,7 @@ export default function ConstructionsTab({ projectId, viewOnly = false }) {
 
                 <Table.Body
                     loading={loading}
+                    columns={columns.length}
                     onRowClick={handleRowClick}
                     sx={{
                         cursor: "pointer",

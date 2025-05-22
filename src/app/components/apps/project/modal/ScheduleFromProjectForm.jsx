@@ -251,7 +251,7 @@ const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = (
         schedule_end_time: fmt(schedule_end_time),
         observation,
         service: service.value || service.id || service,
-        address: address.value || address.id || address,
+        address: address?.value || address.id || address,
         schedule_agent: formData.schedule_agent?.value || formData.schedule_agent?.id || formData.schedule_agent || null,
         service_opinion: formData.service_opinion?.value || formData.service_opinion?.id || formData.service_opinion || null,
         final_service_opinion: formData.final_service_opinion?.value || formData.final_service_opinion?.id || formData.final_service_opinion || null,
@@ -267,9 +267,9 @@ const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = (
       onSave(resp);
       enqueueSnackbar('Agendamento salvo com sucesso!', { variant: 'success' });
     } catch (err) {
-      setFormErrors(err.response?.data || {});
+      setFormErrors(err.response?.data || null);
       console.error('Erro ao salvar agendamento:', err);
-      enqueueSnackbar(err.response?.data?.message || 'Erro ao salvar agendamento.', { variant: 'error' });
+      enqueueSnackbar(err.response?.data?.error || 'Erro ao salvar agendamento.', { variant: 'error' });
     }
   };
 
@@ -311,8 +311,8 @@ const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = (
                 endpoint="api/services"
                 extraParams={{ fields: ['id', 'name'], ordering: ['name'], limit: 50, category__in: categoryId }}
                 mapResponse={data => data?.results.map(it => ({ label: it.name, value: it.id }))}
-                error={!!errors.service}
-                helperText={errors.service?.[0]}
+                error={!!formErrors?.service}
+                helperText={formErrors?.service?.[0]}
               />
             </Grid>
             <Grid item xs={6}>
@@ -327,8 +327,8 @@ const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = (
                 renderCreateModal={({ onClose, onCreate, newObjectData, setNewObjectData }) => (
                   <CreateAddressPage onClose={onClose} onCreate={onCreate} newObjectData={newObjectData} setNewObjectData={setNewObjectData} />
                 )}
-                error={!!errors.address}
-                helperText={errors.address?.[0]}
+                error={!!formErrors?.address}
+                helperText={formErrors?.address?.[0]}
               />
             </Grid>
             <Grid item xs={6}>
@@ -337,8 +337,8 @@ const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = (
                 name="schedule_date"
                 value={formData.schedule_date}
                 onChange={val => handleChange('schedule_date', val)}
-                error={!!errors.schedule_date}
-                helperText={errors.schedule_date?.[0]}
+                error={!!formErrors?.schedule_date}
+                helperText={formErrors?.schedule_date?.[0]}
               />
             </Grid>
             <Grid item xs={6}>
@@ -348,8 +348,8 @@ const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = (
                 name="schedule_start_time"
                 value={formData.schedule_start_time}
                 onChange={val => handleChange('schedule_start_time', val)}
-                error={!!errors.schedule_start_time}
-                helperText={errors.schedule_start_time?.[0]}
+                error={!!formErrors?.schedule_start_time}
+                helperText={formErrors?.schedule_start_time?.[0]}
               />
             </Grid>
             {formData.schedule_date && formData.schedule_start_time && (
@@ -360,8 +360,8 @@ const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = (
                     name="schedule_end_date"
                     value={formData.schedule_end_date}
                     onChange={val => handleChange('schedule_end_date', val)}
-                    error={!!errors.schedule_end_date}
-                    helperText={errors.schedule_end_date?.[0]}
+                    error={!!formErrors?.schedule_end_date}
+                    helperText={formErrors?.schedule_end_date?.[0]}
                     minDate={minEndDate}
                   />
                 </Grid>
@@ -372,8 +372,8 @@ const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = (
                     name="schedule_end_time"
                     value={formData.schedule_end_time}
                     onChange={val => handleChange('schedule_end_time', val)}
-                    error={!!errors.schedule_end_time}
-                    helperText={errors.schedule_end_time?.[0]}
+                    error={!!formErrors?.schedule_end_time}
+                    helperText={formErrors?.schedule_end_time?.[0]}
                     minTime={minEndTime}
                   />
                 </Grid>
@@ -388,8 +388,8 @@ const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = (
                 queryParam="complete_name__icontains"
                 extraParams={{ fields: ['id', 'complete_name'], limit: 10, user_types: useSupplier ? 1 : 5 }}
                 mapResponse={d => d.results.map(u => ({ label: u.complete_name, value: u.id }))}
-                error={!!errors.schedule_agent}
-                helperText={errors.schedule_agent?.[0]}
+                error={!!formErrors?.schedule_agent}
+                helperText={formErrors?.schedule_agent?.[0]}
               />
             </Grid>}
             {scheduleId && (
@@ -402,8 +402,8 @@ const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = (
                     endpoint="api/service-opinions"
                     extraParams={{ limit: 50, fields: ['id', 'name'], is_final_opinion: FinalServiceOpinionChip, service__in: formData.service?.value || formData.service }}
                     mapResponse={d => d.results.map(it => ({ label: it.name, value: it.id }))}
-                    error={!!errors.service_opinion}
-                    helperText={errors.service_opinion?.[0]}
+                    error={!!formErrors?.service_opinion}
+                    helperText={formErrors?.service_opinion?.[0]}
                   />
                 </Grid>
                 <Grid item xs={6}>
@@ -414,8 +414,8 @@ const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = (
                     endpoint="api/service-opinions"
                     extraParams={{ limit: 50, fields: ['id', 'name'], is_final_opinion: true, service__in: formData.service?.value || formData.service }}
                     mapResponse={d => d.results.map(it => ({ label: it.name, value: it.id }))}
-                    error={!!errors.final_service_opinion}
-                    helperText={errors.final_service_opinion?.[0]}
+                    error={!!formErrors?.final_service_opinion}
+                    helperText={formErrors?.final_service_opinion?.[0]}
                   />
                 </Grid>
                 <Grid item xs={6}>
@@ -425,8 +425,8 @@ const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = (
                     label="Status"
                     value={formData.status || ''}
                     onChange={e => handleChange('status', e.target.value)}
-                    error={!!errors.status}
-                    helperText={errors.status?.[0]}
+                    error={!!formErrors?.status}
+                    helperText={formErrors?.status?.[0]}
                   >
                     {['Pendente', 'Em Andamento', 'Confirmado', 'Cancelado'].map(opt => (
                       <MenuItem key={opt} value={opt}>{opt}</MenuItem>
@@ -444,8 +444,8 @@ const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = (
                 name="observation"
                 value={formData.observation || ''}
                 onChange={e => handleChange('observation', e.target.value)}
-                error={!!errors.observation}
-                helperText={errors.observation?.[0]}
+                error={!!formErrors?.observation}
+                helperText={formErrors?.observation?.[0]}
               />
             </Grid>
           </Grid>
