@@ -32,6 +32,7 @@ import {
   TablePagination,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
+import { TabPanel } from '@/app/components/shared/TabPanel';
 
 const BCrumb = [{ to: '/', title: 'Home' }, { title: 'Solicitações de Financiamento' }];
 
