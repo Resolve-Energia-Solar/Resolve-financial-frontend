@@ -541,6 +541,7 @@ const UpdateSchedulePage = ({ scheduleId = null, onClosedModal = null, onRefresh
                   extraParams={{
                     fields: ['id', 'name'],
                     service: `${formData.service?.id}`,
+                    is_final_opinion: true,
                   }}
                   mapResponse={(data) =>
                     data.results.map((s) => ({
