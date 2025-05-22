@@ -8,19 +8,19 @@ import {
 } from "@mui/material";
 import TableSkeleton from "@/app/components/apps/comercial/sale/components/TableSkeleton";
 
-export function TableBody({ loading, children }) {
+export function TableBody({ loading, columns = 0, children }) {
   const theme = useTheme();
   const { data, onRowClick } = useContext(TableCtxt);
 
   if (loading) {
-    return <TableSkeleton columns={8} rows={4} />;
+    return <TableSkeleton columns={(columns > 0 ? columns : 8)} rows={4} />;
   }
 
   return (
     <MuiBody>
       {data.length === 0 ? (
         <TableRow>
-          <TableCell colSpan={8} align="center">
+          <TableCell colSpan={(columns > 0 ? columns : 8)} align="center">
             Nenhum registro
           </TableCell>
         </TableRow>

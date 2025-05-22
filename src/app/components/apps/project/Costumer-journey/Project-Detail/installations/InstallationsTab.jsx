@@ -127,7 +127,7 @@ export default function InstallationsTab({ projectId, viewOnly = false }) {
                     <Table.Cell align="center">Ver</Table.Cell>
                 </Table.Head>
 
-                <Table.Body loading={loading}>
+                <Table.Body loading={loading} columns={columns.length}>
                     <Table.Cell
                         render={row => row.service?.name}
                         sx={{ opacity: 0.7, }}

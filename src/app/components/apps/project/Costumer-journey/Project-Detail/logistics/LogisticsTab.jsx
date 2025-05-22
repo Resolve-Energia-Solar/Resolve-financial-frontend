@@ -178,7 +178,7 @@ export default function LogisticsTab({ projectId, viewOnly = false }) {
                     <Table.Cell align="center">Ver</Table.Cell>
                 </Table.Head>
 
-                <Table.Body loading={loading}>
+                <Table.Body loading={loading} columns={deliveriesColumns.length}>
                     <Table.Cell
                         render={row => row.service?.name}
                         sx={{ opacity: 0.7 }}
@@ -274,7 +274,7 @@ export default function LogisticsTab({ projectId, viewOnly = false }) {
                     <Table.Cell align="center">Ver</Table.Cell>
                 </Table.Head>
 
-                <Table.Body loading={loading}>
+                <Table.Body loading={loading} columns={purchasesColumns.length}>
                     <Table.Cell render={row => formatDate(row.purchase_date)} sx={{ opacity: 0.7 }} />
                     <Table.Cell render={row => {
                         const statusMap = {
