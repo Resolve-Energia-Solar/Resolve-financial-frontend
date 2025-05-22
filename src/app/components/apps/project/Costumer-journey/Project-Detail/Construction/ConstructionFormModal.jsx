@@ -154,7 +154,7 @@ export default function ConstructionFormModal({
                         <FormLabel sx={{ fontWeight: 'bold' }}>Cliente ciente da obra?</FormLabel>
                         <RadioGroup
                             row
-                            value={form.is_customer_aware}
+                            value={form.is_customer_aware ? 'true' : 'false'}
                             onChange={e => handleChange('is_customer_aware', e.target.value === 'true')}
                             error={!!formErrors.is_customer_aware}
                             helperText={formErrors.is_customer_aware?.[0]}
