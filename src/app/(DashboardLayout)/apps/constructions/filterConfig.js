@@ -12,6 +12,11 @@ export default [
       })),
   },
   {
+    key: 'project_number__icontains',
+    label: 'Número do Projeto',
+    type: 'text',
+  },
+  {
     key: 'purchase_status',
     label: 'Status de Compra',
     type: 'multiselect',

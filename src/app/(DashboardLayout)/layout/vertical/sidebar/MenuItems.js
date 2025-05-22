@@ -152,9 +152,7 @@ const Menuitems = [
     id: uniqueId(),
     title: 'Gestão Operacional',
     icon: IconUserBolt,
-    permissions: [
-      'field_services.view_schedule',
-    ],
+    permissions: ['field_services.view_schedule'],
     children: [
       {
         id: uniqueId(),
@@ -174,7 +172,14 @@ const Menuitems = [
         id: uniqueId(),
         title: 'Instalação',
         icon: IconSolarPanel2,
-        href: '/apps/installation',
+        href: '/apps/installations',
+        permissions: ['field_services.view_schedule'],
+      },
+      {
+        id: uniqueId(),
+        title: 'Obras',
+        icon: IconBuilding,
+        href: '/apps/constructions',
         permissions: ['field_services.view_schedule'],
       },
     ],
@@ -235,7 +240,6 @@ const Menuitems = [
         permissions: ['core.view_documenttype'],
       },
     ],
-
   },
 ];
 export default Menuitems;
