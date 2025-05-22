@@ -37,6 +37,7 @@ const InspectionsDashboard = () => {
   const [totalRows, setTotalRows] = useState(0);
   const [openDrawer, setOpenDrawer] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
+  const [selectedSaleId, setSelectedSaleId] = useState(null);
   const { enqueueSnackbar } = useSnackbar();
 
   const formatHours = (hours) => {
@@ -156,7 +157,7 @@ const InspectionsDashboard = () => {
     try {
       const response = await projectService.index({
         fields:
-          'id,project_number,sale.customer.complete_name,sale.signature_date,sale.status,sale.treadmill_counter,sale.branch.name,installation_status',
+          'id,project_number,sale.customer.complete_name,sale.signature_date,sale.status,sale.treadmill_counter,sale.branch.name,installation_status,sale.id',
         expand:
           'sale,sale.customer,sale.branch,inspection',
         metrics: 'installation_status',
@@ -252,6 +253,7 @@ const InspectionsDashboard = () => {
 
   const handleRowClick = (row) => {
     setSelectedRow(row.id);
+    setSelectedSaleId(row.sale?.id);
     setOpenDrawer(true);
   };
 
@@ -399,6 +401,7 @@ const InspectionsDashboard = () => {
       </Table.Root>
       <ProjectDetailDrawer
         projectId={selectedRow}
+        saleId={selectedSaleId}
         open={openDrawer}
         onClose={() => setOpenDrawer(false)}
       />

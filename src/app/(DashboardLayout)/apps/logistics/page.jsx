@@ -49,12 +49,13 @@ const LogisticsDashboard = () => {
   const [totalRows, setTotalRows] = useState(0);
   const [openDrawer, setOpenDrawer] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
+  const [selectedSaleId, setSelectedSaleId] = useState(null);
   const { enqueueSnackbar } = useSnackbar();
 
   const fetchProjects = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await projectService.index({ user_types: 3, fields: 'id,project_number,sale.customer.complete_name,product.description,address.complete_address,sale.status,purchase_status,delivery_status', expand: 'sale.customer,product,address,expected_delivery_date', metrics: 'purchase_status,delivery_status,expected_delivery_date', page: page + 1, limit: rowsPerPage, ...filters });
+      const response = await projectService.index({ user_types: 3, fields: 'id,project_number,sale.customer.complete_name,product.description,address.complete_address,sale.status,purchase_status,delivery_status,sale.id', expand: 'sale.customer,product,address,expected_delivery_date', metrics: 'purchase_status,delivery_status,expected_delivery_date', page: page + 1, limit: rowsPerPage, ...filters });
       setProjects(response.results);
       setTotalRows(response.meta.pagination.total_count);
     } catch (error) {
@@ -244,7 +245,9 @@ const LogisticsDashboard = () => {
   ];
 
   const handleRowClick = (row) => {
+    console.log('Row clicked:', row);
     setSelectedRow(row.id);
+    setSelectedSaleId(row.sale?.id);
     setOpenDrawer(true);
   };
 
@@ -356,7 +359,7 @@ const LogisticsDashboard = () => {
         </Table.Body>
         <Table.Pagination />
       </Table.Root>
-      <ProjectDetailDrawer projectId={selectedRow} open={openDrawer} onClose={() => setOpenDrawer(false)} />
+      <ProjectDetailDrawer projectId={selectedRow} saleId={selectedSaleId} open={openDrawer} onClose={() => setOpenDrawer(false)} />
     </PageContainer>
   );
 };
