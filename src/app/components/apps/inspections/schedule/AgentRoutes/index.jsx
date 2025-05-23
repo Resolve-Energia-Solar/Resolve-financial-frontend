@@ -105,6 +105,7 @@ export default function AgentRoutes({ projectId = null }) {
         setSchedules([]);
         const agentResponse = await userService.index({
           name: nameFilter,
+          role: 'vistoriador',
           category: 1,
           limit: rowsPerPage,
           page: page + 1,
