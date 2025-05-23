@@ -1,5 +1,6 @@
-"use client"
+'use client';
 
+import { useSystemConfig } from '@/context/SystemConfigContext';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import PageContainer from '@/app/components/container/PageContainer';
@@ -8,9 +9,13 @@ import AuthLogin from '../authForms/AuthLogin';
 import Image from 'next/image';
 
 export default function Login() {
+  const { config } = useSystemConfig();
+  const bgImage = config?.configs?.login_bg_img || '/images/login-bg.png';
+  const logoImage = config?.configs?.login_logo_img || '/images/logos/black-resolve-logo.svg';
+
   return (
-    <PageContainer title="Login Page" description="this is Sample page">
-      <Grid container spacing={0} sx={{ height: '100vh', posistion: "relative" }}>
+    <PageContainer title="Login Page" description="this is Sample page" sx={{ p: 0, m: 0 }}>
+      <Grid container spacing={0} sx={{ height: '100vh', position: 'relative' }}>
         <Grid
           item
           xs={12}
@@ -21,93 +26,74 @@ export default function Login() {
             position: 'relative',
             height: '100%',
 
-
             '&:before': {
-
               background: '#F9F9F9',
               backgroundSize: '400% 400%',
               animation: 'gradient 15s ease infinite',
               position: 'absolute',
               height: '100%',
               width: '100%',
-
             },
           }}
         >
-
           <Box
             component="div"
             sx={{
-              position: "absolute",
-              width: "100%",
-              height: "100%",
-              left: 0,
-              top: 0,
-              backgroundImage: 'url("/images/backgrounds/login-bg-img-handshake-yellow.svg")',
+              position: 'absolute',
+              width: '100vw',
+              height: '100vh',
+              backgroundImage: `url(${bgImage})`,
               backgroundSize: 'cover',
               backgroundPosition: 'center',
               backgroundRepeat: 'no-repeat',
-              zIndex: 1,
-              borderRadius: 0
+              // zIndex: 1,
             }}
           />
           <Box
             component="div"
             sx={{
-              position: "absolute",
-              width: "99px",
-              height: "27.4px",
+              position: 'absolute',
+              width: '120px',
+              height: '30.4px',
               left: 128,
               top: 57,
-              backgroundImage: 'url("/images/logos/black-resolve-logo.svg")',
+              backgroundImage: `url(${logoImage})`,
               backgroundSize: 'cover',
               backgroundPosition: 'center',
               backgroundRepeat: 'no-repeat',
               zIndex: 1,
-              borderRadius: 0
             }}
           />
-
-
         </Grid>
-        <Grid
-          item
-          xs={12}
-          sm={12}
-          lg={5}
-          xl={4}
+        <Box
           display="flex"
           justifyContent="center"
           alignItems="center"
           sx={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            zIndex: 1,
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            zIndex: 2,
           }}
         >
           <Box
             sx={{
-              width: "527px",
-              height: "491px",
-              backgroundColor: "#FFFFFF",
+              width: '527px',
+              height: '491px',
+              backgroundColor: '#FFFFFF',
               borderRadius: 2,
-              boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.15)",
-              padding: "48px",
+              boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.15)',
+              padding: '48px',
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'center',
             }}
           >
-            <AuthLogin
-              title="Entrar"
-            />
+            <AuthLogin title="Entrar" />
           </Box>
-        </Grid>
+        </Box>
       </Grid>
     </PageContainer>
-  )
-};
-
-
+  );
+}
