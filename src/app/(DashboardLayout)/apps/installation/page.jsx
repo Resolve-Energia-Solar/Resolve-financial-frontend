@@ -215,8 +215,11 @@ const InspectionsDashboard = () => {
 
   const handleKPIClick = (kpiType) => {
     const kpiFilter = statusStats.find((stat) => stat.key === kpiType)?.filter;
+    const isAlreadyFiltered = kpiFilter && Object.keys(kpiFilter).every(
+      (key) => filters[key] === kpiFilter[key]
+    );
 
-    if (kpiFilter && Object.keys(kpiFilter).length > 0) {
+    if (kpiFilter && Object.keys(kpiFilter).length > 0 && !isAlreadyFiltered) {
       clearFilters();
       setFilters((prevFilters) => ({
         ...prevFilters,
