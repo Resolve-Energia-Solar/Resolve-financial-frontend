@@ -102,8 +102,10 @@ export default function AgentRoutes({ projectId = null }) {
     async (date, nameFilter) => {
       setLoading(true);
       try {
+        setSchedules([]);
         const agentResponse = await userService.index({
           name: nameFilter,
+          role: 'vistoriador',
           category: 1,
           limit: rowsPerPage,
           page: page + 1,
