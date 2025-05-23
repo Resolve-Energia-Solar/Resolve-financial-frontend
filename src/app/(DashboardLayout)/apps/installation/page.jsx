@@ -8,7 +8,7 @@ import { Table } from '@/app/components/Table';
 import { TableHeader } from '@/app/components/TableHeader';
 import StatusChip from '@/utils/status/DocumentStatusIcon';
 import {
-  AssignmentTurnedIn, BuildCircle, FilterAlt, HourglassTop, PendingActions, LockOpen, Lock,
+  AssignmentTurnedIn, FilterAlt, LockOpen, Lock,
   Cancel,
   ConstructionRounded,
   CheckCircle
@@ -17,7 +17,6 @@ import ProjectDetailDrawer from '@/app/components/apps/project/Costumer-journey/
 import { Chip, Box, Typography } from '@mui/material';
 import GenericFilterDrawer from '@/app/components/filters/GenericFilterDrawer';
 import filterConfig from './filterConfig';
-import { formatDate } from '@/utils/dateUtils';
 import { FilterContext } from '@/context/FilterContext';
 import { KPICard } from '@/app/components/charts/KPICard';
 import ScheduleOpinionChip from '@/app/components/apps/inspections/schedule/StatusChip/ScheduleOpinionChip';
@@ -42,18 +41,6 @@ const InspectionsDashboard = () => {
   const [selectedRow, setSelectedRow] = useState(null);
   const [selectedSaleId, setSelectedSaleId] = useState(null);
   const { enqueueSnackbar } = useSnackbar();
-
-  const formatHours = (hours) => {
-    if (typeof hours !== 'number' || isNaN(hours)) return '-';
-    if (hours >= 24) {
-      const days = (hours / 24).toFixed(1);
-      return `${days} dias`;
-    }
-    if (hours >= 1) {
-      return `${hours} horas`;
-    }
-    return `-`;
-  };
 
   const statusStats = [
     {
@@ -190,6 +177,11 @@ const InspectionsDashboard = () => {
       render: (r) => <DeliveryStatusChip status={r.delivery_status} />,
     },
     {
+      field: 'installation_status',
+      headerName: 'Status de Instalação',
+      render: (r) => installationStatusChips[r.installation_status] || <Chip label="Indefinido" color="default" />,
+    },
+    {
       field: 'sale.treadmill_counter',
       headerName: 'Contador de Dias',
       render: (r) => <Chip label={r.sale?.treadmill_counter || '-'} variant="outlined" />,
@@ -230,7 +222,6 @@ const InspectionsDashboard = () => {
         ...prevFilters,
         ...kpiFilter,
       }));
-      console.log('Filters:', filters);
     } else {
       clearFilters();
     }
