@@ -55,55 +55,6 @@ const InspectionsDashboard = () => {
     return `-`;
   };
 
-  const stats = [
-    {
-      key: 'avg_time_installation_hours',
-      label: 'Tempo médio de instalação',
-      value: indicators?.avg_time_installation_hours,
-      icon: <BuildCircle style={{ color: '#155724' }} />,
-      color: '#d4edda',
-      filter: { inspection_is_finished: true },
-      format: formatHours,
-    },
-    {
-      key: 'released_clients_count',
-      label: 'Liberados para instalação',
-      value: indicators?.released_clients_count,
-      icon: <AssignmentTurnedIn style={{ color: '#155724' }} />,
-      color: '#d4edda',
-      filter: { inspection_is_finished: true },
-      format: formatHours,
-    },
-    {
-      key: 'avg_contract_time',
-      label: 'Tempo médio em contratos',
-      value: indicators?.avg_contract_time || '-',
-      icon: <HourglassTop style={{ color: '#856404' }} />,
-      color: '#fff3cd',
-      filter: { inspection_is_pending: true },
-    },
-    {
-      key: 'number_of_installations',
-      label: 'Número de instalações finalizadas',
-      value: indicators?.number_of_installations,
-      icon: <CheckCircle style={{ color: '#155724' }} />,
-      color: '#d4edda',
-      filter: { inspection_isnull: true },
-    },
-    {
-      key: 'sla_validation',
-      label: 'SLA de Validação',
-      value: (
-        <Typography variant="body2" fontSize={12} color="#856404">
-          Em desenvolvimento...
-        </Typography>
-      ),
-      icon: <PendingActions style={{ color: '#856404' }} />,
-      color: '#fff3cd',
-      filter: {},
-    },
-  ];
-
   const statusStats = [
     {
       key: 'scheduled',
@@ -111,7 +62,7 @@ const InspectionsDashboard = () => {
       icon: <AssignmentTurnedIn />,
       value: indicators?.installations_status_count?.Agendado || 0,
       color: '#E3F2FD',
-      filter: { installation_status: 'Agendado' }
+      filter: { installation_status__in: 'Agendado' }
     },
     {
       key: 'blocked',
@@ -119,7 +70,7 @@ const InspectionsDashboard = () => {
       icon: <Lock />,
       value: indicators?.installations_status_count?.Bloqueado || 0,
       color: '#FFEBEE',
-      filter: { installation_status: 'Bloqueado' }
+      filter: { installation_status__in: 'Bloqueado' }
     },
     {
       key: 'cancelled',
@@ -127,7 +78,7 @@ const InspectionsDashboard = () => {
       icon: <Cancel />,
       value: indicators?.installations_status_count?.Cancelado || 0,
       color: '#FFCDD2',
-      filter: { installation_status: 'Cancelado' }
+      filter: { installation_status__in: 'Cancelado' }
     },
     {
       key: 'in_construction',
@@ -135,7 +86,7 @@ const InspectionsDashboard = () => {
       icon: <ConstructionRounded />,
       value: indicators?.installations_status_count?.['Em obra'] || 0,
       color: '#FFF9C4',
-      filter: { installation_status: 'Em obra' }
+      filter: { installation_status__in: 'Em obra' }
     },
     {
       key: 'installed',
@@ -143,7 +94,7 @@ const InspectionsDashboard = () => {
       icon: <CheckCircle />,
       value: indicators?.installations_status_count?.Instalado || 0,
       color: '#C8E6C9',
-      filter: { installation_status: 'Instalado' }
+      filter: { installation_status__in: 'Instalado' }
     },
     {
       key: 'released',
@@ -151,7 +102,7 @@ const InspectionsDashboard = () => {
       icon: <LockOpen />,
       value: indicators?.installations_status_count?.Liberado || 0,
       color: '#E8F5E9',
-      filter: { installation_status: 'Liberado' }
+      filter: { installation_status__in: 'Liberado' }
     }
   ];
 
@@ -271,7 +222,7 @@ const InspectionsDashboard = () => {
   ];
 
   const handleKPIClick = (kpiType) => {
-    const kpiFilter = stats.find((stat) => stat.key === kpiType)?.filter;
+    const kpiFilter = statusStats.find((stat) => stat.key === kpiType)?.filter;
 
     if (kpiFilter && Object.keys(kpiFilter).length > 0) {
       clearFilters();
@@ -279,6 +230,7 @@ const InspectionsDashboard = () => {
         ...prevFilters,
         ...kpiFilter,
       }));
+      console.log('Filters:', filters);
     } else {
       clearFilters();
     }
@@ -305,39 +257,6 @@ const InspectionsDashboard = () => {
 
       {/* Indicadores */}
       <Box sx={{ width: '100%', mb: 2 }}>
-        <Typography variant="h6">Indicadores</Typography>
-        <Box
-          sx={{
-            width: '100%',
-            display: 'flex',
-            justifyContent: 'space-evenly',
-            gap: 2,
-            flexWrap: 'wrap',
-            mt: 1,
-            mb: 4,
-            background: '#f5f5f5',
-            p: 2,
-          }}
-        >
-          {stats.map(({ key, label, value, icon, color, filter, format }) => {
-            const isActive = filters && Object.keys(filters).some((fk) => fk in filter);
-            return (
-              <KPICard
-                key={key}
-                label={label}
-                value={value}
-                icon={icon}
-                color={color}
-                active={isActive}
-                loading={loadingIndicators}
-                format={format}
-                onClick={() => handleKPIClick(key)}
-              />
-            );
-          })}
-        </Box>
-      </Box>
-      <Box sx={{ width: '100%', mb: 2 }}>
         <Typography variant="h6">Status de Instalação</Typography>
         <Box
           sx={{
@@ -353,7 +272,9 @@ const InspectionsDashboard = () => {
           }}
         >
           {statusStats.map(({ key, label, value, icon, color, filter, format }) => {
-            const isActive = filters && Object.keys(filters).some((fk) => fk in filter);
+            const isActive = filter && Object.keys(filter).every(
+              (key) => filters[key] === filter[key]
+            );
             return (
               <KPICard
                 key={key}
