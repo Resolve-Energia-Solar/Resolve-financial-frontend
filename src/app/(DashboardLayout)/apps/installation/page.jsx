@@ -20,6 +20,9 @@ import filterConfig from './filterConfig';
 import { formatDate } from '@/utils/dateUtils';
 import { FilterContext } from '@/context/FilterContext';
 import { KPICard } from '@/app/components/charts/KPICard';
+import ScheduleOpinionChip from '@/app/components/apps/inspections/schedule/StatusChip/ScheduleOpinionChip';
+import DeliveryStatusChip from '@/app/components/apps/logistics/DeliveryStatusChip';
+import UserCard from '@/app/components/apps/users/userCard';
 
 const InspectionsDashboard = () => {
   const [loading, setLoading] = useState(true);
@@ -157,10 +160,10 @@ const InspectionsDashboard = () => {
     try {
       const response = await projectService.index({
         fields:
-          'id,project_number,sale.customer.complete_name,sale.signature_date,sale.status,sale.treadmill_counter,sale.branch.name,installation_status,sale.id',
+          'id,project_number,status,sale.customer.complete_name,sale.signature_date,sale.status,sale.treadmill_counter,sale.branch.name,installation_status,sale.id,sale.customer.address,sale.customer.neighborhood,inspection.final_service_opinion.name,team,supervisor,purchase_order_number,panels_count,delivery_status,is_released_to_installation,latest_installation',
         expand:
-          'sale,sale.customer,sale.branch,inspection',
-        metrics: 'installation_status',
+          'sale,sale.customer,sale.branch,inspection.final_service_opinion',
+        metrics: 'installation_status,delivery_status,installation_status,is_released_to_installation,installation_status,latest_installation',
         page: page + 1,
         limit: rowsPerPage,
         remove_termination_cancelled_and_pre_sale: true,
@@ -205,35 +208,65 @@ const InspectionsDashboard = () => {
 
   const columns = [
     {
-      field: 'project',
+      field: 'project_number',
       headerName: 'Projeto',
-      render: (r) => `${r.project_number} - ${r.sale?.customer?.complete_name}` || 'SEM NÚMERO',
+      render: (r) => `${r.project_number} - ${r.sale?.customer?.complete_name}`,
       sx: { opacity: 0.7 },
     },
     {
-      field: 'sale.branch',
-      headerName: 'Unidade',
-      render: (r) => r.sale?.branch?.name || '-',
-    },
-    {
-      field: 'sale.signature_date',
-      headerName: 'Data de Assinatura',
-      render: (r) => formatDate(r.sale?.signature_date),
-    },
-    {
       field: 'sale.status',
-      headerName: 'Status',
+      headerName: 'Status da Venda',
       render: (r) => <StatusChip status={r.sale?.status} />,
     },
     {
+      field: 'status',
+      headerName: 'Status do Projeto',
+      render: (r) => <StatusChip status={r.status} />,
+    },
+    {
+      field: 'inspection.status',
+      headerName: 'Status da Vistoria',
+      render: (r) => <ScheduleOpinionChip status={r.inspection?.final_service_opinion?.name} />,
+    },
+    {
+      field: 'is_released_to_installation',
+      headerName: 'Liberado para Instalação',
+      render: (r) => r.is_released_to_installation ? <Chip label="Sim" color="success" icon={<CheckCircle />} /> : <Chip label="Não" color="error" icon={<Cancel />} />,
+    },
+    {
+      field: 'delivery_status',
+      headerName: 'Status de Entrega',
+      render: (r) => <DeliveryStatusChip status={r.delivery_status} />,
+    },
+    {
       field: 'sale.treadmill_counter',
-      headerName: 'Contador',
+      headerName: 'Contador de Dias',
       render: (r) => <Chip label={r.sale?.treadmill_counter || '-'} variant="outlined" />,
     },
     {
-      field: 'installation_status',
-      headerName: 'Status de Instalação',
-      render: (r) => installationStatusChips[r.installation_status] || <Chip label="SEM STATUS" variant="outlined" />,
+      field: 'latest_installation.schedule_agent',
+      headerName: 'Equipe',
+      render: (r) => r.latest_installation?.schedule_agent ? <UserCard userId={r.latest_installation?.schedule_agent} /> : '-',
+    },
+    {
+      field: 'latest_installation.final_service_opinion_user',
+      headerName: 'Fiscal',
+      render: (r) => r.latest_installation?.final_service_opinion_user ? <UserCard userId={r.latest_installation?.final_service_opinion_user} /> : '-',
+    },
+    {
+      field: 'latest_installation.product_description',
+      headerName: 'Produto',
+      render: (r) => r.latest_installation?.product_description || '-',
+    },
+    {
+      field: 'latest_installation.complete_address',
+      headerName: 'Endereço',
+      render: (r) => r.latest_installation?.complete_address || '-',
+    },
+    {
+      field: 'latest_installation.neighborhood',
+      headerName: 'Bairro',
+      render: (r) => r.latest_installation?.neighborhood || '-',
     },
   ];
 
