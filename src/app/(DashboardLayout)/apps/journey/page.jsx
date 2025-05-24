@@ -135,7 +135,7 @@ const CustomerJourney = () => {
           'id',
           'sale.signature_date',
           'sale.contract_number',
-          'sale.treadmill_counter',
+          'journey_counter',
           'sale.customer.complete_name',
           'project_number',
           'sale.status',
@@ -494,7 +494,7 @@ const CustomerJourney = () => {
                       }}
                     >
                       <TableCell>
-                        <CounterChip counter={project.sale?.treadmill_counter || 0} projectId={project.id} />
+                        <CounterChip counter={project.journey_counter || 0} projectId={project.id} />
                       </TableCell>
                       <TableCell sx={{ textWrap: 'nowrap' }}>
                         {project.sale?.signature_date

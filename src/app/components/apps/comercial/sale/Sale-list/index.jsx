@@ -135,7 +135,7 @@ const SaleList = () => {
           'is_released_to_engineering',
           'created_at',
           'branch.name',
-          'treadmill_counter',
+          'journey_counter',
         ],
         ...filters,
       });
@@ -475,7 +475,7 @@ const SaleList = () => {
                       )}
                     </TableCell>
                     <TableCell>
-                      <CounterChip counter={item.treadmill_counter || 0} />
+                      <CounterChip counter={item.journey_counter || 0} />
                     </TableCell>
                     <TableCell>{item.customer.complete_name}</TableCell>
                     <TableCell>{item.contract_number}</TableCell>

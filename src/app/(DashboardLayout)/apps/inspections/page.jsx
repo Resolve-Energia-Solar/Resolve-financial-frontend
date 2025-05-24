@@ -72,7 +72,7 @@ const InspectionsDashboard = () => {
     try {
       const response = await projectService.index({
         fields:
-          'id,project_number,sale.customer.complete_name,sale.signature_date,sale.status,sale.treadmill_counter,sale.branch.name,inspection.schedule_date,inspection.final_service_opinion.name,inspection.final_service_opinion_date,inspection.final_service_opinion_user,sale.id',
+          'id,project_number,sale.customer.complete_name,sale.signature_date,sale.status,sale.journey_counter,sale.branch.name,inspection.schedule_date,inspection.final_service_opinion.name,inspection.final_service_opinion_date,inspection.final_service_opinion_user,sale.id',
         expand: 'sale,sale.customer,sale.branch,inspection',
         metrics: '',
         page: page + 1,
@@ -129,9 +129,9 @@ const InspectionsDashboard = () => {
       render: (r) => <StatusChip status={r.sale?.status} />,
     },
     {
-      field: 'sale.treadmill_counter',
+      field: 'journey_counter',
       headerName: 'Contador',
-      render: (r) => <Chip label={r.sale?.treadmill_counter || '-'} variant="outlined" />,
+      render: (r) => <Chip label={r.journey_counter || '-'} variant="outlined" />,
     },
     {
       field: 'sale.branch',

@@ -98,7 +98,7 @@ const InspectionsDashboard = () => {
     try {
       const response = await projectService.index({
         fields:
-          'id,project_number,status,sale.customer.complete_name,sale.signature_date,sale.status,sale.treadmill_counter,sale.branch.name,installation_status,sale.id,sale.customer.address,sale.customer.neighborhood,inspection.final_service_opinion.name,team,supervisor,purchase_order_number,panels_count,delivery_status,is_released_to_installation,latest_installation',
+          'id,project_number,status,sale.customer.complete_name,sale.signature_date,sale.status,journey_counter,sale.branch.name,installation_status,sale.id,sale.customer.address,sale.customer.neighborhood,inspection.final_service_opinion.name,team,supervisor,purchase_order_number,panels_count,delivery_status,is_released_to_installation,latest_installation',
         expand:
           'sale,sale.customer,sale.branch,inspection.final_service_opinion',
         metrics: 'installation_status,delivery_status,installation_status,is_released_to_installation,installation_status,latest_installation',
@@ -182,9 +182,9 @@ const InspectionsDashboard = () => {
       render: (r) => installationStatusChips[r.installation_status] || <Chip label="Indefinido" color="default" />,
     },
     {
-      field: 'sale.treadmill_counter',
+      field: 'journey_counter',
       headerName: 'Contador de Dias',
-      render: (r) => <Chip label={r.sale?.treadmill_counter || '-'} variant="outlined" />,
+      render: (r) => <Chip label={r.readmill_counter || '-'} variant="outlined" />,
     },
     {
       field: 'latest_installation.schedule_agent',
