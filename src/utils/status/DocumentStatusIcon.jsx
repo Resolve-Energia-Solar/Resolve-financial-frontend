@@ -22,6 +22,8 @@ const StatusChip = ({ status }) => {
         return { label: 'Cancelado', color: theme.palette.error.light, icon: <CancelIcon sx={{ color: '#fff' }} /> };
       case 'D':
         return { label: 'Distrato', color: theme.palette.secondary.light, icon: <RemoveCircleIcon sx={{ color: '#fff' }} /> };
+      case 'ED':
+        return { label: 'Em Processo de Distrato', color: theme.palette.secondary.light, icon: <RemoveCircleIcon sx={{ color: '#fff' }} /> };
       default:
         return { label: 'Desconhecido', color: theme.palette.grey.light, icon: <CancelIcon sx={{ color: '#fff' }} /> };
     }

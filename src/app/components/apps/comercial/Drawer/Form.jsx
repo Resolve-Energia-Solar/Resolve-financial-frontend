@@ -92,6 +92,7 @@ const EditDrawer = ({ saleId = null, onClosedModal = null, refresh }) => {
     { value: 'EA', label: 'Em Andamento' },
     { value: 'C', label: 'Cancelado' },
     { value: 'D', label: 'Distrato' },
+    { value: 'ED', label: 'Em Processo de Distrato' },
   ];
 
   const [value, setValue] = useState(0);

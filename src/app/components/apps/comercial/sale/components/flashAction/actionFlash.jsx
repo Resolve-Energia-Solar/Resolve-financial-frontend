@@ -44,6 +44,7 @@ export default function ActionFlash({ value }) {
     { value: 'EA', label: 'Em Andamento' },
     { value: 'C', label: 'Cancelado' },
     { value: 'D', label: 'Distrato' },
+    { value: 'ED', label: 'Em Processo de Distrato' },
   ];
 
   const handleClickOpen = () => {
