@@ -211,9 +211,9 @@ const InstallationsDashboard = () => {
       render: (r) => r.latest_installation?.final_service_opinion_user ? <UserCard userId={r.latest_installation?.final_service_opinion_user} /> : '-',
     },
     {
-      field: 'latest_installation.product_description',
-      headerName: 'Produto',
-      render: (r) => r.latest_installation?.product_description || '-',
+      field: 'latest_installation.panel_count',
+      headerName: 'Qtd. de Módulos',
+      render: (r) => r.latest_installation?.panel_count || '-',
     },
     {
       field: 'latest_installation.complete_address',
