@@ -122,7 +122,7 @@ const CreateSchedulePage = () => {
             </li>
           ));
           enqueueSnackbar(
-            <div>
+            <div style={{maxWidth: '400px'}}>
               <Typography variant="body1">{message}</Typography>
               <Typography variant="body2">Horários disponíveis:</Typography>
               <ul>{timeSlots}</ul>
