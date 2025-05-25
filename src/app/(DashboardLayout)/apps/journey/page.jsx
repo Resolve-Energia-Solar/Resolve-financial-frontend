@@ -146,6 +146,7 @@ const CustomerJourney = () => {
           'field_services.status',
           'field_services.schedule_date'
         ],
+        metrics: 'journey_counter',
         ordering: orderDirection === 'desc' ? order : `-${order}`,
         ...filters,
       })

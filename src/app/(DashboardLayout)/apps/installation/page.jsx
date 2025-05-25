@@ -23,7 +23,7 @@ import ScheduleOpinionChip from '@/app/components/apps/inspections/schedule/Stat
 import DeliveryStatusChip from '@/app/components/apps/logistics/DeliveryStatusChip';
 import UserCard from '@/app/components/apps/users/userCard';
 
-const InspectionsDashboard = () => {
+const InstallationsDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [projects, setProjects] = useState([]);
   const [indicators, setIndicators] = useState({
@@ -101,7 +101,7 @@ const InspectionsDashboard = () => {
           'id,project_number,status,sale.customer.complete_name,sale.signature_date,sale.status,journey_counter,sale.branch.name,installation_status,sale.id,sale.customer.address,sale.customer.neighborhood,inspection.final_service_opinion.name,team,supervisor,purchase_order_number,panels_count,delivery_status,is_released_to_installation,latest_installation',
         expand:
           'sale,sale.customer,sale.branch,inspection.final_service_opinion',
-        metrics: 'installation_status,delivery_status,installation_status,is_released_to_installation,installation_status,latest_installation',
+        metrics: 'journey_counter,installation_status,delivery_status,is_released_to_installation,latest_installation',
         page: page + 1,
         limit: rowsPerPage,
         remove_termination_cancelled_and_pre_sale: true,
@@ -184,7 +184,7 @@ const InspectionsDashboard = () => {
     {
       field: 'journey_counter',
       headerName: 'Contador de Dias',
-      render: (r) => <Chip label={r.readmill_counter || '-'} variant="outlined" />,
+      render: (r) => <Chip label={r.journey_counter || '-'} variant="outlined" />,
     },
     {
       field: 'latest_installation.schedule_agent',
@@ -357,4 +357,4 @@ const InspectionsDashboard = () => {
   );
 };
 
-export default InspectionsDashboard;
+export default InstallationsDashboard;

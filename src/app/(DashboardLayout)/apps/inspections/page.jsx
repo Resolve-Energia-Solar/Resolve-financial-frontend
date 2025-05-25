@@ -72,9 +72,9 @@ const InspectionsDashboard = () => {
     try {
       const response = await projectService.index({
         fields:
-          'id,project_number,sale.customer.complete_name,sale.signature_date,sale.status,sale.journey_counter,sale.branch.name,inspection.schedule_date,inspection.final_service_opinion.name,inspection.final_service_opinion_date,inspection.final_service_opinion_user,sale.id',
+          'id,project_number,sale.customer.complete_name,sale.signature_date,sale.status,journey_counter,sale.branch.name,inspection.schedule_date,inspection.final_service_opinion.name,inspection.final_service_opinion_date,inspection.final_service_opinion_user,sale.id',
         expand: 'sale,sale.customer,sale.branch,inspection',
-        metrics: '',
+        metrics: 'journey_counter',
         page: page + 1,
         limit: rowsPerPage,
         remove_termination_cancelled_and_pre_sale: true,
