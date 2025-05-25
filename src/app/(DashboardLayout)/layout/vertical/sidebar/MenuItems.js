@@ -172,7 +172,7 @@ const Menuitems = [
         id: uniqueId(),
         title: 'Instalação',
         icon: IconSolarPanel2,
-        href: '/apps/installations',
+        href: '/apps/installation',
         permissions: ['field_services.view_schedule'],
       },
       {
