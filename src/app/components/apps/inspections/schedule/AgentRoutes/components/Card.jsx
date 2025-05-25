@@ -29,6 +29,7 @@ import ModalChooseOption from '@/app/components/apps/inspections/schedule/AgentR
 export default function CardAgentRoutes({
   id,
   date,
+  freeTimeAgent,
   title,
   items = [],
   onItemClick,
@@ -74,7 +75,8 @@ export default function CardAgentRoutes({
     handleMenuClose();
   };
 
-  // Verifica se há pelo menos um item com latitude e longitude
+  const formatTime = (time) => time?.slice(0, 5);
+
   const hasLocations = items.some((item) => item?.address?.latitude && item?.address?.longitude);
 
   return (
@@ -108,7 +110,7 @@ export default function CardAgentRoutes({
           sx={{ display: 'flex', alignItems: 'center', mb: 1 }}
         >
           <CheckCircleIcon fontSize="small" color="success" sx={{ mr: 1 }} />
-          Horário disponível: 08:00 - 18:00
+          Horário disponível: {formatTime(freeTimeAgent?.start_time)} - {formatTime(freeTimeAgent?.end_time)}
         </Typography>
 
         <Timeline

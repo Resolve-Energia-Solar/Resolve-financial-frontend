@@ -55,6 +55,8 @@ export default function AgentRoutes({ projectId = null }) {
   const permissions = useSelector((state) => state.user.permissions);
   const canEdit = permissions.includes('field_services.can_see_admin_schedules');
 
+  console.log('expand: ', agents)
+
   const handleRefresh = () => {
     setRefresh(!refresh);
   };
@@ -107,9 +109,10 @@ export default function AgentRoutes({ projectId = null }) {
           name: nameFilter,
           role: 'vistoriador',
           category: 1,
+          expand: 'free_time_agent',
           limit: rowsPerPage,
           page: page + 1,
-          fields: 'id,complete_name',
+          fields: 'id,complete_name,free_time_agent',
           date: format(date, 'yyyy-MM-dd'),
           order_by_schedule_count: 'desc',
         });
@@ -217,6 +220,7 @@ export default function AgentRoutes({ projectId = null }) {
               <CardAgentRoutes
                 id={agent.id}
                 date={selectedDate}
+                freeTimeAgent={agent.free_time_agent[0]}
                 title={agent.complete_name}
                 items={agent.schedules}
                 onItemClick={handleOpenModalSchedule}
