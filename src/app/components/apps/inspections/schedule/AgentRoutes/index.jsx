@@ -55,8 +55,6 @@ export default function AgentRoutes({ projectId = null }) {
   const permissions = useSelector((state) => state.user.permissions);
   const canEdit = permissions.includes('field_services.can_see_admin_schedules');
 
-  console.log('expand: ', agents)
-
   const handleRefresh = () => {
     setRefresh(!refresh);
   };
@@ -127,9 +125,9 @@ export default function AgentRoutes({ projectId = null }) {
             const scheduleResponse = await scheduleService.index({
               schedule_agent: agent.id,
               schedule_date__range: `${dateStr},${dateStr}`,
-              expand: 'address,service',
+              expand: 'address,service,customer',
               fields:
-                'id,address,schedule_date,schedule_end_date,schedule_start_time,schedule_end_time,service',
+                'id,address,schedule_date,schedule_end_date,schedule_start_time,schedule_end_time,service,customer',
               ordering: 'schedule_start_time',
               limit: 5,
             });
