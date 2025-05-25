@@ -283,7 +283,7 @@ const UpdateSchedulePage = ({ scheduleId = null, onClosedModal = null, onRefresh
             </li>
           ));
           enqueueSnackbar(
-            <div>
+            <div style={{maxWidth: '400px'}}>
               <Typography variant="body1">{message}</Typography>
               <Typography variant="body2">Horários disponíveis:</Typography>
               <ul>{timeSlots}</ul>
