@@ -22,6 +22,7 @@ import { KPICard } from '@/app/components/charts/KPICard';
 import ScheduleOpinionChip from '@/app/components/apps/inspections/schedule/StatusChip/ScheduleOpinionChip';
 import DeliveryStatusChip from '@/app/components/apps/logistics/DeliveryStatusChip';
 import UserCard from '@/app/components/apps/users/userCard';
+import JourneyCounterChip from '@/app/components/apps/project/Costumer-journey/JourneyCounterChip';
 
 const InstallationsDashboard = () => {
   const [loading, setLoading] = useState(true);
@@ -184,7 +185,7 @@ const InstallationsDashboard = () => {
     {
       field: 'journey_counter',
       headerName: 'Contador de Dias',
-      render: (r) => <Chip label={r.journey_counter || '-'} variant="outlined" />,
+      render: (r) => <JourneyCounterChip count={r.journey_counter} />,
     },
     {
       field: 'latest_installation.schedule_agent',

@@ -20,6 +20,7 @@ import ScheduleOpinionChip from '@/app/components/apps/inspections/schedule/Stat
 import { FilterContext } from '@/context/FilterContext';
 import UserCard from '@/app/components/apps/users/userCard';
 import { KPICard } from '@/app/components/charts/KPICard';
+import JourneyCounterChip from '@/app/components/apps/project/Costumer-journey/JourneyCounterChip';
 
 const InspectionsDashboard = () => {
   const [loading, setLoading] = useState(true);
@@ -131,7 +132,7 @@ const InspectionsDashboard = () => {
     {
       field: 'journey_counter',
       headerName: 'Contador',
-      render: (r) => <Chip label={r.journey_counter || '-'} variant="outlined" />,
+      render: (r) => <JourneyCounterChip count={r.journey_counter} />,
     },
     {
       field: 'sale.branch',

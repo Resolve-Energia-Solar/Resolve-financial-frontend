@@ -21,8 +21,7 @@ import {
   Box,
   TablePagination,
   Chip,
-  Grid,
-  useTheme,
+  Grid
 } from '@mui/material';
 import { AddBoxRounded, Lock as LockIcon, LockOpen as LockOpenIcon } from '@mui/icons-material';
 import { useRouter } from 'next/navigation';
@@ -50,10 +49,10 @@ import StatusChip from '@/utils/status/DocumentStatusIcon';
 import ChipSigned from '@/utils/status/ChipSigned';
 import PulsingBadge from '@/app/components/shared/PulsingBadge';
 import TableSortLabel from '@/app/components/shared/TableSortLabel';
-import CounterChip from '../CounterChip';
 import GenericFilterDrawer from '@/app/components/filters/GenericFilterDrawer';
 import filterConfig from './filterConfig';
 import { FilterContext } from '@/context/FilterContext';
+import JourneyCounterChip from '../../../project/Costumer-journey/JourneyCounterChip';
 
 const SaleList = () => {
   const [salesList, setSalesList] = useState([]);
@@ -198,15 +197,6 @@ const SaleList = () => {
       setOrder(field);
       setOrderDirection('asc');
     }
-  };
-
-  const theme = useTheme();
-
-  const getBgColor = (counter, homologado) => {
-    if (homologado) return theme.palette.success.main;
-    const ratio = Math.min(counter, 40) / 40;
-    const hue = (1 - ratio) * 120;
-    return `hsl(${hue}, 100%, 40%)`;
   };
 
   return (
@@ -472,17 +462,8 @@ const SaleList = () => {
                       {Array.isArray(item.projects) && item.projects.length > 0 ? (
                         <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                           {item.projects.map((project) => {
-                            const bg = getBgColor(project.journey_counter || 0, item.is_homologated);
                             return (
-                              <Chip
-                                key={project.id}
-                                label={`${project.journey_counter || 0} dias`}
-                                size="small"
-                                sx={{
-                                  bgcolor: bg,
-                                  color: theme.palette.getContrastText(bg),
-                                }}
-                              />
+                              <JourneyCounterChip key={project.id} count={project.journey_counter} />
                             );
                           })}
                         </Box>
