@@ -37,6 +37,7 @@ const InstallationsDashboard = () => {
   const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [ordering, setOrdering] = useState('-created_at');
   const [totalRows, setTotalRows] = useState(0);
   const [openDrawer, setOpenDrawer] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
@@ -105,6 +106,7 @@ const InstallationsDashboard = () => {
         metrics: 'journey_counter,installation_status,delivery_status,is_released_to_installation,latest_installation',
         page: page + 1,
         limit: rowsPerPage,
+        ordering,
         remove_termination_cancelled_and_pre_sale: true,
         ...filters,
       });
@@ -115,7 +117,7 @@ const InstallationsDashboard = () => {
     } finally {
       setLoading(false);
     }
-  }, [page, rowsPerPage, filters, enqueueSnackbar]);
+  }, [page, rowsPerPage, filters, ordering, enqueueSnackbar]);
 
   const fetchIndicators = useCallback(async () => {
     setLoadingIndicators(true);
@@ -132,7 +134,17 @@ const InstallationsDashboard = () => {
   useEffect(() => {
     fetchProjects();
     fetchIndicators();
-  }, [fetchProjects, fetchIndicators, filters, refresh]);
+  }, [fetchProjects, fetchIndicators, filters, ordering, refresh]);
+
+  const handleSort = (field) => {
+    console.log('Sorting by:', field);
+    setPage(0);
+    if (ordering === field) {
+      setOrdering(`-${field}`);
+    } else {
+      setOrdering(field);
+    }
+  };
 
   const BCrumb = [{ to: '/', title: 'Home' }, { title: 'Instalação' }];
 
@@ -186,6 +198,7 @@ const InstallationsDashboard = () => {
       field: 'journey_counter',
       headerName: 'Contador de Dias',
       render: (r) => <JourneyCounterChip count={r.journey_counter} />,
+      sortable: true
     },
     {
       field: 'latest_installation.schedule_agent',
@@ -329,9 +342,18 @@ const InstallationsDashboard = () => {
         noWrap={true}
       >
         <Table.Head>
-          {columns.map((c) => (
-            <Table.Cell key={c.field} sx={{ fontWeight: 600, fontSize: '14px' }}>
-              {c.headerName}
+          {columns.map((col) => (
+            <Table.Cell
+              key={col.field}
+              sx={{
+                fontWeight: 600,
+                fontSize: '14px',
+                cursor: col.sortable ? 'pointer' : 'default',
+              }}
+              onClick={() => col.sortable && handleSort(col.field)}
+            >
+              {col.headerName}
+              {col.sortable && (ordering === col.field ? ' ▲' : ordering === `-${col.field}` ? ' ▼' : '')}
             </Table.Cell>
           ))}
         </Table.Head>
