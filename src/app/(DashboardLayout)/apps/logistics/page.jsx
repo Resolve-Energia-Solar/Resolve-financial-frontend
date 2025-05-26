@@ -7,9 +7,9 @@ import { useSnackbar } from 'notistack';
 import { Box, Chip, Typography } from '@mui/material';
 
 // Material UI Icons
-import { 
-  FilterAlt, 
-  LockOpen, 
+import {
+  FilterAlt,
+  LockOpen,
   RemoveCircleOutline,
   AccessTime as AccessTimeIcon,
   Block as BlockIcon,
@@ -32,6 +32,8 @@ import ProjectDetailDrawer from '@/app/components/apps/project/Costumer-journey/
 // Services and utilities
 import projectService from '@/services/projectService';
 import StatusChip from '@/utils/status/DocumentStatusIcon';
+import DeliveryStatusChip from '@/app/components/apps/logistics/DeliveryStatusChip';
+import PurchaseStatusChip from '@/app/components/apps/logistics/PurchaseStatusChip';
 import { formatDate } from '@/utils/dateUtils';
 
 // Filter Config
@@ -91,46 +93,6 @@ const LogisticsDashboard = () => {
     { to: '/', title: 'Home' },
     { title: 'Logística' },
   ];
-
-  const getPurchaseChipProps = (status) => {
-    switch (status) {
-      case 'Bloqueado':
-        return { label: status, color: 'error', icon: <BlockIcon /> };
-      case 'Liberado':
-        return { label: status, color: 'info', icon: <LockOpen /> };
-      case 'Pendente':
-        return { label: status, color: 'warning', icon: <HourglassEmptyIcon /> };
-      case 'Compra Realizada':
-        return { label: status, color: 'success', icon: <CheckCircleIcon /> };
-      case 'Cancelado':
-        return { label: status, color: 'error', icon: <CancelIcon /> };
-      case 'Distrato':
-        return { label: status, color: 'default', icon: <RemoveCircleOutlineIcon /> };
-      case 'Aguardando Previsão de Entrega':
-        return { label: status, color: 'info', icon: <AccessTimeIcon /> };
-      case 'Aguardando Pagamento':
-        return { label: status, color: 'warning', icon: <CreditCardIcon /> };
-      default:
-        return { label: status, color: 'default' };
-    }
-  };
-
-  const getDeliveryChipProps = (status) => {
-    switch (status) {
-      case 'Bloqueado':
-        return { label: status, color: 'error', icon: <BlockIcon /> };
-      case 'Liberado':
-        return { label: status, color: 'info', icon: <LockOpen /> };
-      case 'Agendado':
-        return { label: status, color: 'info', icon: <EventIcon /> };
-      case 'Entregue':
-        return { label: status, color: 'success', icon: <CheckCircleIcon /> };
-      case 'Cancelado':
-        return { label: status, color: 'error', icon: <CancelIcon /> };
-      default:
-        return { label: status, color: 'default' };
-    }
-  };
 
   // Build purchase indicators with vivid icon colors
   const purchaseStats = Object.entries(indicators.purchase_status).map(([status, count]) => {
@@ -230,12 +192,12 @@ const LogisticsDashboard = () => {
     {
       field: 'purchase_status',
       headerName: 'Status da Compra',
-      render: r => <Chip {...getPurchaseChipProps(r.purchase_status)} />
+      render: r => <PurchaseStatusChip status={r.purchase_status} />,
     },
     {
       field: 'delivery_status',
       headerName: 'Status da Entrega',
-      render: r => <Chip {...getDeliveryChipProps(r.delivery_status)} />
+      render: r => <DeliveryStatusChip status={r.delivery_status} />
     },
     {
       field: 'expected_delivery_date',

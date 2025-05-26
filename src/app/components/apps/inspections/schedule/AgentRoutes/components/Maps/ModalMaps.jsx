@@ -7,8 +7,15 @@ import {
   Button,
   Box,
   CircularProgress,
+  useTheme,
 } from '@mui/material';
-import { LoadScript, GoogleMap, Marker, DirectionsRenderer } from '@react-google-maps/api';
+import {
+  LoadScript,
+  GoogleMap,
+  Marker,
+  DirectionsRenderer,
+  OverlayView,
+} from '@react-google-maps/api';
 
 const containerStyle = {
   width: '100%',
@@ -18,8 +25,10 @@ const containerStyle = {
 const ModalMaps = ({ open, onClose, points, apiKey }) => {
   const [map, setMap] = useState(null);
   const [directions, setDirections] = useState(null);
+  const [infoWindows, setInfoWindows] = useState([]);
   const [loading, setLoading] = useState(true);
   const [center, setCenter] = useState({ lat: -23.5505, lng: -46.6333 });
+  const theme = useTheme();
 
   useEffect(() => {
     if (points && points.length > 0) {
@@ -28,6 +37,13 @@ const ModalMaps = ({ open, onClose, points, apiKey }) => {
       setCenter({ lat: avgLat, lng: avgLng });
     }
   }, [points]);
+
+  const calculateMidPoint = (startLoc, endLoc) => {
+    return {
+      lat: (startLoc.lat() + endLoc.lat()) / 2,
+      lng: (startLoc.lng() + endLoc.lng()) / 2,
+    };
+  };
 
   const calculateRoute = useCallback(() => {
     if (!points || points.length < 2 || !window.google) {
@@ -51,6 +67,18 @@ const ModalMaps = ({ open, onClose, points, apiKey }) => {
       (result, status) => {
         if (status === window.google.maps.DirectionsStatus.OK) {
           setDirections(result);
+
+          // Criar InfoWindows com distância
+          const legs = result.routes[0].legs;
+          const infos = legs.map((leg) => {
+            const mid = calculateMidPoint(leg.start_location, leg.end_location);
+            return {
+              position: mid,
+              text: leg.distance.text,
+            };
+          });
+
+          setInfoWindows(infos);
         } else {
           console.error(`Error fetching directions: ${status}`);
         }
@@ -59,15 +87,12 @@ const ModalMaps = ({ open, onClose, points, apiKey }) => {
     );
   }, [points]);
 
-  // Efeito principal que dispara o cálculo da rota
   useEffect(() => {
     if (open) {
       setLoading(true);
-      // Timeout para garantir que o Google Maps está carregado
       const timer = setTimeout(() => {
         calculateRoute();
       }, 300);
-
       return () => clearTimeout(timer);
     }
   }, [open, calculateRoute]);
@@ -120,11 +145,39 @@ const ModalMaps = ({ open, onClose, points, apiKey }) => {
                 />
               ))}
 
+              {/* Rota desenhada */}
               {directions && <DirectionsRenderer directions={directions} />}
+
+              {/* Distâncias com OverlayView (sem botão X) */}
+              {infoWindows.map((info, index) => (
+                <OverlayView
+                  key={`overlay-${index}`}
+                  position={info.position}
+                  mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
+                >
+                  <Box
+                    sx={{
+                      background: theme.palette.primary.main,
+                      padding: '4px 30px',
+                      color: 'white',
+                      borderRadius: '4px',
+                      display: 'flex',
+                      fontSize: '13px',
+                      justifyContent: 'center',
+                      boxShadow: '0 2px 6px rgba(0,0,0,0.3)',
+                      fontWeight: 'bold',
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    {info.text}
+                  </Box>
+                </OverlayView>
+              ))}
             </GoogleMap>
           </LoadScript>
         </Box>
       </DialogContent>
+
       <DialogActions>
         <Button onClick={onClose} color="primary">
           Fechar
