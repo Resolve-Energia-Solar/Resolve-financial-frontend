@@ -146,7 +146,7 @@ export default function ConstructionsTab({ projectId, viewOnly = false }) {
 
     const statusMap = {
         P: { label: 'Pendente', color: 'warning' },
-        E: { label: 'Em Andamento', color: 'info' },
+        EA: { label: 'Em Andamento', color: 'info' },
         C: { label: 'Cancelada', color: 'error' },
         F: { label: 'Finalizada', color: 'success' },
     };
