@@ -35,7 +35,7 @@ import HasPermission from '@/app/components/permissions/HasPermissions';
 import SendContractButton from '../../../contractSubmissions/Send-contract';
 import ContractSubmissions from '../../../contractSubmissions/contract-list';
 import SchedulesInspections from '../../../project/components/SchedulesInspections';
-// import History from '@/app/components/apps/history';
+import History from '@/app/components/apps/history';
 import Comment from '../../../comment';
 import TagList from '@/app/components/tags/TagList';
 import AutoCompleteReasonMultiple from '../components/auto-complete/Auto-Input-Reasons';
@@ -506,9 +506,9 @@ const EditSaleTabs = ({
             <ContractSubmissions sale={saleData} />
           </TabPanel>
 
-          {/* <TabPanel value={value} index={7}>
+          <TabPanel value={value} index={7}>
             <History contentType={saleContentTypeId} objectId={id_sale} />
-          </TabPanel> */}
+          </TabPanel>
 
           <TabPanel value={value} index={8}>
             <Comment appLabel={'resolve_crm'} model={'sale'} objectId={id_sale} />
