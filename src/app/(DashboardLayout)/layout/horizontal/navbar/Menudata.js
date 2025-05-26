@@ -180,7 +180,7 @@ const Menuitems = [
         title: 'Obras',
         icon: IconBuilding,
         href: '/apps/constructions',
-        permissions: ['resolve_crm.can_manage_journey'],
+        permissions: ['engineering.view_civilconstruction'],
       },
     ],
   },
