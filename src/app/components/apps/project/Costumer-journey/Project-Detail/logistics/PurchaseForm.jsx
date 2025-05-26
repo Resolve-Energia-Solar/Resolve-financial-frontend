@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Button, TextField, MenuItem, Grid, Box } from "@mui/material";
+import { Button, TextField, MenuItem, Grid, Box, CircularProgress } from "@mui/material";
 import purchaseService from "@/services/purchaseService";
 import GenericAsyncAutocompleteInput from "@/app/components/filters/GenericAsyncAutocompleteInput";
 import projectService from "@/services/projectService";
@@ -25,15 +25,18 @@ export default function PurchaseForm({ projectId, purchaseId = null, onSave }) {
     });
     const [errors, setErrors] = useState({});
     const [project, setProject] = useState(null);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         const loadProject = async () => {
             if (projectId) {
+                setLoading(true);
                 const data = await projectService.find(projectId, {
                     expand: "sale.customer",
                     fields: "id,project_number,sale.customer"
                 });
                 setProject(data);
+                setLoading(false);
             }
         };
         loadProject();
@@ -63,6 +66,7 @@ export default function PurchaseForm({ projectId, purchaseId = null, onSave }) {
 
     const handleSubmit = async () => {
         try {
+            setLoading(true)
             if (purchaseId) {
                 await purchaseService.update(purchaseId, formData);
             } else {
@@ -72,7 +76,14 @@ export default function PurchaseForm({ projectId, purchaseId = null, onSave }) {
         } catch (err) {
             if (err.response?.data) {
                 setErrors(err.response.data);
+                if (err.response.status === 403) {
+                    console.error('Você não tem permissão para realizar esta ação.');
+                    return;
+                }
+                console.error('Erro ao salvar a compra. Verifique os campos e tente novamente.');
             }
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -277,7 +288,7 @@ export default function PurchaseForm({ projectId, purchaseId = null, onSave }) {
 
                 {/* Botão Salvar */}
                 <Grid item xs={12}>
-                    <Button variant="contained" onClick={handleSubmit} fullWidth sx={{ padding: '10px' }}>
+                    <Button variant="contained" onClick={handleSubmit} fullWidth sx={{ padding: '10px' }} disabled={loading} startIcon={loading && <CircularProgress size={20} />}>
                         Salvar
                     </Button>
                 </Grid>
