@@ -20,6 +20,7 @@ import ScheduleOpinionChip from '@/app/components/apps/inspections/schedule/Stat
 import { FilterContext } from '@/context/FilterContext';
 import UserCard from '@/app/components/apps/users/userCard';
 import { KPICard } from '@/app/components/charts/KPICard';
+import JourneyCounterChip from '@/app/components/apps/project/Costumer-journey/JourneyCounterChip';
 
 const InspectionsDashboard = () => {
   const [loading, setLoading] = useState(true);
@@ -72,9 +73,9 @@ const InspectionsDashboard = () => {
     try {
       const response = await projectService.index({
         fields:
-          'id,project_number,sale.customer.complete_name,sale.signature_date,sale.status,sale.treadmill_counter,sale.branch.name,inspection.schedule_date,inspection.final_service_opinion.name,inspection.final_service_opinion_date,inspection.final_service_opinion_user,sale.id',
+          'id,project_number,sale.customer.complete_name,sale.signature_date,sale.status,journey_counter,sale.branch.name,inspection.schedule_date,inspection.final_service_opinion.name,inspection.final_service_opinion_date,inspection.final_service_opinion_user,sale.id',
         expand: 'sale,sale.customer,sale.branch,inspection',
-        metrics: '',
+        metrics: 'journey_counter',
         page: page + 1,
         limit: rowsPerPage,
         remove_termination_cancelled_and_pre_sale: true,
@@ -129,9 +130,9 @@ const InspectionsDashboard = () => {
       render: (r) => <StatusChip status={r.sale?.status} />,
     },
     {
-      field: 'sale.treadmill_counter',
+      field: 'journey_counter',
       headerName: 'Contador',
-      render: (r) => <Chip label={r.sale?.treadmill_counter || '-'} variant="outlined" />,
+      render: (r) => <JourneyCounterChip count={r.journey_counter} />,
     },
     {
       field: 'sale.branch',

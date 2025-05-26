@@ -22,8 +22,9 @@ import { KPICard } from '@/app/components/charts/KPICard';
 import ScheduleOpinionChip from '@/app/components/apps/inspections/schedule/StatusChip/ScheduleOpinionChip';
 import DeliveryStatusChip from '@/app/components/apps/logistics/DeliveryStatusChip';
 import UserCard from '@/app/components/apps/users/userCard';
+import JourneyCounterChip from '@/app/components/apps/project/Costumer-journey/JourneyCounterChip';
 
-const InspectionsDashboard = () => {
+const InstallationsDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [projects, setProjects] = useState([]);
   const [indicators, setIndicators] = useState({
@@ -36,6 +37,7 @@ const InspectionsDashboard = () => {
   const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [ordering, setOrdering] = useState('-created_at');
   const [totalRows, setTotalRows] = useState(0);
   const [openDrawer, setOpenDrawer] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
@@ -98,12 +100,13 @@ const InspectionsDashboard = () => {
     try {
       const response = await projectService.index({
         fields:
-          'id,project_number,status,sale.customer.complete_name,sale.signature_date,sale.status,sale.treadmill_counter,sale.branch.name,installation_status,sale.id,sale.customer.address,sale.customer.neighborhood,inspection.final_service_opinion.name,team,supervisor,purchase_order_number,panels_count,delivery_status,is_released_to_installation,latest_installation',
+          'id,project_number,status,sale.customer.complete_name,sale.signature_date,sale.status,journey_counter,sale.branch.name,installation_status,sale.id,sale.customer.address,sale.customer.neighborhood,inspection.final_service_opinion.name,team,supervisor,purchase_order_number,panels_count,delivery_status,is_released_to_installation,latest_installation',
         expand:
           'sale,sale.customer,sale.branch,inspection.final_service_opinion',
-        metrics: 'installation_status,delivery_status,installation_status,is_released_to_installation,installation_status,latest_installation',
+        metrics: 'journey_counter,installation_status,delivery_status,is_released_to_installation,latest_installation',
         page: page + 1,
         limit: rowsPerPage,
+        ordering,
         remove_termination_cancelled_and_pre_sale: true,
         ...filters,
       });
@@ -114,7 +117,7 @@ const InspectionsDashboard = () => {
     } finally {
       setLoading(false);
     }
-  }, [page, rowsPerPage, filters, enqueueSnackbar]);
+  }, [page, rowsPerPage, filters, ordering, enqueueSnackbar]);
 
   const fetchIndicators = useCallback(async () => {
     setLoadingIndicators(true);
@@ -131,7 +134,17 @@ const InspectionsDashboard = () => {
   useEffect(() => {
     fetchProjects();
     fetchIndicators();
-  }, [fetchProjects, fetchIndicators, filters, refresh]);
+  }, [fetchProjects, fetchIndicators, filters, ordering, refresh]);
+
+  const handleSort = (field) => {
+    console.log('Sorting by:', field);
+    setPage(0);
+    if (ordering === field) {
+      setOrdering(`-${field}`);
+    } else {
+      setOrdering(field);
+    }
+  };
 
   const BCrumb = [{ to: '/', title: 'Home' }, { title: 'Instalação' }];
 
@@ -182,9 +195,10 @@ const InspectionsDashboard = () => {
       render: (r) => installationStatusChips[r.installation_status] || <Chip label="Indefinido" color="default" />,
     },
     {
-      field: 'sale.treadmill_counter',
+      field: 'journey_counter',
       headerName: 'Contador de Dias',
-      render: (r) => <Chip label={r.sale?.treadmill_counter || '-'} variant="outlined" />,
+      render: (r) => <JourneyCounterChip count={r.journey_counter} />,
+      sortable: true
     },
     {
       field: 'latest_installation.schedule_agent',
@@ -197,9 +211,9 @@ const InspectionsDashboard = () => {
       render: (r) => r.latest_installation?.final_service_opinion_user ? <UserCard userId={r.latest_installation?.final_service_opinion_user} /> : '-',
     },
     {
-      field: 'latest_installation.product_description',
-      headerName: 'Produto',
-      render: (r) => r.latest_installation?.product_description || '-',
+      field: 'latest_installation.panel_count',
+      headerName: 'Qtd. de Módulos',
+      render: (r) => r.latest_installation?.panel_count || '-',
     },
     {
       field: 'latest_installation.complete_address',
@@ -328,9 +342,18 @@ const InspectionsDashboard = () => {
         noWrap={true}
       >
         <Table.Head>
-          {columns.map((c) => (
-            <Table.Cell key={c.field} sx={{ fontWeight: 600, fontSize: '14px' }}>
-              {c.headerName}
+          {columns.map((col) => (
+            <Table.Cell
+              key={col.field}
+              sx={{
+                fontWeight: 600,
+                fontSize: '14px',
+                cursor: col.sortable ? 'pointer' : 'default',
+              }}
+              onClick={() => col.sortable && handleSort(col.field)}
+            >
+              {col.headerName}
+              {col.sortable && (ordering === col.field ? ' ▲' : ordering === `-${col.field}` ? ' ▼' : '')}
             </Table.Cell>
           ))}
         </Table.Head>
@@ -357,4 +380,4 @@ const InspectionsDashboard = () => {
   );
 };
 
-export default InspectionsDashboard;
+export default InstallationsDashboard;

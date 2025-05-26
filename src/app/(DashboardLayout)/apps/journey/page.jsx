@@ -24,11 +24,11 @@ import Breadcrumb from '@/app/(DashboardLayout)/layout/shared/breadcrumb/Breadcr
 import PageContainer from '@/app/components/container/PageContainer';
 import BlankCard from '@/app/components/shared/BlankCard';
 import TableSkeleton from '@/app/components/apps/comercial/sale/components/TableSkeleton';
-import CounterChip from '@/app/components/apps/comercial/sale/CounterChip';
 import GenericFilterDrawer from '@/app/components/filters/GenericFilterDrawer';
 
 import { FilterContext } from '@/context/FilterContext';
 import projectService from '@/services/projectService';
+import JourneyCounterChip from '@/app/components/apps/project/Costumer-journey/JourneyCounterChip';
 
 const BCrumb = [{ title: 'Início' }];
 
@@ -135,7 +135,7 @@ const CustomerJourney = () => {
           'id',
           'sale.signature_date',
           'sale.contract_number',
-          'sale.treadmill_counter',
+          'journey_counter',
           'sale.customer.complete_name',
           'project_number',
           'sale.status',
@@ -146,6 +146,7 @@ const CustomerJourney = () => {
           'field_services.status',
           'field_services.schedule_date'
         ],
+        metrics: 'journey_counter',
         ordering: orderDirection === 'desc' ? order : `-${order}`,
         ...filters,
       })
@@ -494,7 +495,7 @@ const CustomerJourney = () => {
                       }}
                     >
                       <TableCell>
-                        <CounterChip counter={project.sale?.treadmill_counter || 0} projectId={project.id} />
+                        <JourneyCounterChip counter={project.journey_counter} />
                       </TableCell>
                       <TableCell sx={{ textWrap: 'nowrap' }}>
                         {project.sale?.signature_date

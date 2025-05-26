@@ -380,12 +380,12 @@ const DetailsDrawer = ({ open, onClose, scheduleId, dialogMode = false }) => {
             <Comment appLabel="field_services" model="schedule" objectId={schedule.id} />
           </Box>
         )}
-        {tabValue === 2 && (
+        {/* {tabValue === 2 && (
           <Box sx={{ p: 2 }}>
             <History appLabel={'field_services'} model={'schedule'} objectId={schedule.id} />
           </Box>
-        )}
-        {answers && answers.results?.length > 0 && tabValue === 3 && (
+        )} */}
+        {answers && answers.results?.length > 0 && tabValue === 2 && (
           <Box sx={{ p: 2 }}>
             <AnswerForm answerData={answers} />
           </Box>

@@ -25,7 +25,7 @@ const statusOptions = [
     { value: 'P', label: 'Pendente' },
     { value: 'EA', label: 'Em Andamento' },
     { value: 'F', label: 'Finalizada' },
-    { value: 'C', label: 'Cancelado' }
+    { value: 'C', label: 'Cancelada' }
 ];
 const responsibilityOptions = [
     { value: 'C', label: 'Cliente' },

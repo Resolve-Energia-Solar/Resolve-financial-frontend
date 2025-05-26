@@ -107,9 +107,10 @@ export default function AgentRoutes({ projectId = null }) {
           name: nameFilter,
           role: 'vistoriador',
           category: 1,
+          expand: 'free_time_agent',
           limit: rowsPerPage,
           page: page + 1,
-          fields: 'id,complete_name',
+          fields: 'id,complete_name,free_time_agent',
           date: format(date, 'yyyy-MM-dd'),
           order_by_schedule_count: 'desc',
         });
@@ -124,9 +125,9 @@ export default function AgentRoutes({ projectId = null }) {
             const scheduleResponse = await scheduleService.index({
               schedule_agent: agent.id,
               schedule_date__range: `${dateStr},${dateStr}`,
-              expand: 'address,service',
+              expand: 'address,service,customer',
               fields:
-                'id,address,schedule_date,schedule_end_date,schedule_start_time,schedule_end_time,service',
+                'id,address,schedule_date,schedule_end_date,schedule_start_time,schedule_end_time,service,customer',
               ordering: 'schedule_start_time',
               limit: 5,
             });
@@ -217,6 +218,7 @@ export default function AgentRoutes({ projectId = null }) {
               <CardAgentRoutes
                 id={agent.id}
                 date={selectedDate}
+                freeTimeAgent={agent?.free_time_agent[0]}
                 title={agent.complete_name}
                 items={agent.schedules}
                 onItemClick={handleOpenModalSchedule}

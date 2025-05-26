@@ -1,5 +1,10 @@
 export default [
-  // Informações básicas do cliente e venda
+  {
+    key: 'date_range',
+    label: 'Data Início - Data Fim',
+    type: 'range',
+    inputType: 'date',
+  },
   {
     key: 'customer',
     label: 'Cliente',
@@ -13,8 +18,85 @@ export default [
       })),
   },
   {
+    key: 'final_service_options',
+    label: 'Parecer Final da Vistoria',
+    type: 'async-multiselect',
+    endpoint: '/api/service-opinions/',
+    queryParam: 'name__icontains',
+    extraParams: {
+      is_final_opinion: true,
+      limit: 20,
+      fields: ['id', 'name', 'service.name'],
+      expand: 'service',
+      service__in: process.env.NEXT_PUBLIC_SERVICE_INSPECTION_ID,
+    },
+    mapResponse: (data) =>
+      data.results.map((opinion) => ({
+        label: `${opinion.name} - ${opinion.service?.name}`,
+        value: opinion.id,
+      })),
+  },
+  {
+    key: 'designer_status',
+    label: 'Status do Projeto',
+    type: 'multiselect',
+    options: [
+      { value: 'P', label: 'Pendente' },
+      { value: 'CO', label: 'Concluído' },
+      { value: 'EA', label: 'Em Andamento' },
+      { value: 'C', label: 'Cancelado' },
+      { value: 'D', label: 'Distrato' },
+    ],
+  },
+  {
+    key: 'delivery_status',
+    label: 'Status de Entrega',
+    type: 'select',
+    options: [
+      { value: 'Bloqueado', label: 'Bloqueado' },
+      { value: 'Liberado', label: 'Liberado' },
+      { value: 'Agendado', label: 'Agendado' },
+      { value: 'Entregue', label: 'Entregue' },
+      { value: 'Cancelado', label: 'Cancelado' },
+    ],
+  },
+  {
+    key: 'is_released_to_installation',
+    label: 'Liberado para Instalação',
+    type: 'select',
+    options: [
+      { value: 'true', label: 'Sim' },
+      { value: 'false', label: 'Não' },
+      { value: 'null', label: 'Todos' },
+    ],
+  },
+  {
+    key: 'sale_status',
+    label: 'Status da Venda',
+    type: 'multiselect',
+    options: [
+      { value: 'P', label: 'Pendente' },
+      { value: 'CO', label: 'Concluído' },
+      { value: 'EA', label: 'Em Andamento' },
+      { value: 'C', label: 'Cancelado' },
+      { value: 'D', label: 'Distrato' },
+    ],
+  },
+  {
     key: 'borrower',
     label: 'Tomador',
+    type: 'async-autocomplete',
+    endpoint: '/api/users',
+    queryParam: 'complete_name__icontains',
+    mapResponse: (data) =>
+      data.results.map((user) => ({
+        label: user.complete_name,
+        value: user.id,
+      })),
+  },
+  {
+    key: 'homologator',
+    label: 'Homologador',
     type: 'async-autocomplete',
     endpoint: '/api/users',
     queryParam: 'complete_name__icontains',
@@ -54,20 +136,6 @@ export default [
     type: 'range',
     inputType: 'date',
   },
-  {
-    key: 'sale_status',
-    label: 'Status da Venda',
-    type: 'multiselect',
-    options: [
-      { value: 'P', label: 'Pendente' },
-      { value: 'CO', label: 'Concluído' },
-      { value: 'EA', label: 'Em Andamento' },
-      { value: 'C', label: 'Cancelado' },
-      { value: 'D', label: 'Distrato' },
-    ],
-  },
-
-  // Informações de pagamento e financeiras
   {
     key: 'payment_types',
     label: 'Tipo de Pagamentos',
@@ -109,16 +177,9 @@ export default [
       { value: 'C', label: 'Cancelada' },
     ],
   },
-
-  // Informações técnicas/produto
   {
-    key: 'product_kwp',
-    label: 'Kwp',
-    type: 'number',
-  },
-  {
-    key: 'material_list_is_completed',
-    label: 'Lista de Material',
+    key: 'is_released_to_engineering',
+    label: 'Liberado para Engenharia',
     type: 'select',
     options: [
       { value: 'true', label: 'Sim' },
@@ -126,43 +187,10 @@ export default [
       { value: 'null', label: 'Todos' },
     ],
   },
-
-  // Status de projeto e engenharia
   {
-    key: 'designer_status',
-    label: 'Status do Projeto',
-    type: 'multiselect',
-    options: [
-      { value: 'P', label: 'Pendente' },
-      { value: 'CO', label: 'Concluído' },
-      { value: 'EA', label: 'Em Andamento' },
-      { value: 'C', label: 'Cancelado' },
-      { value: 'D', label: 'Distrato' },
-    ],
-  },
-  {
-    key: 'homologator',
-    label: 'Homologador',
-    type: 'async-autocomplete',
-    endpoint: '/api/users',
-    queryParam: 'complete_name__icontains',
-    mapResponse: (data) =>
-      data.results.map((user) => ({
-        label: user.complete_name,
-        value: user.id,
-      })),
-  },
-  {
-    key: 'status',
-    label: 'Status de Homologação',
-    type: 'multiselect',
-    options: [
-      { value: 'P', label: 'Pendente' },
-      { value: 'CO', label: 'Concluído' },
-      { value: 'EA', label: 'Em Andamento' },
-      { value: 'C', label: 'Cancelado' },
-      { value: 'D', label: 'Distrato' },
-    ],
+    key: 'product_kwp',
+    label: 'Kwp',
+    type: 'number',
   },
   {
     key: 'trt_status',
@@ -176,69 +204,27 @@ export default [
     ],
   },
   {
-    key: 'is_released_to_engineering',
-    label: 'Liberado para Engenharia',
-    type: 'select',
-    options: [
-      { value: 'true', label: 'Sim' },
-      { value: 'false', label: 'Não' },
-      { value: 'null', label: 'Todos' }
-    ],
-  },
-
-  // Informações de fornecimento e instalação
-  {
-    key: 'supply_adquance',
-    label: 'Adequação de Fornecimento',
+    key: 'sale_marketing_campaign',
+    label: 'Campanha de Marketing',
     type: 'async-autocomplete',
-    endpoint: '/api/supply-adequances',
+    endpoint: '/api/marketing-campaigns',
     queryParam: 'name__icontains',
     mapResponse: (data) =>
-      data.results.map((supply) => ({
-        label: supply.name,
-        value: supply.id,
+      data.results.map((c) => ({
+        label: c.name,
+        value: c.id,
       })),
   },
   {
-    key: 'new_contract_number',
-    label: 'Nova UC',
-    type: 'select',
-    options: [
-      { value: 'true', label: 'Sim' },
-      { value: 'false', label: 'Não' },
-      { value: 'null', label: 'Todos' },
-    ],
-  },
-  {
-    key: 'access_opnion',
-    label: 'Parecer de Acesso',
-    type: 'select',
-    options: [
-      { value: 'liberado', label: 'Liberado' },
-      { value: 'bloqueado', label: 'Bloqueado' },
-      { value: 'null', label: 'Todos' },
-    ],
-  },
-  {
-    key: 'is_released_to_installation',
-    label: 'Liberado para Instalação',
-    type: 'select',
-    options: [
-      { value: 'true', label: 'Sim' },
-      { value: 'false', label: 'Não' },
-      { value: 'null', label: 'Todos' }
-    ],
-  },
-  {
-    key: 'delivery_status',
-    label: 'Status de Entrega',
-    type: 'select',
-    options: [
-      { value: 'Bloqueado', label: 'Bloqueado' },
-      { value: 'Liberado', label: 'Liberado' },
-      { value: 'Agendado', label: 'Agendado' },
-      { value: 'Entregue', label: 'Entregue' },
-      { value: 'Cancelado', label: 'Cancelado' },
-    ],
+    key: 'latest_installation_agent',
+    label: 'Agente da Instalação',
+    type: 'async-autocomplete',
+    endpoint: '/api/users',
+    queryParam: 'complete_name__icontains',
+    mapResponse: (data) =>
+      data.results.map((user) => ({
+        label: user.complete_name,
+        value: user.id,
+      })),
   },
 ];

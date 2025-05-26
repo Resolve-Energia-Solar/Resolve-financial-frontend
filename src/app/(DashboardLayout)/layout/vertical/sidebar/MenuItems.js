@@ -173,7 +173,7 @@ const Menuitems = [
         title: 'Instalação',
         icon: IconSolarPanel2,
         href: '/apps/installation',
-        permissions: ['resolve_crm.can_manage_journey'],
+        permissions: ['field_services.view_schedule'],
       },
       {
         id: uniqueId(),
