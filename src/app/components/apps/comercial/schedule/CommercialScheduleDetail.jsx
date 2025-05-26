@@ -26,7 +26,7 @@ import LocationOnIcon from '@mui/icons-material/LocationOn';
 import ScheduleIcon from '@mui/icons-material/Schedule';
 import Inventory2OutlinedIcon from '@mui/icons-material/Inventory2Outlined';
 import Comment from '../../comment';
-import History from '../../history';
+// import History from '../../history';
 import UserCard from '../../users/userCard';
 import ProductService from '@/services/productsService';
 import userService from '@/services/userService';
@@ -454,9 +454,9 @@ const CommercialScheduleDetail = ({ schedule }) => {
           {tabValue === 2 && (
             <Comment appLabel={'field_services'} model={'schedule'} objectId={scheduleId} />
           )}
-          {tabValue === 3 && (
+          {/* {tabValue === 3 && (
             <History appLabel={'field_services'} model={'schedule'} objectId={scheduleId} />
-          )}
+          )} */}
         </Box>
       </Paper>
     </Box>
