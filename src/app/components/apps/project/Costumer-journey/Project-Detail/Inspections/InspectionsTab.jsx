@@ -50,7 +50,7 @@ export default function InspectionsTab({ projectId, viewOnly = false }) {
                 fields: ['id', 'inspection']
             });
             if (response.inspection) {
-                setMainId(response.inspection.id);
+                setMainId(response.inspection);
             }
         } catch (error) {
             enqueueSnackbar(`Erro ao carregar a vistoria principal: ${error.message}`, { variant: "error" });

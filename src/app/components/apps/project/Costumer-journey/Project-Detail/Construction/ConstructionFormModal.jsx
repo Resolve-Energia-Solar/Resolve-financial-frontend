@@ -94,9 +94,15 @@ export default function ConstructionFormModal({
         }
         catch (error) {
             if (error.response) {
+                if (error.response.status === 403) {
+                    enqueueSnackbar('Você não tem permissão para realizar esta ação.', { variant: 'error' });
+                    return;
+                }
                 setFormErrors(error.response.data.error || error.response.data);
                 if (error.response.data.error) {
                     enqueueSnackbar(error.response.data.error, { variant: 'error' });
+                } else {
+                    enqueueSnackbar('Erro ao salvar a obra. Verifique os campos e tente novamente.', { variant: 'error' });
                 }
             } else {
                 console.error('Error saving construction:', error);

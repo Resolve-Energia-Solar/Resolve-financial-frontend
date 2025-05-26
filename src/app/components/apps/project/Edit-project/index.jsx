@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback } from 'react';
 import EditProjectTab from '@/app/components/apps/project/Edit-project/tabs/EditProject';
 import CheckListRateio from '@/app/components/apps/checklist/Checklist-list';
 import Attachments from '@/app/components/shared/Attachments';
-// import History from '@/app/components/apps/history';
+import History from '@/app/components/apps/history';
 import ListInspection from '../components/SchedulesInspections/list-Inspections';
 import RequestList from '../../request/Request-list';
 import UploadDocument from '../UploadDocument';
@@ -111,11 +111,11 @@ export default function EditProject({ projectData, projectId }) {
         </Box>
       </TabPanel>
 
-      {/* <TabPanel value={value} index={6}>
+      <TabPanel value={value} index={6}>
         <Box mt={2}>
           <History contentType={CONTENT_TYPE_PROJECT_ID} objectId={projectId} />
         </Box>
-      </TabPanel> */}
+      </TabPanel>
 
       <TabPanel value={value} index={7}>
         <Box mt={2}>

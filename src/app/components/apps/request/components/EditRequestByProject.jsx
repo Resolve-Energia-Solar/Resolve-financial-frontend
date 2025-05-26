@@ -16,7 +16,7 @@ import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import AttachFileIcon from '@mui/icons-material/AttachFile';
 import RequestPageIcon from '@mui/icons-material/RequestPage';
 import ListAltIcon from '@mui/icons-material/ListAlt';
-// import HistoryIcon from '@mui/icons-material/History';
+import HistoryIcon from '@mui/icons-material/History';
 import CommentIcon from '@mui/icons-material/Comment';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 
@@ -26,7 +26,7 @@ import Attachments from '@/app/components/shared/Attachments';
 import AttachmentDetails from '@/app/components/shared/AttachmentDetails';
 import RequestList from '../Request-list';
 import UploadDocument from '../../project/UploadDocument';
-// import History from '@/app/components/apps/history';
+import History from '@/app/components/apps/history';
 import ListInspection from '../../project/components/SchedulesInspections/list-Inspections';
 import Comment from '../../comment';
 import useDocumentTypesByFilter from '@/hooks/document-types/useDocumenTypeByFilter';
