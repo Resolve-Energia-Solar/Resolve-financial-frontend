@@ -12,22 +12,65 @@ export default [
       })),
   },
   {
-    key: 'project_number__icontains',
-    label: 'Número do Projeto',
-    type: 'text',
-  },
-  {
-    key: 'purchase_status',
-    label: 'Status de Compra',
+    key: 'construction_status__in',
+    label: 'Status da Obra',
     type: 'multiselect',
     options: [
-      { value: 'Bloqueado', label: 'Bloqueado' },
-      { value: 'Pendente', label: 'Pendente' },
-      { value: 'Compra Realizada', label: 'Compra Realizada' },
-      { value: 'Cancelado', label: 'Cancelado' },
-      { value: 'Distrato', label: 'Distrato' },
-      { value: 'Aguardando Previsão de Entrega', label: 'Aguardando Previsão de Entrega' },
-      { value: 'Aguardando Pagamento', label: 'Aguardando Pagamento' },
+      { value: 'P', label: 'Pendente' },
+      { value: 'F', label: 'Finalizada' },
+      { value: 'C', label: 'Cancelada' },
+      { value: 'EA', label: 'Em Andamento' },
+    ],
+  },
+  {
+    key: 'forecast_date',
+    label: 'Data de Previsão',
+    type: 'range',
+    inputType: 'date',
+  },
+  {
+    key: 'work_responsibility',
+    label: 'Responsabilidade da Obra',
+    type: 'multiselect',
+    options: [
+      { value: 'C', label: 'Cliente' },
+      { value: 'F', label: 'Franquia' },
+      { value: 'O', label: 'Centro de Operações' },
+    ],
+  },
+  {
+    key: 'is_customer_aware_of_construction',
+    label: 'Cliente Ciente',
+    type: 'select',
+    options: [
+      { value: 'true', label: 'Sim' },
+      { value: 'false', label: 'Não' },
+      { value: 'null', label: 'Todos' },
+    ],
+  },
+  {
+    key: 'final_service_opinion_name',
+    label: 'Parecer da vistoria',
+    type: 'multiselect',
+    options: [
+      { value: 'Aprovado com  Obra', label: 'Aprovado com  Obra' },
+      {
+        value: 'APROVADO COM OBRA + APROVADO COM SOMBREAMENTO',
+        label: 'Aprovado com  Obra e Sombreamento',
+      },
+      { value: 'Aprovado com Sombreamento', label: 'Aprovado com Sombreamento' },
+    ],
+  },
+  {
+    key: 'project_status',
+    label: 'Status do Projeto',
+    type: 'multiselect',
+    options: [
+      { value: 'P', label: 'Pendente' },
+      { value: 'CO', label: 'Concluído' },
+      { value: 'EA', label: 'Em Andamento' },
+      { value: 'C', label: 'Cancelado' },
+      { value: 'D', label: 'Distrato' },
     ],
   },
   {
@@ -43,10 +86,16 @@ export default [
     ],
   },
   {
-    key: 'expected_delivery_date__range',
-    label: 'Data de Previsão',
-    type: 'range',
-    inputType: 'date',
+    key: 'sale_status',
+    label: 'Status da Venda',
+    type: 'multiselect',
+    options: [
+      { value: 'P', label: 'Pendente' },
+      { value: 'CO', label: 'Concluído' },
+      { value: 'EA', label: 'Em Andamento' },
+      { value: 'C', label: 'Cancelado' },
+      { value: 'D', label: 'Distrato' },
+    ],
   },
   {
     key: 'borrower',
@@ -83,18 +132,6 @@ export default [
         label: user.complete_name,
         value: user.id,
       })),
-  },
-  {
-    key: 'sele_status',
-    label: 'Status da Venda',
-    type: 'multiselect',
-    options: [
-      { value: 'P', label: 'Pendente' },
-      { value: 'CO', label: 'Concluído' },
-      { value: 'EA', label: 'Em Andamento' },
-      { value: 'C', label: 'Cancelado' },
-      { value: 'D', label: 'Distrato' },
-    ],
   },
   {
     key: 'sale_branches',
@@ -166,18 +203,6 @@ export default [
     ],
   },
   {
-    key: 'status',
-    label: 'Status de Homologação',
-    type: 'multiselect',
-    options: [
-      { value: 'P', label: 'Pendente' },
-      { value: 'CO', label: 'Concluído' },
-      { value: 'EA', label: 'Em Andamento' },
-      { value: 'C', label: 'Cancelado' },
-      { value: 'D', label: 'Distrato' },
-    ],
-  },
-  {
     key: 'product_kwp',
     label: 'Kwp',
     type: 'number',
@@ -191,60 +216,6 @@ export default [
       { value: 'A', label: 'Aprovado' },
       { value: 'EA', label: 'Em Andamento' },
       { value: 'R', label: 'Recusado' },
-    ],
-  },
-  {
-    key: 'material_list_is_completed',
-    label: 'Lista de Material',
-    type: 'select',
-    options: [
-      { value: 'true', label: 'Sim' },
-      { value: 'false', label: 'Não' },
-      { value: 'null', label: 'Todos' },
-    ],
-  },
-  {
-    key: 'supply_adquance',
-    label: 'Adequação de Fornecimento',
-    type: 'async-autocomplete',
-    endpoint: '/api/supply-adequances',
-    queryParam: 'name__icontains',
-    mapResponse: (data) =>
-      data.results.map((supply) => ({
-        label: supply.name,
-        value: supply.id,
-      })),
-  },
-  {
-    key: 'new_contract_number',
-    label: 'Nova UC',
-    type: 'select',
-    options: [
-      { value: 'true', label: 'Sim' },
-      { value: 'false', label: 'Não' },
-      { value: 'null', label: 'Todos' },
-    ],
-  },
-  {
-    key: 'access_opnion',
-    label: 'Parecer de Acesso',
-    type: 'select',
-    options: [
-      { value: 'liberado', label: 'Liberado' },
-      { value: 'bloqueado', label: 'Bloqueado' },
-      { value: 'null', label: 'Todos' },
-    ],
-  },
-  {
-    key: 'designer_status',
-    label: 'Status do Projeto',
-    type: 'multiselect',
-    options: [
-      { value: 'P', label: 'Pendente' },
-      { value: 'CO', label: 'Concluído' },
-      { value: 'EA', label: 'Em Andamento' },
-      { value: 'C', label: 'Cancelado' },
-      { value: 'D', label: 'Distrato' },
     ],
   },
 ];

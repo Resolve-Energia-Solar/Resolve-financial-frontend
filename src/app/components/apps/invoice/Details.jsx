@@ -20,7 +20,7 @@ import SaleEditForm from "./components/accordeon-components/SaleEditForm";
 import PaymentCard from "./components/paymentList/card";
 import documentTypeService from "@/services/documentTypeService";
 import Comment from "../comment";
-import History from "../history";
+// import History from "../history";
 import saleService from "@/services/saleService";
 import Customer from "../sale/Customer";
 import Phones from "../sale/phones";
@@ -175,14 +175,14 @@ export default function Details({ id, refresh, customerId = null }) {
       title: "Comentários",
       content: <Comment appLabel={"resolve_crm"} objectId={id} model={"sale"} />,
     },
-    {
-      key: "history",
-      icon: <HistoryIcon />,
-      title: "Histórico",
-      content: (
-        <History objectId={id} contentType={CONTEXT_TYPE_SALE_ID} />
-      ),
-    },
+    // {
+    //   key: "history",
+    //   icon: <HistoryIcon />,
+    //   title: "Histórico",
+    //   content: (
+    //     <History objectId={id} contentType={CONTEXT_TYPE_SALE_ID} />
+    //   ),
+    // },
   ];
 
   return (

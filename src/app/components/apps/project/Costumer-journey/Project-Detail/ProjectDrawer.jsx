@@ -24,7 +24,7 @@ import LogisticsTab from './logistics/LogisticsTab';
 import InstallationsTab from './installations/InstallationsTab';
 import CommentsTab from './Comments/CommentsTab';
 import RequestList from '../../../request/Request-list';
-import History from '../../../history';
+// import History from '../../../history';
 import CheckListRateio from '../../../checklist/Checklist-list';
 import ConstructionsTab from './Construction/ConstructionsTab';
 import LossesTab from './Losses/LossesTab';
@@ -189,10 +189,10 @@ export default function ProjectDetailDrawer({ projectId, saleId, open, onClose, 
           ),
         },
         { label: 'Perdas', content: <LossesTab projectId={projectId} viewOnly={!canEdit} /> },
-        {
-          label: 'Histórico',
-          content: <History objectId={projectId} appLabel="resolve_crm" model="project" />,
-        },
+        // {
+        //   label: 'Histórico',
+        //   content: <History objectId={projectId} appLabel="resolve_crm" model="project" />,
+        // },
         {
           label: 'Comentários',
           content: <CommentsTab projectId={projectId} saleId={saleId} userPermissions={userPermissions} />,
