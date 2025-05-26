@@ -21,7 +21,7 @@ import {
   Box,
   TablePagination,
   Chip,
-  Grid,
+  Grid
 } from '@mui/material';
 import { AddBoxRounded, Lock as LockIcon, LockOpen as LockOpenIcon } from '@mui/icons-material';
 import { useRouter } from 'next/navigation';
@@ -49,10 +49,10 @@ import StatusChip from '@/utils/status/DocumentStatusIcon';
 import ChipSigned from '@/utils/status/ChipSigned';
 import PulsingBadge from '@/app/components/shared/PulsingBadge';
 import TableSortLabel from '@/app/components/shared/TableSortLabel';
-import CounterChip from '../CounterChip';
 import GenericFilterDrawer from '@/app/components/filters/GenericFilterDrawer';
 import filterConfig from './filterConfig';
 import { FilterContext } from '@/context/FilterContext';
+import JourneyCounterChip from '../../../project/Costumer-journey/JourneyCounterChip';
 
 const SaleList = () => {
   const [salesList, setSalesList] = useState([]);
@@ -120,23 +120,8 @@ const SaleList = () => {
         ordering: orderingParam,
         limit: rowsPerPage,
         page: page + 1,
-        expand: ['customer', 'branch', 'documents_under_analysis'],
-        fields: [
-          'id',
-          'documents_under_analysis',
-          'customer.complete_name',
-          'contract_number',
-          'signature_date',
-          'total_value',
-          'signature_status',
-          'is_pre_sale',
-          'status',
-          'final_service_opinion',
-          'is_released_to_engineering',
-          'created_at',
-          'branch.name',
-          'treadmill_counter',
-        ],
+        expand: 'customer,branch,documents_under_analysis,projects',
+        fields: 'id,documents_under_analysis,customer.complete_name,contract_number,signature_date,total_value,signature_status,is_pre_sale,status,final_service_opinion,is_released_to_engineering,created_at,branch.name,projects.journey_counter',
         ...filters,
       });
 
@@ -301,9 +286,8 @@ const SaleList = () => {
         <Grid container xs={2} justifyContent="flex-end" alignItems="center">
           {activeCount > 0 && (
             <Chip
-              label={`${activeCount} filtro${activeCount > 1 ? 's' : ''} ativo${
-                activeCount > 1 ? 's' : ''
-              }`}
+              label={`${activeCount} filtro${activeCount > 1 ? 's' : ''} ativo${activeCount > 1 ? 's' : ''
+                }`}
               onDelete={clearFilters}
               variant="outlined"
               size="small"
@@ -475,7 +459,17 @@ const SaleList = () => {
                       )}
                     </TableCell>
                     <TableCell>
-                      <CounterChip counter={item.treadmill_counter || 0} />
+                      {Array.isArray(item.projects) && item.projects.length > 0 ? (
+                        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                          {item.projects.map((project) => {
+                            return (
+                              <JourneyCounterChip key={project.id} count={project.journey_counter} />
+                            );
+                          })}
+                        </Box>
+                      ) : (
+                        <Chip label="-" size="small" variant="outlined" />
+                      )}
                     </TableCell>
                     <TableCell>{item.customer.complete_name}</TableCell>
                     <TableCell>{item.contract_number}</TableCell>
@@ -499,7 +493,7 @@ const SaleList = () => {
                     </TableCell>
                     <TableCell>
                       {Array.isArray(item.final_service_opinion) &&
-                      item.final_service_opinion[0].name ? (
+                        item.final_service_opinion[0].name ? (
                         <Chip
                           label={item.final_service_opinion[0].name}
                           color={

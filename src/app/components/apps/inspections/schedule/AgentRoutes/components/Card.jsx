@@ -29,6 +29,7 @@ import ModalChooseOption from '@/app/components/apps/inspections/schedule/AgentR
 export default function CardAgentRoutes({
   id,
   date,
+  freeTimeAgent,
   title,
   items = [],
   onItemClick,
@@ -74,7 +75,8 @@ export default function CardAgentRoutes({
     handleMenuClose();
   };
 
-  // Verifica se há pelo menos um item com latitude e longitude
+  const formatTime = (time) => time?.slice(0, 5);
+
   const hasLocations = items.some((item) => item?.address?.latitude && item?.address?.longitude);
 
   return (
@@ -108,7 +110,8 @@ export default function CardAgentRoutes({
           sx={{ display: 'flex', alignItems: 'center', mb: 1 }}
         >
           <CheckCircleIcon fontSize="small" color="success" sx={{ mr: 1 }} />
-          Horário disponível: 08:00 - 18:00
+          Horário disponível: {formatTime(freeTimeAgent?.start_time)} -{' '}
+          {formatTime(freeTimeAgent?.end_time)}
         </Typography>
 
         <Timeline
@@ -121,11 +124,12 @@ export default function CardAgentRoutes({
         >
           {items.map((item, index) => {
             const isHovered = hoveredIndex === index;
-            const IconComponent = canEdit && isHovered ? (
-              <EditIcon fontSize="small" />
-            ) : (
-              <DirectionsCarIcon fontSize="small" />
-            );
+            const IconComponent =
+              canEdit && isHovered ? (
+                <EditIcon fontSize="small" />
+              ) : (
+                <DirectionsCarIcon fontSize="small" />
+              );
 
             return (
               <TimelineItem
@@ -150,6 +154,16 @@ export default function CardAgentRoutes({
                   onClick={canEdit ? () => onItemClick(item.id) : undefined}
                   sx={{ py: '8px', px: 2, cursor: canEdit ? 'pointer' : 'default' }}
                 >
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      cursor: 'pointer',
+                      fontWeight: 600,
+                      '&:hover': { textDecoration: 'underline' },
+                    }}
+                  >
+                    {item.customer.complete_name}
+                  </Typography>
                   <Typography variant="body2" fontWeight={500}>
                     {item.schedule_date &&
                       item.schedule_date.split('T')[0].split('-').reverse().join('/')}{' '}

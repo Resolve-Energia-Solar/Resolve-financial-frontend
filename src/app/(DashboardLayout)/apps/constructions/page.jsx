@@ -105,7 +105,7 @@ const ConstructionsDashboard = () => {
     try {
       const response = await projectService.index({
         fields:
-          'id,project_number,sale.customer.complete_name,sale.signature_date,sale.status,sale.treadmill_counter,sale.branch.name,inspection.status,inspection.service_opinion,inspection.schedule_date,inspection.final_service_opinion.name,inspection.final_service_opinion_date,inspection.final_service_opinion_user,civil_construction.work_responsibility,civil_construction.status,civil_construction.is_customer_aware,civil_construction.start_date,civil_construction.end_date,constructions-indicators.total_pending,constructions-indicators.total_in_progress,constructions-indicators.total_finished,constructions-indicators.total_canceld,constructions-indicators.total_without_construction,constructions-indicators.total_not_applicable',
+          'id,project_number,sale.customer.complete_name,sale.signature_date,sale.status,sale.branch.name,inspection.status,inspection.service_opinion,inspection.schedule_date,inspection.final_service_opinion.name,inspection.final_service_opinion_date,inspection.final_service_opinion_user,civil_construction.work_responsibility,civil_construction.status,civil_construction.is_customer_aware,civil_construction.start_date,civil_construction.end_date,constructions-indicators.total_pending,constructions-indicators.total_in_progress,civil_construction.repass_value,constructions-indicators.total_finished,constructions-indicators.total_canceld,constructions-indicators.total_without_construction,constructions-indicators.total_not_applicable',
         expand:
           'sale,sale.customer,sale.branch,inspection,inspection.final_service_opinion,inspection.final_service_opinion_date,inspection,civil_construction,constructions-indicators',
         in_construction: true,
@@ -230,18 +230,24 @@ const ConstructionsDashboard = () => {
       render: (r) =>
         r.civil_construction[0]?.status ? (
           <Chip
-            label={CONSTRUCTION_STATUS_MAP[r.civil_construction[0]?.status].label}
-            color={CONSTRUCTION_STATUS_MAP[r.civil_construction[0]?.status].color}
-            icon={CONSTRUCTION_STATUS_MAP[r.civil_construction[0].status].icon}
+            label={CONSTRUCTION_STATUS_MAP[r?.civil_construction[0]?.status].label}
+            color={CONSTRUCTION_STATUS_MAP[r?.civil_construction[0]?.status].color}
+            icon={CONSTRUCTION_STATUS_MAP[r?.civil_construction[0]?.status].icon}
           />
         ) : (
           <Chip label="Sem Obra" color="default" icon={<RemoveCircleOutline />} />
         ),
-    },
+    }, 
     {
-      field: 'civil_construction.deadline',
-      headerName: 'Prazo',
-      render: (r) => formatDate(r?.civil_construction[0]?.deadline),
+      field: 'civil_construction.repass_value',
+      headerName: 'Valor de Repasse',
+      render: (r) =>
+        r?.civil_construction[0]?.repass_value !== undefined
+          ? new Intl.NumberFormat('pt-BR', {
+              style: 'currency',
+              currency: 'BRL',
+            }).format(r.civil_construction[0]?.repass_value || 0)
+          : '-',
     },
   ];
 

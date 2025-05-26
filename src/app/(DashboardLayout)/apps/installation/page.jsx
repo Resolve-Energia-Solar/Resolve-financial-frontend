@@ -8,7 +8,7 @@ import { Table } from '@/app/components/Table';
 import { TableHeader } from '@/app/components/TableHeader';
 import StatusChip from '@/utils/status/DocumentStatusIcon';
 import {
-  AssignmentTurnedIn, BuildCircle, FilterAlt, HourglassTop, PendingActions, LockOpen, Lock,
+  AssignmentTurnedIn, FilterAlt, LockOpen, Lock,
   Cancel,
   ConstructionRounded,
   CheckCircle
@@ -17,11 +17,14 @@ import ProjectDetailDrawer from '@/app/components/apps/project/Costumer-journey/
 import { Chip, Box, Typography } from '@mui/material';
 import GenericFilterDrawer from '@/app/components/filters/GenericFilterDrawer';
 import filterConfig from './filterConfig';
-import { formatDate } from '@/utils/dateUtils';
 import { FilterContext } from '@/context/FilterContext';
 import { KPICard } from '@/app/components/charts/KPICard';
+import ScheduleOpinionChip from '@/app/components/apps/inspections/schedule/StatusChip/ScheduleOpinionChip';
+import DeliveryStatusChip from '@/app/components/apps/logistics/DeliveryStatusChip';
+import UserCard from '@/app/components/apps/users/userCard';
+import JourneyCounterChip from '@/app/components/apps/project/Costumer-journey/JourneyCounterChip';
 
-const InspectionsDashboard = () => {
+const InstallationsDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [projects, setProjects] = useState([]);
   const [indicators, setIndicators] = useState({
@@ -34,72 +37,12 @@ const InspectionsDashboard = () => {
   const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [ordering, setOrdering] = useState('-created_at');
   const [totalRows, setTotalRows] = useState(0);
   const [openDrawer, setOpenDrawer] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
   const [selectedSaleId, setSelectedSaleId] = useState(null);
   const { enqueueSnackbar } = useSnackbar();
-
-  const formatHours = (hours) => {
-    if (typeof hours !== 'number' || isNaN(hours)) return '-';
-    if (hours >= 24) {
-      const days = (hours / 24).toFixed(1);
-      return `${days} dias`;
-    }
-    if (hours >= 1) {
-      return `${hours} horas`;
-    }
-    return `-`;
-  };
-
-  const stats = [
-    {
-      key: 'avg_time_installation_hours',
-      label: 'Tempo médio de instalação',
-      value: indicators?.avg_time_installation_hours,
-      icon: <BuildCircle style={{ color: '#155724' }} />,
-      color: '#d4edda',
-      filter: { inspection_is_finished: true },
-      format: formatHours,
-    },
-    {
-      key: 'released_clients_count',
-      label: 'Liberados para instalação',
-      value: indicators?.released_clients_count,
-      icon: <AssignmentTurnedIn style={{ color: '#155724' }} />,
-      color: '#d4edda',
-      filter: { inspection_is_finished: true },
-      format: formatHours,
-    },
-    {
-      key: 'avg_contract_time',
-      label: 'Tempo médio em contratos',
-      value: indicators?.avg_contract_time || '-',
-      icon: <HourglassTop style={{ color: '#856404' }} />,
-      color: '#fff3cd',
-      filter: { inspection_is_pending: true },
-    },
-    {
-      key: 'number_of_installations',
-      label: 'Número de instalações finalizadas',
-      value: indicators?.number_of_installations,
-      icon: <CheckCircle style={{ color: '#155724' }} />,
-      color: '#d4edda',
-      filter: { inspection_isnull: true },
-    },
-    {
-      key: 'sla_validation',
-      label: 'SLA de Validação',
-      value: (
-        <Typography variant="body2" fontSize={12} color="#856404">
-          Em desenvolvimento...
-        </Typography>
-      ),
-      icon: <PendingActions style={{ color: '#856404' }} />,
-      color: '#fff3cd',
-      filter: {},
-    },
-  ];
 
   const statusStats = [
     {
@@ -108,7 +51,7 @@ const InspectionsDashboard = () => {
       icon: <AssignmentTurnedIn />,
       value: indicators?.installations_status_count?.Agendado || 0,
       color: '#E3F2FD',
-      filter: { installation_status: 'Agendado' }
+      filter: { installation_status__in: 'Agendado' }
     },
     {
       key: 'blocked',
@@ -116,7 +59,7 @@ const InspectionsDashboard = () => {
       icon: <Lock />,
       value: indicators?.installations_status_count?.Bloqueado || 0,
       color: '#FFEBEE',
-      filter: { installation_status: 'Bloqueado' }
+      filter: { installation_status__in: 'Bloqueado' }
     },
     {
       key: 'cancelled',
@@ -124,7 +67,7 @@ const InspectionsDashboard = () => {
       icon: <Cancel />,
       value: indicators?.installations_status_count?.Cancelado || 0,
       color: '#FFCDD2',
-      filter: { installation_status: 'Cancelado' }
+      filter: { installation_status__in: 'Cancelado' }
     },
     {
       key: 'in_construction',
@@ -132,7 +75,7 @@ const InspectionsDashboard = () => {
       icon: <ConstructionRounded />,
       value: indicators?.installations_status_count?.['Em obra'] || 0,
       color: '#FFF9C4',
-      filter: { installation_status: 'Em obra' }
+      filter: { installation_status__in: 'Em obra' }
     },
     {
       key: 'installed',
@@ -140,7 +83,7 @@ const InspectionsDashboard = () => {
       icon: <CheckCircle />,
       value: indicators?.installations_status_count?.Instalado || 0,
       color: '#C8E6C9',
-      filter: { installation_status: 'Instalado' }
+      filter: { installation_status__in: 'Instalado' }
     },
     {
       key: 'released',
@@ -148,7 +91,7 @@ const InspectionsDashboard = () => {
       icon: <LockOpen />,
       value: indicators?.installations_status_count?.Liberado || 0,
       color: '#E8F5E9',
-      filter: { installation_status: 'Liberado' }
+      filter: { installation_status__in: 'Liberado' }
     }
   ];
 
@@ -157,12 +100,13 @@ const InspectionsDashboard = () => {
     try {
       const response = await projectService.index({
         fields:
-          'id,project_number,sale.customer.complete_name,sale.signature_date,sale.status,sale.treadmill_counter,sale.branch.name,installation_status,sale.id',
+          'id,project_number,status,sale.customer.complete_name,sale.signature_date,sale.status,journey_counter,sale.branch.name,installation_status,sale.id,sale.customer.address,sale.customer.neighborhood,inspection.final_service_opinion.name,team,supervisor,purchase_order_number,panels_count,delivery_status,is_released_to_installation,latest_installation',
         expand:
-          'sale,sale.customer,sale.branch,inspection',
-        metrics: 'installation_status',
+          'sale,sale.customer,sale.branch,inspection.final_service_opinion',
+        metrics: 'journey_counter,installation_status,delivery_status,is_released_to_installation,latest_installation',
         page: page + 1,
         limit: rowsPerPage,
+        ordering,
         remove_termination_cancelled_and_pre_sale: true,
         ...filters,
       });
@@ -173,7 +117,7 @@ const InspectionsDashboard = () => {
     } finally {
       setLoading(false);
     }
-  }, [page, rowsPerPage, filters, enqueueSnackbar]);
+  }, [page, rowsPerPage, filters, ordering, enqueueSnackbar]);
 
   const fetchIndicators = useCallback(async () => {
     setLoadingIndicators(true);
@@ -190,7 +134,17 @@ const InspectionsDashboard = () => {
   useEffect(() => {
     fetchProjects();
     fetchIndicators();
-  }, [fetchProjects, fetchIndicators, filters, refresh]);
+  }, [fetchProjects, fetchIndicators, filters, ordering, refresh]);
+
+  const handleSort = (field) => {
+    console.log('Sorting by:', field);
+    setPage(0);
+    if (ordering === field) {
+      setOrdering(`-${field}`);
+    } else {
+      setOrdering(field);
+    }
+  };
 
   const BCrumb = [{ to: '/', title: 'Home' }, { title: 'Instalação' }];
 
@@ -205,42 +159,81 @@ const InspectionsDashboard = () => {
 
   const columns = [
     {
-      field: 'project',
+      field: 'project_number',
       headerName: 'Projeto',
-      render: (r) => `${r.project_number} - ${r.sale?.customer?.complete_name}` || 'SEM NÚMERO',
+      render: (r) => `${r.project_number} - ${r.sale?.customer?.complete_name}`,
       sx: { opacity: 0.7 },
     },
     {
-      field: 'sale.branch',
-      headerName: 'Unidade',
-      render: (r) => r.sale?.branch?.name || '-',
-    },
-    {
-      field: 'sale.signature_date',
-      headerName: 'Data de Assinatura',
-      render: (r) => formatDate(r.sale?.signature_date),
-    },
-    {
       field: 'sale.status',
-      headerName: 'Status',
+      headerName: 'Status da Venda',
       render: (r) => <StatusChip status={r.sale?.status} />,
     },
     {
-      field: 'sale.treadmill_counter',
-      headerName: 'Contador',
-      render: (r) => <Chip label={r.sale?.treadmill_counter || '-'} variant="outlined" />,
+      field: 'status',
+      headerName: 'Status do Projeto',
+      render: (r) => <StatusChip status={r.status} />,
+    },
+    {
+      field: 'inspection.status',
+      headerName: 'Status da Vistoria',
+      render: (r) => <ScheduleOpinionChip status={r.inspection?.final_service_opinion?.name} />,
+    },
+    {
+      field: 'is_released_to_installation',
+      headerName: 'Liberado para Instalação',
+      render: (r) => r.is_released_to_installation ? <Chip label="Sim" color="success" icon={<CheckCircle />} /> : <Chip label="Não" color="error" icon={<Cancel />} />,
+    },
+    {
+      field: 'delivery_status',
+      headerName: 'Status de Entrega',
+      render: (r) => <DeliveryStatusChip status={r.delivery_status} />,
     },
     {
       field: 'installation_status',
       headerName: 'Status de Instalação',
-      render: (r) => installationStatusChips[r.installation_status] || <Chip label="SEM STATUS" variant="outlined" />,
+      render: (r) => installationStatusChips[r.installation_status] || <Chip label="Indefinido" color="default" />,
+    },
+    {
+      field: 'journey_counter',
+      headerName: 'Contador de Dias',
+      render: (r) => <JourneyCounterChip count={r.journey_counter} />,
+      sortable: true
+    },
+    {
+      field: 'latest_installation.schedule_agent',
+      headerName: 'Equipe',
+      render: (r) => r.latest_installation?.schedule_agent ? <UserCard userId={r.latest_installation?.schedule_agent} /> : '-',
+    },
+    {
+      field: 'latest_installation.final_service_opinion_user',
+      headerName: 'Fiscal',
+      render: (r) => r.latest_installation?.final_service_opinion_user ? <UserCard userId={r.latest_installation?.final_service_opinion_user} /> : '-',
+    },
+    {
+      field: 'latest_installation.panel_count',
+      headerName: 'Qtd. de Módulos',
+      render: (r) => r.latest_installation?.panel_count || '-',
+    },
+    {
+      field: 'latest_installation.complete_address',
+      headerName: 'Endereço',
+      render: (r) => r.latest_installation?.complete_address || '-',
+    },
+    {
+      field: 'latest_installation.neighborhood',
+      headerName: 'Bairro',
+      render: (r) => r.latest_installation?.neighborhood || '-',
     },
   ];
 
   const handleKPIClick = (kpiType) => {
-    const kpiFilter = stats.find((stat) => stat.key === kpiType)?.filter;
+    const kpiFilter = statusStats.find((stat) => stat.key === kpiType)?.filter;
+    const isAlreadyFiltered = kpiFilter && Object.keys(kpiFilter).every(
+      (key) => filters[key] === kpiFilter[key]
+    );
 
-    if (kpiFilter && Object.keys(kpiFilter).length > 0) {
+    if (kpiFilter && Object.keys(kpiFilter).length > 0 && !isAlreadyFiltered) {
       clearFilters();
       setFilters((prevFilters) => ({
         ...prevFilters,
@@ -272,39 +265,6 @@ const InspectionsDashboard = () => {
 
       {/* Indicadores */}
       <Box sx={{ width: '100%', mb: 2 }}>
-        <Typography variant="h6">Indicadores</Typography>
-        <Box
-          sx={{
-            width: '100%',
-            display: 'flex',
-            justifyContent: 'space-evenly',
-            gap: 2,
-            flexWrap: 'wrap',
-            mt: 1,
-            mb: 4,
-            background: '#f5f5f5',
-            p: 2,
-          }}
-        >
-          {stats.map(({ key, label, value, icon, color, filter, format }) => {
-            const isActive = filters && Object.keys(filters).some((fk) => fk in filter);
-            return (
-              <KPICard
-                key={key}
-                label={label}
-                value={value}
-                icon={icon}
-                color={color}
-                active={isActive}
-                loading={loadingIndicators}
-                format={format}
-                onClick={() => handleKPIClick(key)}
-              />
-            );
-          })}
-        </Box>
-      </Box>
-      <Box sx={{ width: '100%', mb: 2 }}>
         <Typography variant="h6">Status de Instalação</Typography>
         <Box
           sx={{
@@ -320,7 +280,9 @@ const InspectionsDashboard = () => {
           }}
         >
           {statusStats.map(({ key, label, value, icon, color, filter, format }) => {
-            const isActive = filters && Object.keys(filters).some((fk) => fk in filter);
+            const isActive = filter && Object.keys(filter).every(
+              (key) => filters[key] === filter[key]
+            );
             return (
               <KPICard
                 key={key}
@@ -380,9 +342,18 @@ const InspectionsDashboard = () => {
         noWrap={true}
       >
         <Table.Head>
-          {columns.map((c) => (
-            <Table.Cell key={c.field} sx={{ fontWeight: 600, fontSize: '14px' }}>
-              {c.headerName}
+          {columns.map((col) => (
+            <Table.Cell
+              key={col.field}
+              sx={{
+                fontWeight: 600,
+                fontSize: '14px',
+                cursor: col.sortable ? 'pointer' : 'default',
+              }}
+              onClick={() => col.sortable && handleSort(col.field)}
+            >
+              {col.headerName}
+              {col.sortable && (ordering === col.field ? ' ▲' : ordering === `-${col.field}` ? ' ▼' : '')}
             </Table.Cell>
           ))}
         </Table.Head>
@@ -409,4 +380,4 @@ const InspectionsDashboard = () => {
   );
 };
 
-export default InspectionsDashboard;
+export default InstallationsDashboard;

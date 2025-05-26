@@ -123,7 +123,7 @@ export default [
       })),
   },
   {
-    key: 'sele_status',
+    key: 'sale_status',
     label: 'Status da Venda',
     type: 'multiselect',
     options: [

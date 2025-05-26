@@ -1,5 +1,11 @@
 export default [
   {
+    key: 'date_range',
+    label: 'Data Início - Data Fim',
+    type: 'range',
+    inputType: 'date',
+  },
+  {
     key: 'customer',
     label: 'Cliente',
     type: 'async-autocomplete',
@@ -12,17 +18,34 @@ export default [
       })),
   },
   {
-    key: 'purchase_status',
-    label: 'Status de Compra',
-    type: 'select',
+    key: 'final_service_options',
+    label: 'Parecer Final da Vistoria',
+    type: 'async-multiselect',
+    endpoint: '/api/service-opinions/',
+    queryParam: 'name__icontains',
+    extraParams: {
+      is_final_opinion: true,
+      limit: 20,
+      fields: ['id', 'name', 'service.name'],
+      expand: 'service',
+      service__in: process.env.NEXT_PUBLIC_SERVICE_INSPECTION_ID,
+    },
+    mapResponse: (data) =>
+      data.results.map((opinion) => ({
+        label: `${opinion.name} - ${opinion.service?.name}`,
+        value: opinion.id,
+      })),
+  },
+  {
+    key: 'designer_status',
+    label: 'Status do Projeto',
+    type: 'multiselect',
     options: [
-      { value: 'Bloqueado', label: 'Bloqueado' },
-      { value: 'Pendente', label: 'Pendente' },
-      { value: 'Compra Realizada', label: 'Compra Realizada' },
-      { value: 'Cancelado', label: 'Cancelado' },
-      { value: 'Distrato', label: 'Distrato' },
-      { value: 'Aguardando Previsão de Entrega', label: 'Aguardando Previsão de Entrega' },
-      { value: 'Aguardando Pagamento', label: 'Aguardando Pagamento' },
+      { value: 'P', label: 'Pendente' },
+      { value: 'CO', label: 'Concluído' },
+      { value: 'EA', label: 'Em Andamento' },
+      { value: 'C', label: 'Cancelado' },
+      { value: 'D', label: 'Distrato' },
     ],
   },
   {
@@ -35,6 +58,28 @@ export default [
       { value: 'Agendado', label: 'Agendado' },
       { value: 'Entregue', label: 'Entregue' },
       { value: 'Cancelado', label: 'Cancelado' },
+    ],
+  },
+  {
+    key: 'is_released_to_installation',
+    label: 'Liberado para Instalação',
+    type: 'select',
+    options: [
+      { value: 'true', label: 'Sim' },
+      { value: 'false', label: 'Não' },
+      { value: 'null', label: 'Todos' },
+    ],
+  },
+  {
+    key: 'sale_status',
+    label: 'Status da Venda',
+    type: 'multiselect',
+    options: [
+      { value: 'P', label: 'Pendente' },
+      { value: 'CO', label: 'Concluído' },
+      { value: 'EA', label: 'Em Andamento' },
+      { value: 'C', label: 'Cancelado' },
+      { value: 'D', label: 'Distrato' },
     ],
   },
   {
@@ -72,18 +117,6 @@ export default [
         label: user.complete_name,
         value: user.id,
       })),
-  },
-  {
-    key: 'sele_status',
-    label: 'Status da Venda',
-    type: 'multiselect',
-    options: [
-      { value: 'P', label: 'Pendente' },
-      { value: 'CO', label: 'Concluído' },
-      { value: 'EA', label: 'Em Andamento' },
-      { value: 'C', label: 'Cancelado' },
-      { value: 'D', label: 'Distrato' },
-    ],
   },
   {
     key: 'sale_branches',
@@ -151,19 +184,7 @@ export default [
     options: [
       { value: 'true', label: 'Sim' },
       { value: 'false', label: 'Não' },
-      { value: 'null', label: 'Todos' }
-    ],
-  },
-  {
-    key: 'status',
-    label: 'Status de Homologação',
-    type: 'multiselect',
-    options: [
-      { value: 'P', label: 'Pendente' },
-      { value: 'CO', label: 'Concluído' },
-      { value: 'EA', label: 'Em Andamento' },
-      { value: 'C', label: 'Cancelado' },
-      { value: 'D', label: 'Distrato' },
+      { value: 'null', label: 'Todos' },
     ],
   },
   {
@@ -183,57 +204,27 @@ export default [
     ],
   },
   {
-    key: 'material_list_is_completed',
-    label: 'Lista de Material',
-    type: 'select',
-    options: [
-      { value: 'true', label: 'Sim' },
-      { value: 'false', label: 'Não' },
-      { value: 'null', label: 'Todos' },
-    ],
-  },
-  {
-    key: 'supply_adquance',
-    label: 'Adequação de Fornecimento',
+    key: 'sale_marketing_campaign',
+    label: 'Campanha de Marketing',
     type: 'async-autocomplete',
-    endpoint: '/api/supply-adequances',
+    endpoint: '/api/marketing-campaigns',
     queryParam: 'name__icontains',
     mapResponse: (data) =>
-      data.results.map((supply) => ({
-        label: supply.name,
-        value: supply.id,
+      data.results.map((c) => ({
+        label: c.name,
+        value: c.id,
       })),
   },
   {
-    key: 'new_contract_number',
-    label: 'Nova UC',
-    type: 'select',
-    options: [
-      { value: 'true', label: 'Sim' },
-      { value: 'false', label: 'Não' },
-      { value: 'null', label: 'Todos' },
-    ],
-  },
-  {
-    key: 'access_opnion',
-    label: 'Parecer de Acesso',
-    type: 'select',
-    options: [
-      { value: 'liberado', label: 'Liberado' },
-      { value: 'bloqueado', label: 'Bloqueado' },
-      { value: 'null', label: 'Todos' },
-    ],
-  },
-  {
-    key: 'designer_status',
-    label: 'Status do Projeto',
-    type: 'multiselect',
-    options: [
-      { value: 'P', label: 'Pendente' },
-      { value: 'CO', label: 'Concluído' },
-      { value: 'EA', label: 'Em Andamento' },
-      { value: 'C', label: 'Cancelado' },
-      { value: 'D', label: 'Distrato' },
-    ],
+    key: 'latest_installation_agent',
+    label: 'Agente da Instalação',
+    type: 'async-autocomplete',
+    endpoint: '/api/users',
+    queryParam: 'complete_name__icontains',
+    mapResponse: (data) =>
+      data.results.map((user) => ({
+        label: user.complete_name,
+        value: user.id,
+      })),
   },
 ];
