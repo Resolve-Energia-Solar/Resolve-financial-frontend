@@ -7,7 +7,7 @@ import ListRequest from '../request/ListRequest';
 import projectService from '@/services/projectService';
 import RequestEnergyCompany from '@/hooks/requestEnergyCompany/Request';
 import LateralForm from '../request/LateralForm';
-// import History from '@/app/components/apps/history';
+import History from '@/app/components/apps/history';
 import { TabPanel } from '../../shared/TabPanel';
 import Infor from './Infor';
 import CheckList from './CheckList';
@@ -153,10 +153,10 @@ export default function Details({ id = null, data }) {
           </SideDrawer>
         </div>
       </TabPanel>
-{/* 
+
       <TabPanel value={value} index={4}>
         <History contentType={CONTENT_TYPE_PROJECT_ID} objectId={id} />
-      </TabPanel> */}
+      </TabPanel>
     </>
   );
 }
