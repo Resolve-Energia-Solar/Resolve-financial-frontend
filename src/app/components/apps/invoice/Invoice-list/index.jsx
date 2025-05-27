@@ -102,7 +102,7 @@ export default function InvoiceList({ onClick }) {
       type: 'async-autocomplete',
       queryParam: 'complete_name__icontains',
       endpoint: '/api/users',
-      extraParams: { fields: ['id', 'complete_name'] },
+      extraParams: { fields: ['id', 'complete_name'], limit: 10 },
       mapResponse: (data) =>
         data.results.map((user) => ({
           label: user.complete_name,
@@ -225,7 +225,7 @@ export default function InvoiceList({ onClick }) {
       type: 'async-autocomplete',
       endpoint: '/api/users',
       queryParam: 'complete_name__icontains',
-      extraParams: { fields: ['id', 'complete_name'] },
+      extraParams: { fields: ['id', 'complete_name'], limit: 10 },
       mapResponse: (data) =>
         data.results.map((user) => ({
           label: user.complete_name,
@@ -284,71 +284,71 @@ export default function InvoiceList({ onClick }) {
           <Typography variant="h6">Status</Typography>
         </AccordionSummary>
         <AccordionDetails>
-          <InforCards 
-          cardsData={[
-            {
-              backgroundColor: 'error.light',
-              iconColor: 'error.main',
-              IconComponent: IconListDetails,
-              title: 'Parcelas Vencidas',
-              // onClick: () => setFilters({ ...filters, /* defina filtro se necessário */ }),
-              value: overdueInstallmentsValue,
-              count: overdueInstallmentsCount,
-            },
-            {
-              backgroundColor: 'info.light',
-              iconColor: 'info.main',
-              IconComponent: IconSortAscending,
-              title: 'Parcelas em Dia',
-              // onClick: () => setFilters({ ...filters, /* defina filtro se necessário */ }),
-              value: onTimeInstallmentValue,
-              count: onTimeInstallmentCount,
-            },
-            {
-              backgroundColor: 'success.light',
-              iconColor: 'success.main',
-              IconComponent: IconPaperclip,
-              title: 'Parcelas Pagas',
-              // onClick: () => setFilters({ ...filters, /* defina filtro se necessário */ }),
-              value: paidInstallmentsValue,
-              count: paidInstallmentsCount,
-            },
-            {
-              backgroundColor: 'secondary.light',
-              iconColor: 'secondary.main',
-              IconComponent: IconListDetails,
-              title: 'Total de Parcelas',
-              // onClick: () => setFilters({ ...filters, /* defina filtro se necessário */ }),
-              value: totalInstallmentsValue,
-              count: totalInstallments,
-            },
-            {
-              backgroundColor: 'primary.light',
-              iconColor: 'primary.main',
-              IconComponent: IconSortAscending,
-              title: 'Pagamentos Pagos (Dentro do Prazo)',
-              // onClick: () => setFilters({ ...filters, /* defina filtro se necessário */ }),
-              value: consistentPaymentsValue,
-              count: consistentPayments,
-            },
-            {
-              backgroundColor: 'warning.light',
-              iconColor: 'warning.main',
-              IconComponent: IconSortAscending,
-              title: 'Pagamentos Pagos (Fora do Prazo)',
-              // onClick: () => setFilters({ ...filters, /* defina filtro se necessário */ }),
-              value: inconsistentPaymentsValue,
-              count: inconsistentPayments,
-            },
-            {
-              backgroundColor: 'success.light',
-              iconColor: 'success.main',
-              IconComponent: IconSortAscending,
-              title: 'Total de Pagamentos',
-              // onClick: () => setFilters({ ...filters, /* defina filtro se necessário */ }),
-              value: totalPaymentsValue,
-              count: totalPayments,
-            },
+          <InforCards
+            cardsData={[
+              {
+                backgroundColor: 'error.light',
+                iconColor: 'error.main',
+                IconComponent: IconListDetails,
+                title: 'Parcelas Vencidas',
+                // onClick: () => setFilters({ ...filters, /* defina filtro se necessário */ }),
+                value: overdueInstallmentsValue,
+                count: overdueInstallmentsCount,
+              },
+              {
+                backgroundColor: 'info.light',
+                iconColor: 'info.main',
+                IconComponent: IconSortAscending,
+                title: 'Parcelas em Dia',
+                // onClick: () => setFilters({ ...filters, /* defina filtro se necessário */ }),
+                value: onTimeInstallmentValue,
+                count: onTimeInstallmentCount,
+              },
+              {
+                backgroundColor: 'success.light',
+                iconColor: 'success.main',
+                IconComponent: IconPaperclip,
+                title: 'Parcelas Pagas',
+                // onClick: () => setFilters({ ...filters, /* defina filtro se necessário */ }),
+                value: paidInstallmentsValue,
+                count: paidInstallmentsCount,
+              },
+              {
+                backgroundColor: 'secondary.light',
+                iconColor: 'secondary.main',
+                IconComponent: IconListDetails,
+                title: 'Total de Parcelas',
+                // onClick: () => setFilters({ ...filters, /* defina filtro se necessário */ }),
+                value: totalInstallmentsValue,
+                count: totalInstallments,
+              },
+              {
+                backgroundColor: 'primary.light',
+                iconColor: 'primary.main',
+                IconComponent: IconSortAscending,
+                title: 'Pagamentos Pagos (Dentro do Prazo)',
+                // onClick: () => setFilters({ ...filters, /* defina filtro se necessário */ }),
+                value: consistentPaymentsValue,
+                count: consistentPayments,
+              },
+              {
+                backgroundColor: 'warning.light',
+                iconColor: 'warning.main',
+                IconComponent: IconSortAscending,
+                title: 'Pagamentos Pagos (Fora do Prazo)',
+                // onClick: () => setFilters({ ...filters, /* defina filtro se necessário */ }),
+                value: inconsistentPaymentsValue,
+                count: inconsistentPayments,
+              },
+              {
+                backgroundColor: 'success.light',
+                iconColor: 'success.main',
+                IconComponent: IconSortAscending,
+                title: 'Total de Pagamentos',
+                // onClick: () => setFilters({ ...filters, /* defina filtro se necessário */ }),
+                value: totalPaymentsValue,
+                count: totalPayments,
+              },
             ]} />
         </AccordionDetails>
       </Accordion>

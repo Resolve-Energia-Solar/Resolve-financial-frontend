@@ -221,14 +221,12 @@ const CustomerJourney = () => {
       type: 'async-multiselect',
       endpoint: '/api/users/',
       queryParam: 'complete_name__icontains',
+      extraParams: { fields: ['id', 'complete_name'], limit: 10 },
       mapResponse: (data) =>
         data.results.map((user) => ({
           label: user.complete_name,
           value: user.id,
-        })),
-      extraParams: {
-        fields: ['id', 'complete_name'],
-      },
+        }))
     },
     {
       key: 'sale__in',
@@ -292,14 +290,12 @@ const CustomerJourney = () => {
       type: 'async-multiselect',
       endpoint: '/api/users/',
       queryParam: 'complete_name__icontains',
+      extraParams: { fields: ['id', 'complete_name'], limit: 10 },
       mapResponse: (data) =>
         data.results.map((user) => ({
           label: user.complete_name,
           value: user.id,
-        })),
-      extraParams: {
-        fields: ['id', 'complete_name'],
-      },
+        }))
     },
     {
       key: 'designer_status__in',
@@ -373,14 +369,12 @@ const CustomerJourney = () => {
       type: 'async-multiselect',
       endpoint: '/api/users/',
       queryParam: 'complete_name__icontains',
+      extraParams: { fields: ['id', 'complete_name'], limit: 10 },
       mapResponse: (data) =>
         data.results.map((user) => ({
           label: user.complete_name,
           value: user.id,
-        })),
-      extraParams: {
-        fields: ['id', 'complete_name'],
-      },
+        }))
     },
     {
       key: 'is_documentation_completed__in',

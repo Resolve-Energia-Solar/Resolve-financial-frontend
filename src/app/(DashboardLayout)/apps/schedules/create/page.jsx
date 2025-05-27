@@ -122,7 +122,7 @@ const CreateSchedulePage = () => {
             </li>
           ));
           enqueueSnackbar(
-            <div style={{maxWidth: '400px'}}>
+            <div style={{ maxWidth: '400px' }}>
               <Typography variant="body1">{message}</Typography>
               <Typography variant="body2">Horários disponíveis:</Typography>
               <ul>{timeSlots}</ul>
@@ -512,7 +512,7 @@ const CreateSchedulePage = () => {
                         onChange={(newValue) => setFormData({ ...formData, customer: newValue })}
                         endpoint="/api/users/"
                         queryParam="complete_name__icontains"
-                        extraParams={{ fields: ['id', 'complete_name'] }}
+                        extraParams={{ fields: ['id', 'complete_name'], limit: 10 }}
                         mapResponse={(data) =>
                           data.results.map((u) => ({ label: u.complete_name, value: u.id }))
                         }
@@ -604,7 +604,7 @@ const CreateSchedulePage = () => {
                     onChange={(newValue) => setFormData({ ...formData, customer: newValue })}
                     endpoint="/api/users/"
                     queryParam="complete_name__icontains"
-                    extraParams={{ fields: ['id', 'complete_name'] }}
+                    extraParams={{ fields: ['id', 'complete_name'], limit: 10 }}
                     mapResponse={(data) =>
                       data.results.map((u) => ({ label: u.complete_name, value: u.id }))
                     }
@@ -714,9 +714,8 @@ const CreateSchedulePage = () => {
                   }}
                   mapResponse={(data) => {
                     return data.results.map((s) => ({
-                      label: `${s.service?.name || ''} nº ${s.protocol} - ${
-                        s.customer?.complete_name || ''
-                      } - ${s.schedule_date} ${s.schedule_start_time.toLocaleString()}`,
+                      label: `${s.service?.name || ''} nº ${s.protocol} - ${s.customer?.complete_name || ''
+                        } - ${s.schedule_date} ${s.schedule_start_time.toLocaleString()}`,
                       value: s.id,
                       ...s,
                     }));

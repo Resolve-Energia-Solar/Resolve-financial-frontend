@@ -125,7 +125,7 @@ export default function ListSchedule({ form, onClose, onRefresh }) {
             </li>
           ));
           enqueueSnackbar(
-            <div style={{maxWidth: '400px'}}>
+            <div style={{ maxWidth: '400px' }}>
               <Typography variant="body1">{message}</Typography>
               <Typography variant="body2">Horários disponíveis:</Typography>
               <ul>{timeSlots}</ul>
@@ -179,7 +179,7 @@ export default function ListSchedule({ form, onClose, onRefresh }) {
             endpoint="/api/users/"
             size="small"
             queryParam="complete_name__icontains"
-            extraParams={{ fields: ['id', 'complete_name'] }}
+            extraParams={{ fields: ['id', 'complete_name'], limit: 10 }}
             mapResponse={(data) =>
               data.results.map((u) => ({ label: u.complete_name, value: u.id }))
             }
@@ -194,7 +194,7 @@ export default function ListSchedule({ form, onClose, onRefresh }) {
             endpoint="/api/users/"
             size="small"
             queryParam="complete_name__icontains"
-            extraParams={{ fields: ['id', 'complete_name'] }}
+            extraParams={{ fields: ['id', 'complete_name'], limit: 10 }}
             mapResponse={(data) =>
               data.results.map((u) => ({ label: u.complete_name, value: u.id }))
             }
@@ -237,9 +237,8 @@ export default function ListSchedule({ form, onClose, onRefresh }) {
                 <TableCell>{row.schedule_end_time || 'N/A'}</TableCell>
                 <TableCell>
                   {row?.address
-                    ? `${row.address.street || ''} - ${row.address.neighborhood || ''}, ${
-                        row.address.state || ''
-                      }, ${row.address.country || ''}`
+                    ? `${row.address.street || ''} - ${row.address.neighborhood || ''}, ${row.address.state || ''
+                    }, ${row.address.country || ''}`
                     : 'Endereço não disponível'}
                 </TableCell>
                 <TableCell>

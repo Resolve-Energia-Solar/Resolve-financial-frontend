@@ -38,7 +38,7 @@ const scheduleFilterConfig = [
     type: 'async-autocomplete',
     endpoint: '/api/users/',
     queryParam: 'complete_name__icontains',
-    extraParams: { fields: ['id', 'complete_name'] },
+    extraParams: { fields: ['id', 'complete_name'], limit: 10 },
     mapResponse: (data) =>
       data.results.map((customer) => ({
         label: customer.complete_name,
@@ -95,7 +95,7 @@ const scheduleFilterConfig = [
     type: 'async-multiselect',
     endpoint: '/api/users/',
     queryParam: 'complete_name__icontains',
-    extraParams: { fields: ['id', 'complete_name'] },
+    extraParams: { fields: ['id', 'complete_name'], limit: 10 },
     mapResponse: (data) =>
       data.results.map((user) => ({
         label: user.complete_name,

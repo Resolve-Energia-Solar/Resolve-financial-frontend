@@ -119,7 +119,7 @@ export default function CreateCommercialSchedule({ onClose, onRefresh }) {
             label="Cliente"
             endpoint="/api/users"
             queryParam="complete_name__icontains"
-            extraParams={{ fields: 'complete_name,id' }}
+            extraParams={{ fields: ['id', 'complete_name'], limit: 10 }}
             value={formData.customer}
             onChange={opt => {
               setClientSelected(opt ? opt?.value : '');

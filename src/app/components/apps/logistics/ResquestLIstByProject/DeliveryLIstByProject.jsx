@@ -58,7 +58,7 @@ const DeliveryLIstByProject = () => {
   const router = useRouter();
   const context = useContext(RequestDataContext);
   const filters = context?.filters || {};
-  const setFilters = context?.setFilters || (() => {});
+  const setFilters = context?.setFilters || (() => { });
 
   const [projectsList, setProjectsList] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -156,11 +156,11 @@ const DeliveryLIstByProject = () => {
   //   return projectsList.map(proj => {
   //     const ofType = (proj.requests_energy_company || [])
   //       .filter(r => r.type?.id === selectedRequestType);
-  
+
   //     const latestRequest = ofType.length
   //       ? ofType.sort((a, b) => new Date(b.request_date) - new Date(a.request_date))[0]
   //       : null;
-  
+
   //     return { ...proj, latestRequest };
   //   });
   // }, [projectsList, selectedRequestType]);
@@ -179,6 +179,7 @@ const DeliveryLIstByProject = () => {
       type: 'async-autocomplete',
       endpoint: '/api/users',
       queryParam: 'complete_name__icontains',
+      extraParams: { fields: ['id', 'complete_name'], limit: 10 },
       mapResponse: (data) =>
         data.results.map((user) => ({
           label: user.complete_name,
@@ -191,6 +192,7 @@ const DeliveryLIstByProject = () => {
       type: 'async-autocomplete',
       endpoint: '/api/users',
       queryParam: 'complete_name__icontains',
+      extraParams: { fields: ['id', 'complete_name'], limit: 10 },
       mapResponse: (data) =>
         data.results.map((user) => ({
           label: user.complete_name,
@@ -393,7 +395,7 @@ const DeliveryLIstByProject = () => {
             <InfoCard cardsData={cardsBuyData} />
           </AccordionDetails>
         </Accordion>
-        
+
         <Box
           sx={{
             display: 'flex',
@@ -405,27 +407,27 @@ const DeliveryLIstByProject = () => {
           <Button
             variant="outlined"
             startIcon={<AddBoxRounded />}
-            // onClick={() => setOpenAddDialog(true)}
+          // onClick={() => setOpenAddDialog(true)}
           >
             Criar Entrega
           </Button>
           <Button
-              variant="outlined"
-              sx={{ mt: 1, mb: 2 }}
-              onClick={() => setFilterDrawerOpen(true)}
-            >
-              Abrir Filtros
-            </Button>
-            <GenericFilterDrawer
-              filters={projectFilterConfig}
-              initialValues={filters}
-              open={filterDrawerOpen}
-              onClose={() => setFilterDrawerOpen(false)}
-              onApply={(newFilters) => {
-                setFilters(newFilters);
-                setPage(0);
-              }}
-            />
+            variant="outlined"
+            sx={{ mt: 1, mb: 2 }}
+            onClick={() => setFilterDrawerOpen(true)}
+          >
+            Abrir Filtros
+          </Button>
+          <GenericFilterDrawer
+            filters={projectFilterConfig}
+            initialValues={filters}
+            open={filterDrawerOpen}
+            onClose={() => setFilterDrawerOpen(false)}
+            onApply={(newFilters) => {
+              setFilters(newFilters);
+              setPage(0);
+            }}
+          />
         </Box>
       </Box>
 
@@ -470,33 +472,33 @@ const DeliveryLIstByProject = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-            {projectsList.map((item) => {
+              {projectsList.map((item) => {
                 return (
-                <TableRow
-                  key={item.id}
-                  sx={{ cursor: 'pointer' }}
-                  onClick={() => handleEdit(item)}
-                >
-                  <TableCell>PROJ1234 - Cliente X</TableCell>
-                  <TableCell>
-                   -   
-                  </TableCell>
-                  <TableCell>
-                    {item.address?.complete_address || '-'}
-                  </TableCell>
-                  <TableCell>
-                    <StatusChip status={item.sale?.status} />
-                  </TableCell>
-                  <TableCell>
+                  <TableRow
+                    key={item.id}
+                    sx={{ cursor: 'pointer' }}
+                    onClick={() => handleEdit(item)}
+                  >
+                    <TableCell>PROJ1234 - Cliente X</TableCell>
+                    <TableCell>
                       -
-                  </TableCell>
-                  <TableCell>
+                    </TableCell>
+                    <TableCell>
+                      {item.address?.complete_address || '-'}
+                    </TableCell>
+                    <TableCell>
+                      <StatusChip status={item.sale?.status} />
+                    </TableCell>
+                    <TableCell>
                       -
-                  </TableCell>
-                </TableRow>
+                    </TableCell>
+                    <TableCell>
+                      -
+                    </TableCell>
+                  </TableRow>
                 )
               }
-            )}
+              )}
             </TableBody>
           </Table>
           <TablePagination

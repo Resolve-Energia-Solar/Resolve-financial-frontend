@@ -20,7 +20,7 @@ import { IconAlarm } from '@tabler/icons-react';
 import GenericAsyncAutocompleteInput from '@/app/components/filters/GenericAsyncAutocompleteInput';
 
 
-function AddSchedulePage({ form = null, onRefresh = null, onClose = null}) {
+function AddSchedulePage({ form = null, onRefresh = null, onClose = null }) {
   const userPermissions = useSelector((state) => state.user.permissions);
   const theme = useTheme();
   const [isProject, setIsProject] = useState(false);
@@ -32,62 +32,62 @@ function AddSchedulePage({ form = null, onRefresh = null, onClose = null}) {
 
   const { enqueueSnackbar } = useSnackbar();
 
-  const { formData, setFormData, setFormErrors,formErrors, handleChange, handleSave, setLoading: setFormLoading,loading: formLoading } = useScheduleForm()
+  const { formData, setFormData, setFormErrors, formErrors, handleChange, handleSave, setLoading: setFormLoading, loading: formLoading } = useScheduleForm()
 
   form.service ? (formData.service = form.service) : null;
   form.schedule_agent ? (formData.schedule_agent = form.schedule_agent) : null;
   form.schedule_date ? (formData.schedule_date = form.schedule_date) : null;
   form.project ? (formData.project = form.project) : null;
-  
+
   console.log('formData: ', formData)
   useEffect(() => {
-  const loadProjectData = async () => {
-    if (form?.project) {
-      try {
-        const project = await projectService.find(form.project, {
-          expand: ['sale.customer', 'sale.branch', 'product'],
-          fields: ['id', 'sale.customer', 'sale.branch', 'product', 'address'],
-        });
+    const loadProjectData = async () => {
+      if (form?.project) {
+        try {
+          const project = await projectService.find(form.project, {
+            expand: ['sale.customer', 'sale.branch', 'product'],
+            fields: ['id', 'sale.customer', 'sale.branch', 'product', 'address'],
+          });
 
-        if (!project.address) {
-          enqueueSnackbar(
-            'É necessário cadastrar o endereço da unidade Geradora na aba "CheckList".',
-            { variant: 'error' }
-          );
+          if (!project.address) {
+            enqueueSnackbar(
+              'É necessário cadastrar o endereço da unidade Geradora na aba "CheckList".',
+              { variant: 'error' }
+            );
+          }
+
+          setFormData((prev) => ({
+            ...prev,
+            project: {
+              label: `${project.project_number} - ${project.sale?.customer?.complete_name || ''}`,
+              value: project.id,
+            },
+            customer: {
+              label: project.sale?.customer?.complete_name || '',
+              value: project.sale?.customer?.id || null,
+            },
+            branch: {
+              label: project.sale?.branch?.name || '',
+              value: project.sale?.branch?.id || null,
+            },
+            address: {
+              label: project.address?.complete_address || '',
+              value: project.address?.id || null,
+            },
+            products: {
+              label: project.product?.name || '',
+              value: project.product?.id || null,
+            },
+            value: 100,
+          }));
+        } catch (error) {
+          console.error('Erro ao carregar dados do projeto:', error);
         }
-
-        setFormData((prev) => ({
-          ...prev,
-          project: {
-            label: `${project.project_number} - ${project.sale?.customer?.complete_name || ''}`,
-            value: project.id,
-          },
-          customer: {
-            label: project.sale?.customer?.complete_name || '',
-            value: project.sale?.customer?.id || null,
-          },
-          branch: {
-            label: project.sale?.branch?.name || '',
-            value: project.sale?.branch?.id || null,
-          },
-          address: {
-            label: project.address?.complete_address || '',
-            value: project.address?.id || null,
-          },
-          products: {
-            label: project.product?.name || '',
-            value: project.product?.id || null,
-          },
-          value: 100,
-        }));
-      } catch (error) {
-        console.error('Erro ao carregar dados do projeto:', error);
       }
-    }
-  };
+    };
 
-  loadProjectData();
-}, [form?.project]);
+    loadProjectData();
+  }, [form?.project]);
 
 
   const timeOptions = [
@@ -136,7 +136,7 @@ function AddSchedulePage({ form = null, onRefresh = null, onClose = null}) {
         </li>
       ));
       enqueueSnackbar(
-        <div style={{maxWidth: '400px'}}>
+        <div style={{ maxWidth: '400px' }}>
           <Typography variant="body1">{message}</Typography>
           <Typography variant="body2">Horários disponíveis:</Typography>
           <ul>{timeSlots}</ul>
@@ -220,7 +220,7 @@ function AddSchedulePage({ form = null, onRefresh = null, onClose = null}) {
 
   return (
     <Grid container spacing={0}>
-      <Grid item xs={12} sx={{ display: 'flex', justifyContent: "flex-start", flexDirection: 'column'}}>
+      <Grid item xs={12} sx={{ display: 'flex', justifyContent: "flex-start", flexDirection: 'column' }}>
         <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3, alignItems: "center", justifyContent: "center" }}>
           <Grid item xs={12}>
             <Typography sx={{ fontSize: "24px", fontWeight: 700, color: "#303030" }}>
@@ -236,7 +236,7 @@ function AddSchedulePage({ form = null, onRefresh = null, onClose = null}) {
 
         <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3, alignItems: "center", justifyContent: "center" }}>
           {form.service ? null : (
-          <Grid item xs={12}>
+            <Grid item xs={12}>
               <CustomFormLabel htmlFor="service">Serviço</CustomFormLabel>
               <AutoCompleteServiceCatalog
                 fullWidth
@@ -270,143 +270,143 @@ function AddSchedulePage({ form = null, onRefresh = null, onClose = null}) {
         <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3, alignItems: "center", justifyContent: "center" }}>
           {isProject && (
             <Grid item xs={12} sm={6}>
-            <GenericAsyncAutocompleteInput
-              label="Projeto"
-              value={formData.project}
-              disabled={!!form?.project}
-              onChange={(newValue) => {
-                if (newValue) {
-                  setFormData({
-                    ...formData,
-                    project: newValue,
-                    customer: newValue.customer,
-                    branch: newValue.branch,
-                    address: newValue.address,
-                    products: newValue.product,
-                  });
-                } else {
-                  setFormData({
-                    ...formData,
-                    project: null,
-                    customer: null,
-                    branch: null,
-                    address: null,
-                    products: null,
-                  });
+              <GenericAsyncAutocompleteInput
+                label="Projeto"
+                value={formData.project}
+                disabled={!!form?.project}
+                onChange={(newValue) => {
+                  if (newValue) {
+                    setFormData({
+                      ...formData,
+                      project: newValue,
+                      customer: newValue.customer,
+                      branch: newValue.branch,
+                      address: newValue.address,
+                      products: newValue.product,
+                    });
+                  } else {
+                    setFormData({
+                      ...formData,
+                      project: null,
+                      customer: null,
+                      branch: null,
+                      address: null,
+                      products: null,
+                    });
+                  }
+                }}
+                endpoint="/api/projects/"
+                queryParam="q"
+                extraParams={{
+                  expand: [
+                    'sale.customer',
+                    'sale',
+                    'sale.branch',
+                    'product',
+                    'sale.homologator',
+                  ],
+                  fields: [
+                    'id',
+                    'project_number',
+                    'address',
+                    'sale.total_value',
+                    'sale.contract_number',
+                    'sale.customer.complete_name',
+                    'sale.customer.id',
+                    'sale.branch.id',
+                    'sale.branch.name',
+                    'product.id',
+                    'product.name',
+                    'product.description',
+                    'sale.signature_date',
+                    'sale.status',
+                    'sale.homologator.complete_name',
+                    'address.complete_address',
+                  ],
+                  filter: 'status__in=C,P,EA',
+                }}
+                mapResponse={(data) =>
+                  data.results.map((p) => ({
+                    label: `${p.project_number} - ${p.sale?.customer?.complete_name || 'Cliente Desconhecido'}`,
+                    value: p.id,
+                    project_number: p.project_number,
+                    total_value: p.sale?.total_value || 0,
+                    customer: p.sale?.customer
+                      ? { label: p.sale.customer.complete_name, value: p.sale.customer.id }
+                      : null,
+                    branch: p.sale?.branch
+                      ? { label: p.sale.branch.name, value: p.sale.branch.id }
+                      : null,
+                    address: p.address
+                      ? { label: p.address.complete_address || '', value: p.address.id }
+                      : null,
+                    product: p.product
+                      ? { label: p.product?.name, value: p.product.id }
+                      : null,
+                    contract_number: p.sale?.contract_number || '',
+                    homologator: p.sale?.homologator
+                      ? { label: p.sale?.homologator?.complete_name, value: p.sale?.homologator?.id }
+                      : { label: 'Homologador não disponível', value: null },
+                    signature_date: p.sale?.signature_date || '',
+                    status: p.sale?.status || '',
+                  }))
                 }
-              }}
-              endpoint="/api/projects/"
-              queryParam="q"
-              extraParams={{
-                expand: [
-                  'sale.customer',
-                  'sale',
-                  'sale.branch',
-                  'product',
-                  'sale.homologator',
-                ],
-                fields: [
-                  'id',
-                  'project_number',
-                  'address',
-                  'sale.total_value',
-                  'sale.contract_number',
-                  'sale.customer.complete_name',
-                  'sale.customer.id',
-                  'sale.branch.id',
-                  'sale.branch.name',
-                  'product.id',
-                  'product.name',
-                  'product.description',
-                  'sale.signature_date',
-                  'sale.status',
-                  'sale.homologator.complete_name',
-                  'address.complete_address',
-                ],
-                filter: 'status__in=C,P,EA',
-              }}
-              mapResponse={(data) =>
-                data.results.map((p) => ({
-                  label: `${p.project_number} - ${p.sale?.customer?.complete_name || 'Cliente Desconhecido'}`,
-                  value: p.id,
-                  project_number: p.project_number,
-                  total_value: p.sale?.total_value || 0,
-                  customer: p.sale?.customer
-                    ? { label: p.sale.customer.complete_name, value: p.sale.customer.id }
-                    : null,
-                  branch: p.sale?.branch
-                    ? { label: p.sale.branch.name, value: p.sale.branch.id }
-                    : null,
-                  address: p.address
-                    ? { label: p.address.complete_address || '', value: p.address.id }
-                    : null,
-                  product: p.product
-                    ? { label: p.product?.name, value: p.product.id }
-                    : null,
-                  contract_number: p.sale?.contract_number || '',
-                  homologator: p.sale?.homologator
-                    ? { label: p.sale?.homologator?.complete_name, value: p.sale?.homologator?.id }
-                    : { label: 'Homologador não disponível', value: null },
-                  signature_date: p.sale?.signature_date || '',
-                  status: p.sale?.status || '',
-                }))
-              }
-              fullWidth
-              helperText={formErrors.project?.[0] || ''}
-              error={!!formErrors.project}
-              renderOption={(props, option) => (
-                <li {...props}>
-                  <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                    <Typography variant="body2">
-                      <strong>Projeto:</strong> {option.project_number}
-                    </Typography>
-                    <Typography variant="body2">
-                      <strong>Cliente:</strong>{' '}
-                      {option.customer?.label || 'Cliente não Disponível'}
-                    </Typography>
-                    <Typography variant="body2">
-                      <strong>Valor total:</strong>{' '}
-                      {option.total_value
-                        ? formatCurrency(option.total_value)
-                        : 'Sem valor Total'}
-                    </Typography>
-                    <Typography variant="body2">
-                      <strong>Contrato:</strong>{' '}
-                      {option.contract_number || 'Contrato não Disponível'}
-                    </Typography>
-                    <Typography variant="body2">
-                      <strong>Homologador:</strong>{' '}
-                      {option.homologator.label || 'Homologador não Disponível'}
-                    </Typography>
-                    <Typography variant="body2">
-                      <strong>Data de Contrato:</strong>{' '}
-                      {formatDate(option.signature_date) || 'Data de Contrato não Disponível'}
-                    </Typography>
-                    <Typography variant="body2">
-                      <strong>Endereço:</strong>{' '}
-                      {option.address?.label || 'Endereço não Disponível'}
-                    </Typography>
-                    <Typography variant="body2">
-                      <strong>Status da Venda:</strong>{' '}
-                      {option.status ? (
-                        <Grid
-                          label={saleStatusMap[option.status][0] || 'Status Desconhecido'}
-                          size="small"
-                          color={saleStatusMap[option.status][1] || 'default'}
-                        />
-                      ) : (
-                        'Status não Disponível'
-                      )}
-                    </Typography>
-                    <Typography variant="body2">
-                      <strong>Produto:</strong>{' '}
-                      {option.product?.label || 'Produto não Disponível'}
-                    </Typography>
-                  </Box>
-                </li>
-              )}
-            />
-          </Grid>
+                fullWidth
+                helperText={formErrors.project?.[0] || ''}
+                error={!!formErrors.project}
+                renderOption={(props, option) => (
+                  <li {...props}>
+                    <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                      <Typography variant="body2">
+                        <strong>Projeto:</strong> {option.project_number}
+                      </Typography>
+                      <Typography variant="body2">
+                        <strong>Cliente:</strong>{' '}
+                        {option.customer?.label || 'Cliente não Disponível'}
+                      </Typography>
+                      <Typography variant="body2">
+                        <strong>Valor total:</strong>{' '}
+                        {option.total_value
+                          ? formatCurrency(option.total_value)
+                          : 'Sem valor Total'}
+                      </Typography>
+                      <Typography variant="body2">
+                        <strong>Contrato:</strong>{' '}
+                        {option.contract_number || 'Contrato não Disponível'}
+                      </Typography>
+                      <Typography variant="body2">
+                        <strong>Homologador:</strong>{' '}
+                        {option.homologator.label || 'Homologador não Disponível'}
+                      </Typography>
+                      <Typography variant="body2">
+                        <strong>Data de Contrato:</strong>{' '}
+                        {formatDate(option.signature_date) || 'Data de Contrato não Disponível'}
+                      </Typography>
+                      <Typography variant="body2">
+                        <strong>Endereço:</strong>{' '}
+                        {option.address?.label || 'Endereço não Disponível'}
+                      </Typography>
+                      <Typography variant="body2">
+                        <strong>Status da Venda:</strong>{' '}
+                        {option.status ? (
+                          <Grid
+                            label={saleStatusMap[option.status][0] || 'Status Desconhecido'}
+                            size="small"
+                            color={saleStatusMap[option.status][1] || 'default'}
+                          />
+                        ) : (
+                          'Status não Disponível'
+                        )}
+                      </Typography>
+                      <Typography variant="body2">
+                        <strong>Produto:</strong>{' '}
+                        {option.product?.label || 'Produto não Disponível'}
+                      </Typography>
+                    </Box>
+                  </li>
+                )}
+              />
+            </Grid>
           )}
           {!isProject && (
             <>
@@ -417,7 +417,7 @@ function AddSchedulePage({ form = null, onRefresh = null, onClose = null}) {
                   onChange={(newValue) => setFormData({ ...formData, customer: newValue })}
                   endpoint="/api/users/"
                   queryParam="complete_name__icontains"
-                  extraParams={{ fields: ['id', 'complete_name'] }}
+                  extraParams={{ fields: ['id', 'complete_name'], limit: 10 }}
                   mapResponse={(data) =>
                     data.results.map((u) => ({ label: u.complete_name, value: u.id }))
                   }
@@ -503,7 +503,7 @@ function AddSchedulePage({ form = null, onRefresh = null, onClose = null}) {
                 />
               </Grid>
             </>
-         )}
+          )}
 
           {(formData.customer || formData.project) && (
             <Grid item xs={12} sm={6}>
@@ -524,9 +524,8 @@ function AddSchedulePage({ form = null, onRefresh = null, onClose = null}) {
                 }}
                 mapResponse={(data) => {
                   return data.results.map((s) => ({
-                    label: `${s.service?.name || ''} nº ${s.protocol} - ${
-                      s.customer?.complete_name || ''
-                    } - ${s.schedule_date} ${s.schedule_start_time.toLocaleString()}`,
+                    label: `${s.service?.name || ''} nº ${s.protocol} - ${s.customer?.complete_name || ''
+                      } - ${s.schedule_date} ${s.schedule_start_time.toLocaleString()}`,
                     value: s.id,
                     ...s,
                   }));
@@ -597,35 +596,35 @@ function AddSchedulePage({ form = null, onRefresh = null, onClose = null}) {
 
         <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3, alignItems: "center", justifyContent: "center" }}>
           {!form.schedule_date && (
-          <Grid item xs={12}>
-            <CustomFormLabel
-              htmlFor="start_datetime"
-              sx={{ color: '#303030', fontWeight: '700', fontSize: '16px' }}
-            >
-              Data
-            </CustomFormLabel>
-            <FormDate
-              name="start_datetime"
-              value={formData.schedule_date}
-              onChange={(newValue) => handleChange('schedule_date', newValue)}
-              {...(formErrors.schedule_date && {
-                error: true,
-                helperText: formErrors.schedule_date,
-              })}
-              sx={{
-                input: {
-                  color: '#7E92A2',
-                  fontWeight: '400',
-                  fontSize: '14px',
-                  opacity: 1,
-                },
-                '& .MuiOutlinedInput-root': {
-                  border: '1px solid #3E3C41',
-                  borderRadius: '9px',
-                },
-              }}
-            />
-          </Grid>
+            <Grid item xs={12}>
+              <CustomFormLabel
+                htmlFor="start_datetime"
+                sx={{ color: '#303030', fontWeight: '700', fontSize: '16px' }}
+              >
+                Data
+              </CustomFormLabel>
+              <FormDate
+                name="start_datetime"
+                value={formData.schedule_date}
+                onChange={(newValue) => handleChange('schedule_date', newValue)}
+                {...(formErrors.schedule_date && {
+                  error: true,
+                  helperText: formErrors.schedule_date,
+                })}
+                sx={{
+                  input: {
+                    color: '#7E92A2',
+                    fontWeight: '400',
+                    fontSize: '14px',
+                    opacity: 1,
+                  },
+                  '& .MuiOutlinedInput-root': {
+                    border: '1px solid #3E3C41',
+                    borderRadius: '9px',
+                  },
+                }}
+              />
+            </Grid>
           )}
         </Grid>
         <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3, alignItems: "center", justifyContent: "center" }}>
