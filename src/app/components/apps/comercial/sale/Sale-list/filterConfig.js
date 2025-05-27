@@ -10,6 +10,7 @@ export default [
             { value: 'P', label: 'Pendente' },
             { value: 'C', label: 'Cancelado' },
             { value: 'D', label: 'Distrato' },
+            { value: 'ED', label: 'Em Processo de Distrato' },
         ],
     },
     // Status da Nota Fiscal
