@@ -380,27 +380,27 @@ const ResquestLIstByProject = () => {
     Bloqueado: {
       label: 'Bloqueado',
       color: theme.palette.error.light,
-      icon: <CancelIcon sx={{ color: '#fff' }} />,
+      icon: <CancelIcon color='light' />,
     },
     Reprovada: {
       label: 'Reprovada',
       color: theme.palette.error.light,
-      icon: <CancelIcon sx={{ color: '#fff' }} />,
+      icon: <CancelIcon color='light' />,
     },
     'Em Andamento': {
       label: 'Em Andamento',
       color: theme.palette.info.light,
-      icon: <HourglassFullIcon sx={{ color: '#fff' }} />,
+      icon: <HourglassFullIcon color='light' />,
     },
     Concluída: {
       label: 'Concluída',
       color: theme.palette.success.light,
-      icon: <CheckCircleIcon sx={{ color: '#fff' }} />,
+      icon: <CheckCircleIcon color='light' />,
     },
     Pendente: {
       label: 'Pendente',
       color: theme.palette.warning.light,
-      icon: <HourglassEmptyIcon sx={{ color: '#fff' }} />,
+      icon: <HourglassEmptyIcon color='light' />,
     },
   };
 

@@ -1,13 +1,14 @@
-import { Chip } from '@mui/material';
+import { useTheme, Chip } from '@mui/material';
 import PropTypes from 'prop-types';
 
 const GenericChip = ({ status, statusMap }) => {
-  const { label = 'Desconhecido', color = 'grey', icon = null } = statusMap[status] || {};
+  const theme = useTheme();
+  const { label = 'Desconhecido', color = '#fff', icon = null } = statusMap[status] || {};
 
   return (
     <Chip
       label={label}
-      sx={{ backgroundColor: color, color: '#fff' }}
+      sx={{ backgroundColor: color, color: theme.palette.getContrastText(color) }}
       icon={icon}
     />
   );
