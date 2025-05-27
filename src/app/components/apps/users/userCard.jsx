@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Typography, Avatar, Link, Skeleton } from '@mui/material';
+import { useTheme, Box, Typography, Avatar, Link, Skeleton } from '@mui/material';
 import userService from '@/services/userService';
 
 const UserCard = ({ userId, title, showEmail = true, showPhone = false }) => {
+    const theme = useTheme();
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -68,7 +69,7 @@ const UserCard = ({ userId, title, showEmail = true, showPhone = false }) => {
             </Typography>
             <Box display="flex" alignItems="center" gap={2} sx={{ mt: 2 }}>
                 <Link
-                    sx={{ color: 'black', textDecoration: 'none' }}
+                    sx={{ color: theme.palette.getContrastText(theme.palette.background.default), textDecoration: 'none' }}
                     href={`/apps/user-profile/${user.username}`}
                 >
                     <Avatar
@@ -80,7 +81,7 @@ const UserCard = ({ userId, title, showEmail = true, showPhone = false }) => {
                 <Box>
                     <Typography>
                         <Link
-                            sx={{ color: 'black', textDecoration: 'none' }}
+                            sx={{ color: theme.palette.getContrastText(theme.palette.background.default), textDecoration: 'none' }}
                             href={`/apps/user-profile/${user.username}`}
                         >
                             {user.complete_name}
@@ -90,7 +91,7 @@ const UserCard = ({ userId, title, showEmail = true, showPhone = false }) => {
                         user.email ? (
                             <Typography>
                                 <Link
-                                    sx={{ color: 'black', textDecoration: 'none' }}
+                                    sx={{ color: theme.palette.getContrastText(theme.palette.background.default), textDecoration: 'none' }}
                                     href={`mailto:${user.email}`}
                                 >
                                     {user.email}
@@ -104,7 +105,7 @@ const UserCard = ({ userId, title, showEmail = true, showPhone = false }) => {
                         mainPhone ? (
                             <Typography>
                                 <Link
-                                    sx={{ color: 'black', textDecoration: 'none' }}
+                                    sx={{ color: theme.palette.getContrastText(theme.palette.background.default), textDecoration: 'none' }}
                                     href={`tel:${mainPhone.phone_number}`}
                                 >
                                     {`+${mainPhone.country_code} (${mainPhone.area_code}) ${mainPhone.phone_number}`}
