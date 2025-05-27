@@ -132,12 +132,12 @@ export default function AgentRoutes({ projectId = null }) {
                 fields: 'id,address,schedule_date,schedule_end_date,schedule_start_time,schedule_end_time,service,customer',
                 ordering: 'schedule_start_time',
                 limit: 5,
+                view_all: true,
               }),
               userService.availability(agent.id, {
                 date: dateStr,
                 start_time: DEFAULT_START,
                 end_time: DEFAULT_END,
-                // service: 1,
               }),
             ]);
 
@@ -222,7 +222,7 @@ export default function AgentRoutes({ projectId = null }) {
               <CardAgentRoutes
                 id={agent.id}
                 date={selectedDate}
-                freeTimeAgent={agent?.free_time_agent}
+                freeTimeAgent={agent?.availabilityDetails?.free_time_agent[0] || null}
                 title={agent.complete_name}
                 items={agent.schedules}
                 onItemClick={handleOpenModalSchedule}
@@ -230,7 +230,7 @@ export default function AgentRoutes({ projectId = null }) {
                 onListSchedule={handleOpenModalListSchedule}
                 onOpenMap={handleOpenMap}
                 canEdit={canEdit}
-                available={agent.available}
+                available={agent.availabilityDetails?.available}
                 availabilityDetails={agent.availabilityDetails}
               />
             </Grid>
