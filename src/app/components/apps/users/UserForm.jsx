@@ -29,13 +29,11 @@ export default function UserForm({ userId = null, onSave }) {
         last_name: "",
         is_staff: false,
         is_active: true,
-        date_joined: "",
         complete_name: "",
         birth_date: null,
         gender: "",
         first_document: "",
         second_document: null,
-        profile_picture: null,
         username: "",
         email: "",
         person_type: "",
@@ -63,8 +61,8 @@ export default function UserForm({ userId = null, onSave }) {
         setFormData((f) => ({ ...f, [e.target.name]: e.target.value }));
     };
 
-    const handleSelectChange = (name) => (v) => {
-        setFormData((f) => ({ ...f, [name]: v?.value || "" }));
+    const handleSelectChange = (name) => (e) => {
+        setFormData((f) => ({ ...f, [name]: e.target.value }));
     };
 
     const handleSubmit = async () => {
@@ -137,9 +135,13 @@ export default function UserForm({ userId = null, onSave }) {
                             label="Tipos de Usuário"
                             name="api/users-types"
                             value={formData.user_types}
-                            onChange={(newValue) => setFormData(f => ({ ...f, user_types: newValue || [] }))}
+                            onChange={(newValue) => setFormData(f => ({ 
+                                ...f, 
+                                user_types: (newValue || []).map(item => item.value) 
+                            }))}
                             endpoint="api/users-types"
                             queryParam="name__icontains"
+                            extraParams={{ fields: ['id', 'name'] }}
                             mapResponse={(data) =>
                                 data.results.map((ut) => ({ label: ut.name, value: ut.id }))
                             }
@@ -181,7 +183,7 @@ export default function UserForm({ userId = null, onSave }) {
                             name="person_type"
                             select
                             value={formData.person_type}
-                            onChange={handleSelectChange("person_type")}
+                            onChange={handleChange}
                         >
                             <MenuItem value="PF">Pessoa Física</MenuItem>
                             <MenuItem value="PJ">Pessoa Jurídica</MenuItem>
@@ -194,11 +196,10 @@ export default function UserForm({ userId = null, onSave }) {
                             name="gender"
                             select
                             value={formData.gender}
-                            onChange={handleSelectChange("gender")}
+                            onChange={handleChange}
                         >
                             <MenuItem value="M">Masculino</MenuItem>
                             <MenuItem value="F">Feminino</MenuItem>
-                            <MenuItem value="O">Outro</MenuItem>
                         </TextField>
                     </Grid>
                     <Grid item xs={12} md={6}>
@@ -217,17 +218,6 @@ export default function UserForm({ userId = null, onSave }) {
                             name="second_document"
                             value={formData.second_document}
                             onChange={handleChange}
-                        />
-                    </Grid>
-                    <Grid item xs={12} md={6}>
-                        <TextField
-                            fullWidth
-                            label="Foto de Perfil"
-                            name="profile_picture"
-                            type="file"
-                            onChange={(e) =>
-                                setFormData(f => ({ ...f, profile_picture: e.target.files[0] }))
-                            }
                         />
                     </Grid>
                 </Grid>

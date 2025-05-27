@@ -259,7 +259,7 @@ const UserList = () => {
           <Typography variant="h4">Adicionar Usuário</Typography>
         </DialogTitle>
         <DialogContent>
-          <UserForm />
+          <UserForm onSave={() => { setOpenUserForm(false); setSelectedUser(null) }} />
         </DialogContent>
       </Dialog>
 
