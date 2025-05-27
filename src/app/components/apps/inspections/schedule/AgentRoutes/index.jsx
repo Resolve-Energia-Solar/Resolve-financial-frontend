@@ -137,6 +137,7 @@ export default function AgentRoutes({ projectId = null }) {
                 date: dateStr,
                 start_time: DEFAULT_START,
                 end_time: DEFAULT_END,
+                // service: 1,
               }),
             ]);
 
@@ -165,6 +166,8 @@ export default function AgentRoutes({ projectId = null }) {
     },
     [rowsPerPage, page, refresh]
   );
+
+  console.log('Agents:', agents);
 
   useEffect(() => {
     fetchData(selectedDate, committedName);
@@ -219,7 +222,7 @@ export default function AgentRoutes({ projectId = null }) {
               <CardAgentRoutes
                 id={agent.id}
                 date={selectedDate}
-                freeTimeAgent={agent.free_time_agent[0]}
+                freeTimeAgent={agent?.free_time_agent}
                 title={agent.complete_name}
                 items={agent.schedules}
                 onItemClick={handleOpenModalSchedule}
