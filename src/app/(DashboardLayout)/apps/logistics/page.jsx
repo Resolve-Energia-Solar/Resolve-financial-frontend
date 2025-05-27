@@ -85,7 +85,10 @@ const LogisticsDashboard = () => {
   }, [fetchProjects, fetchIndicators]);
 
   const handleKpiClick = (key, value) => {
-    setFilters({ [key]: value });
+    setFilters(prev => ({
+      ...prev,
+      [key]: value
+    }));
     setPage(0);
   };
 
