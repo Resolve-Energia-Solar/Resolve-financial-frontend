@@ -21,7 +21,7 @@ const StatusChip = ({ status }) => {
       case 'D':
         return { label: 'Distrato', color: 'secondary', icon: <RemoveCircleIcon /> };
       case 'ED':
-        return { label: 'Em Processo de Distrato', color: theme.palette.secondary.light, icon: <RemoveCircleIcon sx={{ color: '#fff' }} /> };
+        return { label: 'Em Processo de Distrato', color: "secondary", icon: <RemoveCircleIcon /> };
       default:
         return { label: 'Desconhecido', color: 'default', icon: <CancelIcon /> };
     }
