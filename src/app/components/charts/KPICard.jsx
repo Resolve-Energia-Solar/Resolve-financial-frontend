@@ -5,13 +5,13 @@ export function KPICard({
   label,
   value,
   icon,
-  color = '#fff',
+  color= '#fff',
   active = false,
   loading = false,
   format,
   onClick,
 }) {
-  const bg = loading ? 'transparent' : color;
+  const bg = loading ? 'transparent' : color || 'transparent';
   const border = active ? '2px solid green' : 'none';
   const theme = useTheme();
 
@@ -48,6 +48,7 @@ export function KPICard({
             border,
             cursor: onClick ? 'pointer' : 'default',
             '&:hover': { transform: 'scale(1.05)', transition: 'transform 0.2s' },
+            color: bg === 'transparent' ?  theme.palette.getContrastText(theme.palette.background.default) : theme.palette.getContrastText(bg),
           }}
         >
           {icon}

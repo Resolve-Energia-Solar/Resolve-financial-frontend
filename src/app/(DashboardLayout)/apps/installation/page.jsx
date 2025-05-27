@@ -275,7 +275,6 @@ const InstallationsDashboard = () => {
             flexWrap: 'wrap',
             mt: 1,
             mb: 4,
-            background: '#f5f5f5',
             p: 2,
           }}
         >
