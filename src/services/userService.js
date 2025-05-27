@@ -56,6 +56,26 @@ const userService = {
     }
   },
 
+  availability: async (id, params) => {
+    try {
+      const response = await apiClient.get(`${DEFAULT_ROUTER}/${id}/availability/`, { params });
+      return response.data;
+    } catch (error) {
+      console.error(`Erro ao buscar disponibilidade do usuário com id ${id}:`, error);
+      throw error;
+    }
+    },
+
+    getAvailableAgents: async (params) => {
+    try {
+      const response = await apiClient.get('/api/users/available/', { params });
+      return response.data;
+    } catch (error) {
+      console.error('Erro ao buscar agentes disponíveis:', error);
+      throw error;
+    }
+  },
+
   upInsert: async (id, body) => {
     console.log('afahjsdfjagsd', id);
 

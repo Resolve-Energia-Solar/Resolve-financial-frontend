@@ -5,7 +5,9 @@ import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
 import userService from '@/services/userService';
-import { debounce } from 'lodash';
+
+// Limite de agentes a retornar
+const DEFAULT_LIMIT = 25;
 
 export default function AutoCompleteUserSchedule({
   onChange,
@@ -14,136 +16,138 @@ export default function AutoCompleteUserSchedule({
   helperText,
   disabled,
   query,
-  label="Agentes Disponíveis"
+  label = 'Agentes Disponíveis',
 }) {
   const [open, setOpen] = React.useState(false);
   const [options, setOptions] = React.useState([]);
   const [loading, setLoading] = React.useState(false);
   const [selectedUser, setSelectedUser] = React.useState(null);
 
+  // 1) Carrega o agente atual em modo edição (apenas nome, sem count)
   React.useEffect(() => {
-    const fetchDefaultUser = async () => {
-      if (value) {
-        try {
-          const user = await userService.getUserByIdQuery(value, query);
-          if (user) {
-            setSelectedUser({
-              id: user.id,
-              name: user.complete_name,
-              distance: (user.distance || 0).toFixed(2),
-              daily_schedules_count: user.daily_schedules_count || '0',
-            });
-          }
-        } catch (error) {
-          console.error('Erro ao buscar usuário inicial:', error);
-        }
-      } else {
+    let active = true;
+    const fetchCurrent = async () => {
+      if (!value) {
         setSelectedUser(null);
+        return;
       }
-    };
-
-    fetchDefaultUser();
-  }, [value, query]);
-
-  const handleChange = (event, newValue) => {
-    setSelectedUser(newValue);
-    if (newValue) {
-      onChange(newValue.id);
-    } else {
-      onChange(null);
-    }
-  };
-
-  const fetchUsersByName = React.useCallback(
-    debounce(async (name) => {
       setLoading(true);
       try {
-        // Atualiza a query com o parâmetro `complete_name__icontains`
-        const updatedQuery = {
-          ...query,
-          complete_name: name, // Passa o nome para o campo `complete_name__icontains`
-        };
-
-        const users = await userService.getUsersBySchedule(updatedQuery);
-
-        const formattedUsers = users.results.map((user) => ({
+        const user = await userService.find(value, { fields: 'id,complete_name' });
+        const current = {
           id: user.id,
           name: user.complete_name,
-          distance: (user.distance || 0).toFixed(2),
-          daily_schedules_count: user.daily_schedules_count || '0',
-        }));
-
-        setOptions(formattedUsers);
-      } catch (error) {
-        console.error('Erro ao buscar usuários:', error);
+          // não exibe schedule_count para usuário avulso
+        };
+        if (active) {
+          setSelectedUser(current);
+          setOptions((prev) => prev.some((o) => o.id === current.id) ? prev : [current]);
+        }
+      } catch (err) {
+        console.error('Erro ao carregar agente atual:', err);
       } finally {
-        setLoading(false);
+        if (active) setLoading(false);
       }
-    }, 300),
-    [query],
-  );
+    };
+    fetchCurrent();
+    return () => { active = false; };
+  }, [value]);
+
+  // 2) Busca todos os agentes disponíveis ao abrir o dropdown
+  const fetchAllAgents = React.useCallback(async () => {
+    setLoading(true);
+    try {
+      const params = {
+        date: query.scheduleDate,
+        start_time: query.scheduleStartTime,
+        end_time: query.scheduleEndTime,
+        service: query.service,
+        limit: DEFAULT_LIMIT,
+      };
+      const res = await userService.getAvailableAgents(params);
+      const formatted = (res || []).map((u) => ({
+        id: u.id,
+        name: u.complete_name,
+        schedule_count: u.schedule_count,
+      }));
+      setOptions((prev) => {
+        // inclui o selecionado caso não esteja na lista
+        if (selectedUser && !formatted.some((o) => o.id === selectedUser.id)) {
+          return [selectedUser, ...formatted];
+        }
+        return formatted;
+      });
+    } catch (err) {
+      console.error('Erro ao buscar agentes disponíveis:', err);
+    } finally {
+      setLoading(false);
+    }
+  }, [query, selectedUser]);
 
   const handleOpen = () => {
     setOpen(true);
+    fetchAllAgents();
   };
-
   const handleClose = () => {
     setOpen(false);
     setOptions([]);
   };
 
+  const handleChange = (e, newValue) => {
+    setSelectedUser(newValue);
+    onChange(newValue ? newValue.id : null);
+  };
+
   return (
-    <div>
-      <Autocomplete
-        sx={{ width: '100%' }}
-        open={open}
-        onOpen={handleOpen}
-        onClose={handleClose}
-        isOptionEqualToValue={(option, value) => option.name === value.name}
-        getOptionLabel={(option) =>
-          `${option.name} (Distância: ${option.distance} KMs | Agendamentos: ${option.daily_schedules_count})`
-        }
-        options={options}
-        loading={loading}
-        disabled={disabled}
-        noOptionsText="Não há agentes disponíveis para a região, data e horário selecionados. Por favor, escolha outra data e horário ou entre em contato com o setor de vistoria."
-        loadingText="Carregando..."
-        value={selectedUser}
-        onInputChange={(event, newInputValue) => {
-          fetchUsersByName(newInputValue);
-        }}
-        onChange={handleChange}
-        onFocus={() => fetchUsersByName('')}
-        renderOption={(props, option) => (
-          <li {...props}>
-            <Box>
-              <Typography variant="body1">{option.name}</Typography>
+    <Autocomplete
+      fullWidth
+      open={open}
+      onOpen={handleOpen}
+      onClose={handleClose}
+      disabled={disabled}
+      value={selectedUser}
+      options={options}
+      loading={loading}
+      isOptionEqualToValue={(option, val) => option.id === val?.id}
+      getOptionLabel={(option) =>
+        option.schedule_count != null
+          ? `${option.name} (Agendamentos: ${option.schedule_count})`
+          : option.name
+      }
+      onChange={handleChange}
+      noOptionsText="Nenhum agente disponível para os filtros selecionados."
+      loadingText="Carregando..."
+      renderOption={(props, option) => (
+        <li {...props} key={option.id}>
+          <Box>
+            <Typography variant="body1">{option.name}</Typography>
+            {option.schedule_count != null && (
               <Typography variant="body2" color="textSecondary">
-                {`Distância: ${option.distance} KMs | Agendamentos: ${option.daily_schedules_count}`}
+                {`Agendamentos: ${option.schedule_count}`}
               </Typography>
-            </Box>
-          </li>
-        )}
-        renderInput={(params) => (
-          <CustomTextField
-            label={label}
-            {...params}
-            error={error}
-            helperText={helperText}
-            size="small"
-            variant="outlined"
-            InputProps={{
-              ...params.InputProps,
-              endAdornment: (
-                <React.Fragment>
-                  {loading ? <CircularProgress color="inherit" size={20} /> : null}
-                  {params.InputProps.endAdornment}
-                </React.Fragment>
-              ),
-            }}
-          />
-        )}
-      />
-    </div>
+            )}
+          </Box>
+        </li>
+      )}
+      renderInput={(params) => (
+        <CustomTextField
+          {...params}
+          label={label}
+          error={error}
+          helperText={helperText}
+          size="small"
+          variant="outlined"
+          InputProps={{
+            ...params.InputProps,
+            endAdornment: (
+              <>
+                {loading && <CircularProgress size={20} />} 
+                {params.InputProps.endAdornment}
+              </>
+            ),
+          }}
+        />
+      )}
+    />
   );
 }

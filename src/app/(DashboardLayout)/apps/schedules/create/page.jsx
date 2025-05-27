@@ -244,14 +244,14 @@ const CreateSchedulePage = () => {
                 </Tooltip>
               </Typography>
               <AutoCompleteUserSchedule
-                onChange={(id) => {
-                  if (id) {
-                    setFormData({
-                      ...formData,
-                      schedule_agent: { value: id, name: 'nome do agente' },
-                    });
-                  }
-                }}
+                onChange={(id) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    schedule_agent: id
+                      ? { value: id, name: prev.schedule_agent?.name || '' }
+                      : null,
+                  }))
+                }
                 value={formData.schedule_agent}
                 disabled={
                   !formData.service?.category ||
@@ -259,6 +259,7 @@ const CreateSchedulePage = () => {
                   !formData.schedule_start_time
                 }
                 query={{
+                  service: formData.service?.value || formData.service?.id || null,
                   category: formData.service?.category,
                   scheduleDate: formData.schedule_date,
                   scheduleStartTime: formData.schedule_start_time,

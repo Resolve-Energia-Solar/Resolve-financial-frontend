@@ -381,14 +381,14 @@ const UpdateSchedulePage = ({ scheduleId = null, onClosedModal = null, onRefresh
               </Grid>
               <Grid item xs={12} sm={6} lg={6}>
                 <AutoCompleteUserSchedule
-                  onChange={(id) => {
-                    if (id) {
-                      setFormData({
-                        ...formData,
-                        schedule_agent: { value: id, name: 'nome do agente' },
-                      });
-                    }
-                  }}
+                onChange={(id) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    schedule_agent: id
+                      ? { value: id, name: prev.schedule_agent?.name || '' }
+                      : null,
+                  }))
+                }
                   value={formData.schedule_agent}
                   disabled={
                     !formData.service?.category ||
@@ -400,6 +400,7 @@ const UpdateSchedulePage = ({ scheduleId = null, onClosedModal = null, onRefresh
                     scheduleDate: formData.schedule_date,
                     scheduleStartTime: formData.schedule_start_time,
                     scheduleEndTime: formData.schedule_end_time,
+                    service: formData.service?.id || formData.service?.value || null,
                   }}
                   {...(errors.schedule_agent_id && {
                     error: true,

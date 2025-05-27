@@ -1,15 +1,16 @@
 'use client';
+import React, { useEffect, useState, useCallback } from 'react';
 import {
   Grid,
   TextField,
   Box,
   TablePagination,
   CircularProgress,
+  Button,
   Dialog,
   DialogTitle,
   DialogContent,
   DialogContentText,
-  Button,
   DialogActions,
 } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
@@ -17,17 +18,21 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { ptBR } from 'date-fns/locale';
 import { format } from 'date-fns';
+
 import CardAgentRoutes from './components/Card';
+import ModalMaps from './components/Maps/ModalMaps';
+import ModalGeralMaps from './components/Maps/ModalGeralMaps';
+import UpdateSchedulePage from '@/app/(DashboardLayout)/apps/schedules/[id]/update/page';
+import AddSchedulePage from './Add-Schedule/Add-Schedule';
+import ListSchedule from './List-Schedule/List-Schedule';
+import { IconMapUp } from '@tabler/icons-react';
+
 import userService from '@/services/userService';
 import scheduleService from '@/services/scheduleService';
-import { useEffect, useState, useCallback } from 'react';
-import ModalMaps from '@/app/components/apps/inspections/schedule/AgentRoutes/components/Maps/ModalMaps';
-import UpdateSchedulePage from '@/app/(DashboardLayout)/apps/schedules/[id]/update/page';
-import AddSchedulePage from '@/app/components/apps/inspections/schedule/AgentRoutes/Add-Schedule/Add-Schedule';
-import ListSchedule from '@/app/components/apps/inspections/schedule/AgentRoutes/List-Schedule/List-Schedule';
-import { IconMapUp } from '@tabler/icons-react';
-import ModalGeralMaps from './components/Maps/ModalGeralMaps';
 import { useSelector } from 'react-redux';
+
+const DEFAULT_START = '08:00';
+const DEFAULT_END   = '18:00';
 
 export default function AgentRoutes({ projectId = null }) {
   const [agents, setAgents] = useState([]);
@@ -43,11 +48,10 @@ export default function AgentRoutes({ projectId = null }) {
 
   const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_AGENT_ROUTES_KEY || '';
   const [modalEditScheduleOpen, setModalEditScheduleOpen] = useState(false);
-  const [modelCreateScheduleOpen, setModelCreateScheduleOpen] = useState(false);
+  const [modalCreateScheduleOpen, setModalCreateScheduleOpen] = useState(false);
   const [modalListScheduleOpen, setModalListScheduleOpen] = useState(false);
   const [modalMapsOpen, setModalMapsOpen] = useState(false);
   const [modalMapGeralOpen, setModalMapGeralOpen] = useState(false);
-
   const [selectedScheduleId, setSelectedScheduleId] = useState(null);
   const [schedules, setSchedules] = useState([]);
   const [formData, setFormData] = useState({});
@@ -55,9 +59,7 @@ export default function AgentRoutes({ projectId = null }) {
   const permissions = useSelector((state) => state.user.permissions);
   const canEdit = permissions.includes('field_services.can_see_admin_schedules');
 
-  const handleRefresh = () => {
-    setRefresh(!refresh);
-  };
+  const handleRefresh = () => setRefresh((prev) => !prev);
 
   const handleOpenMap = (locations) => {
     setPoints(locations);
@@ -70,17 +72,17 @@ export default function AgentRoutes({ projectId = null }) {
       schedule_agent: agentId,
       schedule_date: format(selectedDate, 'yyyy-MM-dd'),
       service: 1,
-      project: projectId || null,
+      project: projectId,
     });
   };
 
   const handleOpenModalCreateSchedule = (agentId) => {
-    setModelCreateScheduleOpen(true);
+    setModalCreateScheduleOpen(true);
     setFormData({
       schedule_agent: agentId,
       schedule_date: format(selectedDate, 'yyyy-MM-dd'),
       service: 1,
-      project: projectId || null,
+      project: projectId,
     });
   };
 
@@ -89,10 +91,7 @@ export default function AgentRoutes({ projectId = null }) {
     setModalEditScheduleOpen(true);
   };
 
-  const handlePageChange = (event, newPage) => {
-    setPage(newPage);
-  };
-
+  const handlePageChange = (event, newPage) => setPage(newPage);
   const handleRowsPerPageChange = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
@@ -103,6 +102,9 @@ export default function AgentRoutes({ projectId = null }) {
       setLoading(true);
       try {
         setSchedules([]);
+        const dateStr = format(date, 'yyyy-MM-dd');
+
+        // 1) Busca lista de agentes
         const agentResponse = await userService.index({
           name: nameFilter,
           role: 'vistoriador',
@@ -111,59 +113,64 @@ export default function AgentRoutes({ projectId = null }) {
           limit: rowsPerPage,
           page: page + 1,
           fields: 'id,complete_name,free_time_agent',
-          date: format(date, 'yyyy-MM-dd'),
+          date: dateStr,
           order_by_schedule_count: 'desc',
+          view_all: true,
         });
 
         setTotalRows(agentResponse.meta?.pagination?.total_count || 0);
-
         const agentsData = agentResponse.results;
-        const dateStr = format(date, 'yyyy-MM-dd');
 
-        const agentsWithDetails = await Promise.all(
+        // 2) Para cada agente, busca agendas e disponibilidade
+        const detailed = await Promise.all(
           agentsData.map(async (agent) => {
-            const scheduleResponse = await scheduleService.index({
-              schedule_agent: agent.id,
-              schedule_date__range: `${dateStr},${dateStr}`,
-              expand: 'address,service,customer',
-              fields:
-                'id,address,schedule_date,schedule_end_date,schedule_start_time,schedule_end_time,service,customer',
-              ordering: 'schedule_start_time',
-              limit: 5,
-            });
+            const [scheduleResp, availability] = await Promise.all([
+              scheduleService.index({
+                schedule_agent: agent.id,
+                schedule_date__range: `${dateStr},${dateStr}`,
+                expand: 'address,service,customer',
+                fields: 'id,address,schedule_date,schedule_end_date,schedule_start_time,schedule_end_time,service,customer',
+                ordering: 'schedule_start_time',
+                limit: 5,
+              }),
+              userService.availability(agent.id, {
+                date: dateStr,
+                start_time: DEFAULT_START,
+                end_time: DEFAULT_END,
+              }),
+            ]);
 
-            const schedulesWithAgentName = (scheduleResponse.results || []).map((schedule) => ({
-              ...schedule,
+            const scheds = (scheduleResp.results || []).map((s) => ({
+              ...s,
               agent_name: agent.complete_name,
             }));
 
-            setSchedules((prev) => [...prev, ...schedulesWithAgentName]);
+            setSchedules((prev) => [...prev, ...scheds]);
 
             return {
               ...agent,
-              schedules: schedulesWithAgentName,
+              schedules: scheds,
+              available: availability.available,
+              availabilityDetails: availability,
             };
-          }),
+          })
         );
 
-        setAgents(agentsWithDetails);
+        setAgents(detailed);
       } catch (error) {
         console.error('Erro ao buscar dados dos agentes:', error);
       } finally {
         setLoading(false);
       }
     },
-    [rowsPerPage, page, refresh],
+    [rowsPerPage, page, refresh]
   );
 
   useEffect(() => {
     fetchData(selectedDate, committedName);
-  }, [selectedDate, committedName, fetchData, page, rowsPerPage]);
+  }, [selectedDate, committedName, fetchData]);
 
-  const handleNameChange = (event) => {
-    setName(event.target.value);
-  };
-
+  const handleNameChange = (e) => setName(e.target.value);
   const handleNameCommit = () => {
     if (name !== committedName) {
       setCommittedName(name);
@@ -177,9 +184,7 @@ export default function AgentRoutes({ projectId = null }) {
         <DatePicker
           label="Data"
           value={selectedDate}
-          onChange={(newValue) => {
-            if (newValue) setSelectedDate(newValue);
-          }}
+          onChange={(newVal) => newVal && setSelectedDate(newVal)}
           renderInput={(params) => <TextField {...params} />}
         />
 
@@ -188,11 +193,7 @@ export default function AgentRoutes({ projectId = null }) {
           value={name}
           onChange={handleNameChange}
           onBlur={handleNameCommit}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') {
-              handleNameCommit();
-            }
-          }}
+          onKeyDown={(e) => e.key === 'Enter' && handleNameCommit()}
         />
 
         <Button startIcon={<IconMapUp />} onClick={() => setModalMapGeralOpen(true)}>
@@ -218,7 +219,7 @@ export default function AgentRoutes({ projectId = null }) {
               <CardAgentRoutes
                 id={agent.id}
                 date={selectedDate}
-                freeTimeAgent={agent?.free_time_agent[0]}
+                freeTimeAgent={agent.free_time_agent[0]}
                 title={agent.complete_name}
                 items={agent.schedules}
                 onItemClick={handleOpenModalSchedule}
@@ -226,6 +227,8 @@ export default function AgentRoutes({ projectId = null }) {
                 onListSchedule={handleOpenModalListSchedule}
                 onOpenMap={handleOpenMap}
                 canEdit={canEdit}
+                available={agent.available}
+                availabilityDetails={agent.availabilityDetails}
               />
             </Grid>
           ))}
@@ -243,10 +246,10 @@ export default function AgentRoutes({ projectId = null }) {
         labelRowsPerPage="Linhas por página"
       />
 
+      {/* Modais de CRUD de agendamento */}
       <Dialog
         open={modalEditScheduleOpen}
         onClose={() => setModalEditScheduleOpen(false)}
-        aria-labelledby="draggable-dialog-title"
         maxWidth="lg"
       >
         <DialogContent>
@@ -260,17 +263,16 @@ export default function AgentRoutes({ projectId = null }) {
       </Dialog>
 
       <Dialog
-        open={modelCreateScheduleOpen}
-        onClose={() => setModelCreateScheduleOpen(false)}
-        aria-labelledby="draggable-dialog-title"
+        open={modalCreateScheduleOpen}
+        onClose={() => setModalCreateScheduleOpen(false)}
         maxWidth="lg"
       >
         <DialogContent>
           <DialogContentText>
             <AddSchedulePage
               form={formData}
-              onClose={() => setModelCreateScheduleOpen(false)}
-              onRefresh={() => handleRefresh()}
+              onClose={() => setModalCreateScheduleOpen(false)}
+              onRefresh={handleRefresh}
             />
           </DialogContentText>
         </DialogContent>
@@ -281,18 +283,19 @@ export default function AgentRoutes({ projectId = null }) {
         onClose={() => setModalListScheduleOpen(false)}
         maxWidth="lg"
       >
+        <DialogTitle>Lista de Agendamentos</DialogTitle>
         <DialogContent>
-          <DialogTitle>Lista de Agendamentos</DialogTitle>
           <DialogContentText>
             <ListSchedule
               form={formData}
               onClose={() => setModalListScheduleOpen(false)}
-              onRefresh={() => handleRefresh()}
+              onRefresh={handleRefresh}
             />
           </DialogContentText>
         </DialogContent>
       </Dialog>
 
+      {/* Mapa de rota individual */}
       <ModalMaps
         open={modalMapsOpen}
         onClose={() => setModalMapsOpen(false)}
