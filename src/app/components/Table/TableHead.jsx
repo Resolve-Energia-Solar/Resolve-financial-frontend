@@ -1,17 +1,24 @@
 import React from "react";
-import { TableHead as MuiHead, TableRow } from "@mui/material";
+import { TableHead as MuiHead, TableRow, useTheme } from "@mui/material";
+import { TableCell } from "./TableCell";
 
-export function TableHead({ children }) {
+export function TableHead({ columns, ordering, onSort }) {
+    const theme = useTheme();
     return (
         <MuiHead>
             <TableRow>
-                {/* {columns.map((column) => (
-                    <TableCell key={column.field} sx={{ fontWeight: 600, fontSize: '14px', color: '#303030' }}>
-                        {column.headerName}
+                {columns.map(col => (
+                    <TableCell
+                        key={col.field}
+                        sortable={col.sortable}
+                        onClick={() => col.sortable && onSort(col.field)}
+                        isSorted={ordering === col.field}
+                        isSortedDesc={ordering === `-${col.field}`}
+                        sx={{ fontWeight: 600, fontSize: '14px', color: theme.palette.text.primary }}
+                    >
+                        {col.headerName}
                     </TableCell>
-                ))} */}
-
-                {children}
+                ))}
             </TableRow>
         </MuiHead>
     );
