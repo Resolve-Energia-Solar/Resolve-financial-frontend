@@ -237,16 +237,16 @@ const ConstructionsDashboard = () => {
         ) : (
           <Chip label="Sem Obra" color="default" icon={<RemoveCircleOutline />} />
         ),
-    }, 
+    },
     {
       field: 'civil_construction.repass_value',
       headerName: 'Valor de Repasse',
       render: (r) =>
         r?.civil_construction[0]?.repass_value !== undefined
           ? new Intl.NumberFormat('pt-BR', {
-              style: 'currency',
-              currency: 'BRL',
-            }).format(r.civil_construction[0]?.repass_value || 0)
+            style: 'currency',
+            currency: 'BRL',
+          }).format(r.civil_construction[0]?.repass_value || 0)
           : '-',
     },
   ];
@@ -286,42 +286,42 @@ const ConstructionsDashboard = () => {
 
       {/* Indicadores */}
       <Box sx={{ width: '100%', mb: 2 }}>
-              <Typography variant="h6">Indicadores</Typography>
-              <Box
-                sx={{
-                  width: '100%',
-                  display: 'flex',
-                  justifyContent: 'space-evenly',
-                  gap: 2,
-                  flexWrap: 'wrap',
-                  mt: 1,
-                  mb: 4,
-                  p: 2,
-                }}
-              >
-                {stats.map(({ key, label, value, icon, color, filter, format }) => {
-                  const isActive =
-                    filter &&
-                    Object.entries(filter).some(
-                      ([filterKey, filterValue]) => filters?.[filterKey] === filterValue,
-                    );
-      
-                  return (
-                    <KPICard
-                      key={key}
-                      label={label}
-                      value={value}
-                      icon={icon}
-                      color={color}
-                      active={isActive}
-                      format={format}
-                      onClick={() => handleKPIClick(key)}
-                      loading={loadingIndicators}
-                    />
-                  );
-                })}
-              </Box>
-            </Box>
+        <Typography variant="h6">Indicadores</Typography>
+        <Box
+          sx={{
+            width: '100%',
+            display: 'flex',
+            justifyContent: 'space-evenly',
+            gap: 2,
+            flexWrap: 'wrap',
+            mt: 1,
+            mb: 4,
+            p: 2,
+          }}
+        >
+          {stats.map(({ key, label, value, icon, color, filter, format }) => {
+            const isActive =
+              filter &&
+              Object.entries(filter).some(
+                ([filterKey, filterValue]) => filters?.[filterKey] === filterValue,
+              );
+
+            return (
+              <KPICard
+                key={key}
+                label={label}
+                value={value}
+                icon={icon}
+                color={color}
+                active={isActive}
+                format={format}
+                onClick={() => handleKPIClick(key)}
+                loading={loadingIndicators}
+              />
+            );
+          })}
+        </Box>
+      </Box>
 
       {/* Filtros */}
       <GenericFilterDrawer
@@ -364,14 +364,9 @@ const ConstructionsDashboard = () => {
         }}
         noWrap={true}
       >
-        <Table.Head>
-          {columns.map((c) => (
-            <Table.Cell key={c.field} sx={{ fontWeight: 600, fontSize: '14px' }}>
-              {c.headerName}
-            </Table.Cell>
-          ))}
-        </Table.Head>
-
+        <Table.Head
+          columns={columns}
+        />
         <Table.Body
           loading={loading}
           columns={columns.length}

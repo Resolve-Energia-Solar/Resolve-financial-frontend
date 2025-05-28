@@ -213,19 +213,10 @@ const UserList = () => {
         onRowsPerPageChange={handleRowsPerPageChange}
         noWrap={true}
       >
-        <Table.Head>
-          {columns.map(c => (
-            <Table.Cell
-              key={c.field}
-              sx={{ fontWeight: 600, fontSize: '14px' }}
-            >
-              {c.headerName}
-            </Table.Cell>
-          ))}
+        <Table.Head columns={columns}>
           <Table.Cell align="center">Editar</Table.Cell>
           <Table.Cell align="center">Ver</Table.Cell>
         </Table.Head>
-
         <Table.Body
           loading={loading}
           onRowClick={handleRowClick}

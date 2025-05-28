@@ -107,16 +107,9 @@ export default function UserAddressesTable({
                 totalRows={totalRows}
                 noWrap={true}
             >
-                <Table.Head>
-                    {columns.map(c => (
-                        <Table.Cell
-                            key={c.field}
-                            sx={{ fontWeight: 600, fontSize: '14px' }}
-                        >
-                            {c.headerName}
-                        </Table.Cell>
-                    ))}
-                </Table.Head>
+                <Table.Head
+                    columns={columns}
+                />
                 <Table.Body columns={columns.length}>
                     {columns.map(c => (
                         <Table.Cell

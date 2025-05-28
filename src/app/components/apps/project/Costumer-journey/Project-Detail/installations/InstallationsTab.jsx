@@ -114,15 +114,7 @@ export default function InstallationsTab({ projectId, viewOnly = false }) {
                 onPageChange={setPage}
                 onRowsPerPageChange={setRowsPerPage}
             >
-                <Table.Head>
-                    {columns.map(c => (
-                        <Table.Cell
-                            key={c.field}
-                            sx={{ fontWeight: 600, fontSize: '14px' }}
-                        >
-                            {c.headerName}
-                        </Table.Cell>
-                    ))}
+                <Table.Head columns={columns}>
                     {!viewOnly && <Table.Cell align="center">Editar</Table.Cell>}
                     <Table.Cell align="center">Ver</Table.Cell>
                 </Table.Head>

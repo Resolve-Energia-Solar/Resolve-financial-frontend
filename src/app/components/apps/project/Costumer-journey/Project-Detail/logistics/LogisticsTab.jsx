@@ -163,15 +163,7 @@ export default function LogisticsTab({ projectId, viewOnly = false }) {
                 onPageChange={setPage}
                 onRowsPerPageChange={setRowsPerPage}
             >
-                <Table.Head>
-                    {deliveriesColumns.map(c => (
-                        <Table.Cell
-                            key={c.field}
-                            sx={{ fontWeight: 600, fontSize: '14px' }}
-                        >
-                            {c.headerName}
-                        </Table.Cell>
-                    ))}
+                <Table.Head columns={deliveriesColumns}>
                     {!viewOnly && (
                         <Table.Cell align="center">Editar</Table.Cell>
                     )}
@@ -259,15 +251,7 @@ export default function LogisticsTab({ projectId, viewOnly = false }) {
                 onPageChange={setPage}
                 onRowsPerPageChange={setRowsPerPage}
             >
-                <Table.Head>
-                    {purchasesColumns.map(c => (
-                        <Table.Cell
-                            key={c.field}
-                            sx={{ fontWeight: 600, fontSize: '14px' }}
-                        >
-                            {c.headerName}
-                        </Table.Cell>
-                    ))}
+                <Table.Head columns={purchasesColumns}>
                     {!viewOnly && (
                         <Table.Cell align="center">Editar</Table.Cell>
                     )}
