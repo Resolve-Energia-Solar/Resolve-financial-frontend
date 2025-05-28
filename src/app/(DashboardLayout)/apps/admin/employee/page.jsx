@@ -1,34 +1,40 @@
 'use client';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useContext } from 'react';
 import PageContainer from '@/app/components/container/PageContainer';
 import Breadcrumb from '@/app/(DashboardLayout)/layout/shared/breadcrumb/Breadcrumb';
 import { useSnackbar } from 'notistack';
 import userService from '@/services/userService';
 import { Table } from "@/app/components/Table";
 import { TableHeader } from "@/app/components/TableHeader";
-import { Chip, Dialog, DialogContent, DialogTitle, Typography } from '@mui/material';
+import { Box, Button, Chip, Dialog, DialogContent, DialogTitle, Typography, useTheme } from '@mui/material';
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
 import PersonIcon from '@mui/icons-material/Person';
 import BusinessIcon from '@mui/icons-material/Business';
 import UserForm from '@/app/components/apps/users/UserForm';
-import { Add } from '@mui/icons-material';
+import { Add, FilterAlt } from '@mui/icons-material';
+import GenericFilterDrawer from '@/app/components/filters/GenericFilterDrawer';
+import filterConfig from './filterConfig';
+import { FilterContext } from '@/context/FilterContext';
 
 const UserList = () => {
   // Essa página é uma listagem de USUÁRIOS, porém, ela lista apenas os funcionários (user_type = 3) e extende o funcionário (employee) 
   const [loading, setLoading] = useState(true);
   const [users, setUsers] = useState([]);
+  const { filters, setFilters, clearFilters, refresh } = useContext(FilterContext);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [totalRows, setTotalRows] = useState(0);
   const [selectedUser, setSelectedUser] = useState(null);
+  const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
   const [openUserForm, setOpenUserForm] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
+  const theme = useTheme();
 
   const fetchUsers = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await userService.index({ user_types: 3, fields: 'id,complete_name,username,email,is_active,employee.role.name,employee.branch.name,last_login,person_type', expand: 'employee.role,employee.branch', page: page + 1, limit: rowsPerPage });
+      const response = await userService.index({ user_types: 3, fields: 'id,complete_name,username,email,is_active,employee.role.name,employee.branch.name,last_login,person_type', expand: 'employee.role,employee.branch', page: page + 1, limit: rowsPerPage, ...filters });
       setUsers(response.results);
       setTotalRows(response.meta.pagination.total_count);
     } catch (error) {
@@ -36,11 +42,11 @@ const UserList = () => {
     } finally {
       setLoading(false);
     }
-  }, [page, rowsPerPage, enqueueSnackbar]);
+  }, [filters, page, rowsPerPage, enqueueSnackbar]);
 
   useEffect(() => {
     fetchUsers();
-  }, [fetchUsers]);
+  }, [fetchUsers, filters, page, rowsPerPage]);
 
   const BCrumb = [
     {
@@ -163,6 +169,25 @@ const UserList = () => {
 
     <PageContainer title={'Funcionários'}>
       <Breadcrumb items={BCrumb} />
+
+      <GenericFilterDrawer
+        filters={filterConfig}
+        initialValues={filters}
+        open={filterDrawerOpen}
+        onClose={() => setFilterDrawerOpen(false)}
+        onApply={(newFilters) => setFilters(newFilters)}
+      />
+
+      <Box sx={{ mb: 2 }} display="flex" justifyContent="flex-end" alignItems="center">
+        <Button
+          icon={<FilterAlt />}
+          onClick={() => { setFilterDrawerOpen(true) }}
+          color='info'
+        >
+          Filtros
+        </Button>
+      </Box>
+
       <TableHeader.Root>
         <TableHeader.Title
           title="Total"
@@ -234,7 +259,7 @@ const UserList = () => {
           <Typography variant="h4">Adicionar Usuário</Typography>
         </DialogTitle>
         <DialogContent>
-          <UserForm />
+          <UserForm onSave={() => { setOpenUserForm(false); setSelectedUser(null) }} />
         </DialogContent>
       </Dialog>
 

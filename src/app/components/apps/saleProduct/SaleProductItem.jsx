@@ -92,7 +92,7 @@ export default function SaleProductItem({ initialData, productName, onUpdated = 
             </Grid>
             <Grid item xs={11} sx={{ ml: 1 }}>
               <Typography fontWeight={700} fontSize={14}>Produto</Typography>
-              <Typography fontWeight={500} fontSize={16} color={'rgba(48, 48, 48, 0.5)'}>
+              <Typography fontWeight={500} fontSize={16} color={theme.palette.text.primary}>
                 {productName || 'sem nome'}
               </Typography>
             </Grid>

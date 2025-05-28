@@ -78,7 +78,7 @@ export default function Addresses({ userId, data, onRefresh = () => {} }) {
   return (
     <Box sx={{ marginBottom: 2 }}>
       <Typography variant="h6" sx={{ marginBottom: 2 }}>
-        Endereços
+        Endereços da Instalação
       </Typography>
       <TableContainer component={Paper} sx={{ marginBottom: 2 }}>
         <Table sx={{ width: '100%' }} aria-label="table of addresses">

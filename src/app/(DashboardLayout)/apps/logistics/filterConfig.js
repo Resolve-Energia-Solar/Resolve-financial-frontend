@@ -131,7 +131,7 @@ export default [
     type: 'multiselect',
     options: [
       { value: 'P', label: 'Pendente' },
-      { value: 'CO', label: 'Concluído' },
+      { value: 'F', label: 'Finalizado' },
       { value: 'EA', label: 'Em Andamento' },
       { value: 'C', label: 'Cancelado' },
       { value: 'D', label: 'Distrato' },

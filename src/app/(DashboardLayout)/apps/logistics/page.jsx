@@ -232,7 +232,7 @@ const LogisticsDashboard = () => {
       {/* Indicadores */}
       <Box sx={{ width: '100%', mb: 2 }}>
         <Typography variant="h6">Indicadores de Compra</Typography>
-        <Box sx={{ width: '100%', display: 'flex', justifyContent: 'space-evenly', gap: 2, flexWrap: 'wrap', mt: 1, mb: 4, background: '#f5f5f5', p: 2 }}>
+        <Box sx={{ width: '100%', display: 'flex', justifyContent: 'space-evenly', gap: 2, flexWrap: 'wrap', mt: 1, mb: 4, p: 2 }}>
           {purchaseStats.map(({ key, label, value, icon, color, filter }) => {
             const isActive = filters.purchase_status === filter.purchase_status;
             return (
@@ -251,7 +251,7 @@ const LogisticsDashboard = () => {
         </Box>
 
         <Typography variant="h6">Indicadores de Entrega</Typography>
-        <Box sx={{ width: '100%', display: 'flex', justifyContent: 'space-evenly', gap: 2, flexWrap: 'wrap', mt: 1, background: '#f5f5f5', p: 2 }}>
+        <Box sx={{ width: '100%', display: 'flex', justifyContent: 'space-evenly', gap: 2, flexWrap: 'wrap', mt: 1, p: 2 }}>
           {deliveryStats.map(({ key, label, value, icon, color, filter }) => {
             const isActive = filters.delivery_status === filter.delivery_status;
             return (

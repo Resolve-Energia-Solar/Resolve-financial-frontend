@@ -51,7 +51,7 @@ function AddSchedulePage({ form = null, onRefresh = null, onClose = null }) {
 
           if (!project.address) {
             enqueueSnackbar(
-              'É necessário cadastrar o endereço da unidade Geradora na aba "CheckList".',
+              'Por favor, cadastre o endereço da Unidade Geradora na aba "CheckList".',
               { variant: 'error' }
             );
           }
