@@ -30,6 +30,8 @@ import ScheduleOpinionChip from '../../inspections/schedule/StatusChip';
 import StatusFinancialChip from '@/utils/status/FinancialChip';
 import ChipRequest from '../../request/components/auto-complete/ChipRequest';
 import { IconCheck } from '@tabler/icons-react';
+import JourneyCounterChip from '../Costumer-journey/JourneyCounterChip';
+import { on } from 'events';
 
 const pulse = keyframes`
   0% {
@@ -117,6 +119,7 @@ const ProjectList = ({ onClick }) => {
   const [totalRows, setTotalRows] = useState(0);
   const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
   const { filters, setFilters } = useContext(FilterContext);
+  const [ordering, setOrdering] = useState('-created_at');
 
   const states = [
     { value: 'AC', label: 'AC' },
@@ -392,47 +395,19 @@ const ProjectList = ({ onClick }) => {
       setLoadingProjects(true);
       setLoadingIndicators(true);
       try {
-        // Fetch dos projetos
         const data = await projectService.index({
           page: page + 1,
           limit: rowsPerPage,
           expand:
-            'sale.customer,designer,homologator,product,sale,sale.branch,field_services.service.category,field_services.final_service_opinion,requests_energy_company,requests_energy_company.type',
+            'sale,sale.customer,designer,homologator,product,sale,sale.branch,requests_energy_company,requests_energy_company.type,inspection.final_service_opinion',
           fields:
-            'id,sale.id,sale.customer.complete_name,sale.signature_date,sale.total_value,sale.payment_status,sale.branch.name,is_documentation_completed,homologator.complete_name,designer_status,material_list_is_completed,trt_pending,peding_request,access_opnion,product.name,product.params,status,sale.status,is_released_to_engineering,field_services.service.category.name,field_services.final_service_opinion.name,field_services.status,field_services.schedule_date,requests_energy_company.status,requests_energy_company.type.name',
-          metrics: 'is_released_to_engineering',
+            'id,journey_counter,sale.id,sale.customer.complete_name,sale.signature_date,sale.total_value,sale.payment_status,sale.branch.name,is_documentation_completed,homologator.complete_name,designer_status,material_list_is_completed,trt_pending,peding_request,access_opnion,product.name,product.params,status,sale.status,is_released_to_engineering,requests_energy_company.status,requests_energy_company.type.name,delivery_status,installation_status,final_inspection_status,inspection.final_service_opinion.name',
+          metrics: 'journey_counter,is_released_to_engineering,delivery_status,installation_status,final_inspection_status',
           is_pre_sale: false,
+          ordering,
           ...filters,
         });
-  
-        const getFieldServiceStatus = (project) => {
-          const categories = ['Vistoria', 'Instalação', 'Entrega'];
-          const latestServices = {};
-  
-          project.field_services.forEach((fs) => {
-            const categoryName = fs.service?.category?.name;
-            if (!categories.includes(categoryName)) return;
-  
-            const serviceDate = new Date(fs.schedule_date);
-            if (
-              !latestServices[categoryName] ||
-              serviceDate > new Date(latestServices[categoryName].schedule_date)
-            ) {
-              latestServices[categoryName] = fs;
-            }
-          });
-  
-          const result = {};
-          categories.forEach((category) => {
-            result[category] = latestServices[category]
-              ? latestServices[category].final_service_opinion
-                ? latestServices[category].final_service_opinion.name
-                : latestServices[category].status
-              : null;
-          });
-          return result;
-        };
-  
+
         const projectsWithStatus = data.results.map((project) => {
           const homolog =
             project.requests_energy_company?.find(
@@ -440,18 +415,16 @@ const ProjectList = ({ onClick }) => {
             )?.status || null;
           return {
             ...project,
-            fieldServiceStatus: getFieldServiceStatus(project),
             homologationStatus: homolog,
           };
         });
-  
+
         setProjectsList(projectsWithStatus);
         setTotalRows(data.meta.pagination.total_count);
-  
-        // Fetch dos indicadores
+
         const indicatorsData = await projectService.getIndicators({ ...filters, is_pre_sale: false });
         setIndicators(indicatorsData.indicators);
-  
+
       } catch (err) {
         setError('Erro ao carregar Projetos e Indicadores');
       } finally {
@@ -459,10 +432,18 @@ const ProjectList = ({ onClick }) => {
         setLoadingIndicators(false);
       }
     };
-  
+
     fetchProjectsAndIndicators();
-  }, [page, rowsPerPage, filters]);
-  
+  }, [page, rowsPerPage, filters, ordering]);
+
+  const handleSort = (field) => {
+    setPage(0);
+    if (ordering === field) {
+      setOrdering(`-${field}`);
+    } else {
+      setOrdering(field);
+    }
+  };
 
   const handlePageChange = useCallback((event, newPage) => {
     setPage(newPage);
@@ -486,23 +467,19 @@ const ProjectList = ({ onClick }) => {
     {
       field: 'sale.customer.complete_name',
       headerName: 'Cliente',
-      render: (r) => r.sale.customer.complete_name,
+      render: (r) => r.sale.customer.complete_name
     },
     { field: 'product.name', headerName: 'Produto', render: (r) => r.product.name },
     {
       field: 'signature_date',
       headerName: 'Data de Contrato',
-      render: (r) => new Date(r.signature_date).toLocaleDateString(),
+      render: (r) => new Date(r.sale.signature_date).toLocaleDateString('pt-BR'),
     },
     {
-      field: 'dias',
+      field: 'journey_counter',
       headerName: 'Dias',
-      render: (r) => {
-        if (!r.sale.signature_date) return '-';
-        const diffMs = Date.now() - new Date(r.sale.signature_date).getTime();
-        const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-        return `${diffDays}`;
-      },
+      render: (r) => <JourneyCounterChip count={r.journey_counter} />,
+      sortable: true
     },
     { field: 'sale.branch.name', headerName: 'Unidade', render: (r) => r.sale.branch.name },
     {
@@ -522,32 +499,40 @@ const ProjectList = ({ onClick }) => {
     {
       field: 'inspection_status',
       headerName: 'Status Vistoria',
-      render: (r) => r.fieldServiceStatus?.Vistoria,
+      render: (r) => <ScheduleOpinionChip status={r.inspection?.final_service_opinion?.name} />
     },
     {
       field: 'status_financeiro',
       headerName: 'Status Financeiro',
-      render: (r) => r.sale.payment_status,
+      render: (r) => <StatusFinancialChip status={r.sale.payment_status} />,
     },
     {
       field: 'is_released_to_engineering',
       headerName: 'Liberado p/ Engenharia',
-      render: (r) => r.is_released_to_engineering,
+      render: (r) => (
+        <Chip
+          label={r.is_released_to_engineering ? 'Liberado' : 'Bloqueado'}
+          color={r.is_released_to_engineering ? 'success' : 'error'}
+          icon={
+            r.is_released_to_engineering ? <IconCheck size={16} /> : <IconX size={16} />
+          }
+        />
+      ),
     },
     {
       field: 'delivery_status',
       headerName: 'Status de Entrega',
-      render: (r) => r.fieldServiceStatus?.Entrega,
+      render: (r) => <ScheduleOpinionChip status={r.delivery_status} />,
     },
     {
       field: 'installation_status',
       headerName: 'Status de Instalação',
-      render: (r) => r.fieldServiceStatus?.Instalação,
+      render: (r) => <ScheduleOpinionChip status={r.installation_status} />,
     },
     {
-      field: 'homologationStatus',
+      field: 'final_inspection_status',
       headerName: 'Status Homologação',
-      render: (r) => r.homologationStatus || '-',
+      render: (r) => <ScheduleOpinionChip status={r.final_inspection_status} />,
     },
   ];
 
@@ -740,84 +725,25 @@ const ProjectList = ({ onClick }) => {
           noWrap={true}
         >
           {/* Cabeçalho */}
-          <Table.Head>
-            {columns.map((col) => (
+          <Table.Head
+            columns={columns}
+            ordering={ordering}
+            onSort={handleSort}
+          />
+          {/* Corpo */}
+          <Table.Body
+            loading={loadingProjects}
+            columns={columns.length}
+            onRowClick={onClick}
+            sx={{ cursor: 'pointer', '&:hover': { backgroundColor: 'rgba(236, 242, 255, 0.35)' } }}
+          >
+            {columns.map(col => (
               <Table.Cell
                 key={col.field}
-                sx={{
-                  fontWeight: 600,
-                  fontSize: '14px',
-                }}
-              >
-                {col.headerName}
-              </Table.Cell>
+                render={col.render}
+                sx={col.sx}
+              />
             ))}
-          </Table.Head>
-
-          {/* Corpo */}
-          <Table.Body loading={loadingProjects} columns={columns.length}>
-            <Table.Cell render={(row) => row.sale.customer.complete_name} sx={{ opacity: 0.7 }} />
-            <Table.Cell render={(row) => row.product?.name} sx={{ opacity: 0.7 }} />
-            <Table.Cell
-              render={(row) =>
-                row.sale.signature_date
-                  ? new Date(row.sale.signature_date).toLocaleDateString()
-                  : 'Sem data'
-              }
-              sx={{ opacity: 0.7 }}
-            />
-            <Table.Cell
-              render={(row) => {
-                if (!row.sale.signature_date) return '-';
-                const diffMs = Date.now() - new Date(row.sale.signature_date).getTime();
-                const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-                return `${diffDays}`;
-              }}
-              sx={{ opacity: 0.7 }}
-            />
-            <Table.Cell render={(row) => row.sale.branch.name} sx={{ opacity: 0.7 }} />
-            <Table.Cell
-              render={(row) =>
-                new Intl.NumberFormat('pt-BR', {
-                  style: 'currency',
-                  currency: 'BRL',
-                }).format(row.sale.total_value)
-              }
-              sx={{ opacity: 0.7 }}
-            />
-            <Table.Cell render={(row) => getStatusChip(row.sale.status)} sx={{ opacity: 0.7 }} />
-            <Table.Cell
-              render={(row) => <ScheduleOpinionChip status={row.fieldServiceStatus?.Vistoria} />}
-              sx={{ opacity: 0.7 }}
-            />
-            <Table.Cell
-              render={(row) => <StatusFinancialChip status={row.sale.payment_status} />}
-              sx={{ opacity: 0.7 }}
-            />
-            <Table.Cell
-              render={(row) => (
-                <Chip
-                  label={row.is_released_to_engineering ? 'Liberado' : 'Bloqueado'}
-                  color={row.is_released_to_engineering ? 'success' : 'error'}
-                  icon={
-                    row.is_released_to_engineering ? <IconCheck size={16} /> : <IconX size={16} />
-                  }
-                />
-              )}
-              sx={{ opacity: 0.7 }}
-            />
-            <Table.Cell
-              render={(row) => <ScheduleOpinionChip status={row.fieldServiceStatus?.Entrega} />}
-              sx={{ opacity: 0.7 }}
-            />
-            <Table.Cell
-              render={(row) => <ScheduleOpinionChip status={row.fieldServiceStatus?.Instalação} />}
-              sx={{ opacity: 0.7 }}
-            />
-            <Table.Cell
-              render={(row) => <ChipRequest status={row.homologationStatus} />}
-              sx={{ opacity: 0.7 }}
-            />
           </Table.Body>
           <Table.Pagination />
         </Table.Root>
