@@ -17,7 +17,7 @@ import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import { formatDateTime, formatDate, formatTime } from '@/utils/inspectionFormatDate';
 import answerService from '@/services/answerService';
-import { ArrowBack, ArrowForward } from '@mui/icons-material';
+import { ArrowBack, ArrowForward, Download } from '@mui/icons-material';
 import 'react-image-lightbox/style.css';
 import Lightbox from 'react-image-lightbox';
 import './LightboxOverride.css';
@@ -104,13 +104,16 @@ const AnswerForm = ({ answerData }) => {
     'cr2',
     'nef',
     'arw',
-    'heic',
+    'heic'
   ];
   const validVideoExtensions = ['mp4', 'avi', 'mov', 'webm', 'mpeg', 'mpg', 'ogg'];
 
   const visualFiles = answersFiles.filter((file) => {
     const ext = file.file.split('?')[0].split('.').pop().toLowerCase();
-    return validImageExtensions.includes(ext) || validVideoExtensions.includes(ext);
+    return (
+      (validImageExtensions.includes(ext) || validVideoExtensions.includes(ext)) &&
+      ext !== 'pdf'
+    );
   });
 
   const getFieldLabel = (fieldId) => {
@@ -157,10 +160,9 @@ const AnswerForm = ({ answerData }) => {
         </>
       );
     }
-
     // outras extensões
     if (validImageExtensions.includes(ext)) {
-      return (<Box key={file.id} textAlign="center">
+      return (
         <Box
           component="img"
           src={file.file}
@@ -177,8 +179,7 @@ const AnswerForm = ({ answerData }) => {
             margin: 'auto',
           }}
         />
-        <Typography variant="h5">{file.file}:</Typography>
-      </Box>);
+      );
     }
 
     if (validVideoExtensions.includes(ext)) {
@@ -229,6 +230,24 @@ const AnswerForm = ({ answerData }) => {
         <Typography variant="h4" sx={{ marginBottom: '15px' }}>
           Resposta do Serviço
         </Typography>
+        <Divider />
+        <Stack
+          direction={{ xs: 'column', sm: 'row' }}
+          alignItems="center"
+          justifyContent="space-between"
+          my={1}
+        >
+          {formInfo && <Typography variant="h5">{formInfo.name}</Typography>}
+          <Box display="flex" flexDirection="column" alignItems="center">
+            <Typography variant="body2">Respondido em:</Typography>
+            <Chip
+              size="small"
+              color="secondary"
+              variant="outlined"
+              label={formatDateTime(answerData?.results[0]?.created_at)}
+            />
+          </Box>
+        </Stack>
         <Divider />
         {visualFiles.length > 0 && (
           <Box mt={2} sx={{ position: 'relative' }}>
@@ -348,11 +367,7 @@ const AnswerForm = ({ answerData }) => {
                 if (ext === 'pdf') {
                   return (
                     <Box key={file.id} textAlign="center">
-                      <iframe
-                        src={file.file}
-                        style={{ width: '100%', height: '500px' }}
-                        title="PDF"
-                      />
+                      {file.file}
                     </Box>
                   );
                 }
@@ -428,29 +443,45 @@ const AnswerForm = ({ answerData }) => {
             </Box>
           </Box>
         )}
+        {answersFiles
+          .filter(file => file.file.toLowerCase().includes('.pdf')).length > 0 && (
+            <Box mt={3}>
+              <Typography variant="h5" gutterBottom>
+                Arquivos PDF:
+              </Typography>
+              {answersFiles
+                .filter(file => file.file.toLowerCase().includes('.pdf'))
+                .map(file => (
+                  <Box key={file.id} mt={2} textAlign="center">
+                    <Typography variant="h5" gutterBottom>
+                      <Link
+                        href={file.file}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        color="primary"
+                        underline="hover"
+                        sx={{ display: 'flex', alignItems: 'center' }}
+                      >
+                        {getFieldLabel(file.field_id) || 'Arquivo PDF'}
+                        <Download sx={{ ml: 1, fontSize: 'inherit' }} />
+                      </Link>
+                    </Typography>
+                    <iframe
+                      src={file.file}
+                      style={{ width: '100%', height: '500px' }}
+                      title={file.file}
+                    >
+                      Este browser não suporta PDFs.
+                    </iframe>
+                  </Box>
+                ))}
+            </Box>
+          )}
       </Box>
 
       <Divider />
 
       <Box p={3} display="flex" flexDirection="column" gap={1}>
-        <Stack
-          direction={{ xs: 'column', sm: 'row' }}
-          alignItems="center"
-          justifyContent="space-between"
-          my={1}
-        >
-          {formInfo && <Typography variant="h5">{formInfo.name}</Typography>}
-          <Box display="flex" flexDirection="column" alignItems="center">
-            <Typography variant="body2">Respondido em:</Typography>
-            <Chip
-              size="small"
-              color="secondary"
-              variant="outlined"
-              label={formatDateTime(answerData?.results[0]?.created_at)}
-            />
-          </Box>
-        </Stack>
-        <Divider />
         <Grid container spacing={2} mt={1}>
           {form_fields.map((field) => {
             switch (field.type) {
