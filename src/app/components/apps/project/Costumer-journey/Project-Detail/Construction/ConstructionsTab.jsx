@@ -298,13 +298,12 @@ export default function ConstructionsTab({ projectId, viewOnly = false }) {
                                             onRowsPerPageChange={() => { }}
                                             sx={{ mt: 1 }}
                                         >
-                                            <Table.Head>
-                                                <Table.Cell>Protocolo</Table.Cell>
-                                                <Table.Cell>Valor</Table.Cell>
-                                                <Table.Cell>Vencimento</Table.Cell>
-                                                <Table.Cell>Fornecedor/Cliente</Table.Cell>
-                                            </Table.Head>
-
+                                            <Table.Head columns={[
+                                                { field: 'protocol', headerName: 'Protocolo' },
+                                                { field: 'value', headerName: 'Valor' },
+                                                { field: 'due_date', headerName: 'Vencimento' },
+                                                { field: 'client_supplier_name', headerName: 'Fornecedor/Cliente' },
+                                            ]} />
                                             <Table.Body loading={false} columns={4}>
                                                 <Table.Cell
                                                     render={fr => fr.protocol}
@@ -370,15 +369,7 @@ export default function ConstructionsTab({ projectId, viewOnly = false }) {
                 onPageChange={setPage}
                 onRowsPerPageChange={setRowsPerPage}
             >
-                <Table.Head>
-                    {columns.map(c => (
-                        <Table.Cell
-                            key={c.field}
-                            sx={{ fontWeight: 600, fontSize: '14px' }}
-                        >
-                            {c.headerName}
-                        </Table.Cell>
-                    ))}
+                <Table.Head columns={columns}>
                     {!viewOnly && <Table.Cell align="center">Editar</Table.Cell>}
                     <Table.Cell align="center">Ver</Table.Cell>
                 </Table.Head>

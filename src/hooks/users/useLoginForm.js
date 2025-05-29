@@ -54,16 +54,11 @@ const useLoginForm = () => {
       Cookies.set('access_token', data.access, { expires: 1, sameSite: 'Strict' });
       console.log('data', data);
 
-      const userData = await userService.find(data.id, {
-        expand: 'employee,employee.user_manager,employee.department,employee.role',
-        fields: '*,employee.*,employee.user_manager.id,employee.user_manager.complete_name,employee.department.id,employee.department.name,employee.role.id,employee.role.name'
-      });
-
       dispatch(
         setUser({
-          user: userData,
-          user_permissions: userData?.user_permissions,
-          last_login: userData?.last_login,
+          user: data?.user,
+          user_permissions: data?.user?.user_permissions,
+          last_login: data?.user?.last_login,
           access_token: data?.access,
         })
       );

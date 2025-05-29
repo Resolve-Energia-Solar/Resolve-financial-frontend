@@ -57,7 +57,7 @@ const LogisticsDashboard = () => {
   const fetchProjects = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await projectService.index({ user_types: 3, fields: 'id,project_number,sale.customer.complete_name,product.description,address.complete_address,sale.status,purchase_status,delivery_status,sale.id', expand: 'sale.customer,product,address,expected_delivery_date', metrics: 'purchase_status,delivery_status,expected_delivery_date', page: page + 1, limit: rowsPerPage, ...filters });
+      const response = await projectService.index({ user_types: 3, fields: 'id,project_number,sale.customer.complete_name,product.description,address.complete_address,sale.status,sale.signature_date,purchase_status,delivery_status,sale.id,delivery_type,distance_to_matriz_km', expand: 'sale.customer,product,address,expected_delivery_date', metrics: 'purchase_status,delivery_status,expected_delivery_date', page: page + 1, limit: rowsPerPage, ...filters });
       setProjects(response.results);
       setTotalRows(response.meta.pagination.total_count);
     } catch (error) {
@@ -172,6 +172,12 @@ const LogisticsDashboard = () => {
 
   const columns = [
     {
+      field: 'sale.signature_date',
+      headerName: 'Data da Assinatura',
+      render: r => formatDate(r.sale?.signature_date) || '-',
+      sx: { width: 150, textAlign: 'center' }
+    },
+    {
       field: 'project_number',
       headerName: 'Projeto',
       render: r => `${r.project_number} - ${r.sale?.customer?.complete_name}` || 'SEM NÚMERO',
@@ -188,6 +194,15 @@ const LogisticsDashboard = () => {
       render: r => r.address?.complete_address || '-'
     },
     {
+      field: 'distance_to_matriz_km',
+      headerName: 'Distância à CD',
+      render: r =>
+        r.distance_to_matriz_km !== undefined && r.distance_to_matriz_km !== null
+          ? `${r.distance_to_matriz_km} km`
+          : '-',
+      sx: { fontWeight: 500, textAlign: 'center' }
+    },
+    {
       field: 'sale.status',
       headerName: 'Status da Venda',
       render: r => <StatusChip status={r.sale?.status} />
@@ -195,7 +210,7 @@ const LogisticsDashboard = () => {
     {
       field: 'purchase_status',
       headerName: 'Status da Compra',
-      render: r => <PurchaseStatusChip status={r.purchase_status} />,
+      render: r => <PurchaseStatusChip status={r.purchase_status} />
     },
     {
       field: 'delivery_status',
@@ -203,9 +218,19 @@ const LogisticsDashboard = () => {
       render: r => <DeliveryStatusChip status={r.delivery_status} />
     },
     {
+      field: 'delivery_type',
+      headerName: 'Tipo de Entrega',
+      render: r =>
+        r.delivery_type === 'C'
+          ? 'Entrega CD'
+          : r.delivery_type === 'D'
+          ? 'Entrega Direta'
+          : '-'
+    },
+    {
       field: 'expected_delivery_date',
       headerName: 'Previsão de Entrega',
-      render: r => formatDate(r.expected_delivery_date) || '-',
+      render: r => formatDate(r.expected_delivery_date) || '-'
     }
   ];
 
@@ -304,14 +329,7 @@ const LogisticsDashboard = () => {
         onClose={() => { setOpenDrawer(false); setSelectedRow(null); }}
         noWrap={true}
       >
-        <Table.Head>
-          {columns.map(c => (
-            <Table.Cell key={c.field} sx={{ fontWeight: 600, fontSize: '14px' }}>
-              {c.headerName}
-            </Table.Cell>
-          ))}
-        </Table.Head>
-
+        <Table.Head columns={columns} />
         <Table.Body
           loading={loading}
           columns={columns.length}

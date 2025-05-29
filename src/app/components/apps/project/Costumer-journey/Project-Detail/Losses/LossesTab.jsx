@@ -83,12 +83,7 @@ export default function LossesTab({ projectId, viewOnly = false }) {
                 onPageChange={setPage}
                 onRowsPerPageChange={setRowsPerPage}
             >
-                <Table.Head>
-                    {columns.map(c => (
-                        <Table.Cell key={c.field} sx={{ fontWeight: 600, fontSize: '14px' }}>
-                            {c.headerName}
-                        </Table.Cell>
-                    ))}
+                <Table.Head columns={columns}>
                     <Table.Cell align="center">Ver</Table.Cell>
                 </Table.Head>
 

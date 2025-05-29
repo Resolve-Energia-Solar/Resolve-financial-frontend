@@ -155,12 +155,12 @@ const InspectionsDashboard = () => {
       render: (r) =>
         r.inspection?.final_service_opinion_date
           ? new Date(r.inspection.final_service_opinion_date).toLocaleString('pt-BR', {
-              day: '2-digit',
-              month: '2-digit',
-              year: 'numeric',
-              hour: '2-digit',
-              minute: '2-digit',
-            })
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+          })
           : '-',
     },
     {
@@ -290,14 +290,7 @@ const InspectionsDashboard = () => {
         }}
         noWrap={true}
       >
-        <Table.Head>
-          {columns.map((c) => (
-            <Table.Cell key={c.field} sx={{ fontWeight: 600, fontSize: '14px' }}>
-              {c.headerName}
-            </Table.Cell>
-          ))}
-        </Table.Head>
-
+        <Table.Head columns={columns} />
         <Table.Body
           loading={loading}
           columns={columns.length}

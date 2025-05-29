@@ -137,7 +137,6 @@ const InstallationsDashboard = () => {
   }, [fetchProjects, fetchIndicators, filters, ordering, refresh]);
 
   const handleSort = (field) => {
-    console.log('Sorting by:', field);
     setPage(0);
     if (ordering === field) {
       setOrdering(`-${field}`);
@@ -340,23 +339,11 @@ const InstallationsDashboard = () => {
         }}
         noWrap={true}
       >
-        <Table.Head>
-          {columns.map((col) => (
-            <Table.Cell
-              key={col.field}
-              sx={{
-                fontWeight: 600,
-                fontSize: '14px',
-                cursor: col.sortable ? 'pointer' : 'default',
-              }}
-              onClick={() => col.sortable && handleSort(col.field)}
-            >
-              {col.headerName}
-              {col.sortable && (ordering === col.field ? ' ▲' : ordering === `-${col.field}` ? ' ▼' : '')}
-            </Table.Cell>
-          ))}
-        </Table.Head>
-
+        <Table.Head
+          columns={columns}
+          ordering={ordering}
+          onSort={handleSort}
+        />
         <Table.Body
           loading={loading}
           columns={columns.length}
