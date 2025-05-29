@@ -129,7 +129,7 @@ export default function AgentRoutes({ projectId = null }) {
                 schedule_agent: agent.id,
                 schedule_date__range: `${dateStr},${dateStr}`,
                 expand: 'address,service,customer',
-                fields: 'id,address,schedule_date,schedule_end_date,schedule_start_time,schedule_end_time,service,customer',
+                fields: 'id,address,schedule_date,schedule_end_date,schedule_start_time,schedule_end_time,service.name,customer.complete_name',
                 ordering: 'schedule_start_time',
                 limit: 5,
                 view_all: true,
