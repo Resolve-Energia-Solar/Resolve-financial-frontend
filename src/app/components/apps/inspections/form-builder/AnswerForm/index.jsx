@@ -18,6 +18,10 @@ import 'slick-carousel/slick/slick-theme.css';
 import { formatDateTime, formatDate, formatTime } from '@/utils/inspectionFormatDate';
 import answerService from '@/services/answerService';
 import { ArrowBack, ArrowForward } from '@mui/icons-material';
+import 'react-image-lightbox/style.css';
+import Lightbox from 'react-image-lightbox';
+import './LightboxOverride.css';
+
 
 const AnswerForm = ({ answerData }) => {
   const sliderRef = useRef(null);
@@ -27,7 +31,8 @@ const AnswerForm = ({ answerData }) => {
   const [answersFiles, setAnswersFiles] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [convertedHeicMap, setConvertedHeicMap] = useState({});
-
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
 
   const handleThumbnailClick = (idx) => {
     setCurrentIndex(idx);
@@ -116,7 +121,6 @@ const AnswerForm = ({ answerData }) => {
 
   const renderFile = (file) => {
     const ext = file.file.split('?')[0].split('.').pop().toLowerCase();
-
     if (ext === 'heic') {
       return (
         <>
@@ -160,8 +164,12 @@ const AnswerForm = ({ answerData }) => {
         <Box
           component="img"
           src={file.file}
-          alt={file.file}
+          onClick={() => {
+            setLightboxIndex(idx);
+            setLightboxOpen(true);
+          }}
           sx={{
+            cursor: 'zoom-in',
             height: '50vh',
             width: 'auto',
             maxWidth: { xs: 350, md: 250 },
@@ -243,7 +251,7 @@ const AnswerForm = ({ answerData }) => {
                 </Box>
               }
             >
-              {visualFiles.map((file) => {
+              {visualFiles.map((file, idx) => {
                 const ext = file.file
                   .split('?')[0]
                   .split('.')
@@ -290,7 +298,12 @@ const AnswerForm = ({ answerData }) => {
                         component="img"
                         src={file.file}
                         alt=""
+                        onClick={() => {
+                          setLightboxIndex(idx);
+                          setLightboxOpen(true);
+                        }}
                         sx={{
+                          cursor: 'zoom-in',
                           height: '50vh',
                           width: 'auto',
                           maxWidth: { xs: 350, md: 250 },
@@ -298,6 +311,7 @@ const AnswerForm = ({ answerData }) => {
                           margin: 'auto',
                         }}
                       />
+
                       <Box mt={1}>
                         <Link
                           href={file.file}
@@ -462,13 +476,13 @@ const AnswerForm = ({ answerData }) => {
                     <Typography variant="body1">
                       {field.multiple
                         ? (normalizedValue || [])
-                            .map(
-                              (val) => field.options.find((opt) => opt.value === val)?.label || val,
-                            )
-                            .join(', ')
+                          .map(
+                            (val) => field.options.find((opt) => opt.value === val)?.label || val,
+                          )
+                          .join(', ')
                         : field.options.find((opt) => opt.value === normalizedValue)?.label ||
-                          normalizedValue ||
-                          'Sem resposta'}
+                        normalizedValue ||
+                        'Sem resposta'}
                     </Typography>
                   </Grid>
                 );
@@ -497,9 +511,9 @@ const AnswerForm = ({ answerData }) => {
                 const filesForField = answersFiles.filter((file) => file.field_id === fieldKey);
                 if (filesForField.length === 0) return null;
 
-              return (
-                <Grid item xs={12} md={6} p={2} key={field.id}>
-                  <Typography variant="h5">{field.label}:</Typography>
+                return (
+                  <Grid item xs={12} md={6} p={2} key={field.id}>
+                    <Typography variant="h5">{field.label}:</Typography>
                     {filesForField.map((file) => (
                       <Box key={file.id} mt={1}>
                         <Link href={file.file} target="_blank" rel="noopener noreferrer" color="primary">
@@ -507,8 +521,8 @@ const AnswerForm = ({ answerData }) => {
                         </Link>
                       </Box>
                     ))}
-                </Grid>
-              );
+                  </Grid>
+                );
               }
               default:
                 return null;
@@ -516,6 +530,22 @@ const AnswerForm = ({ answerData }) => {
           })}
         </Grid>
       </Box>
+      {
+        lightboxOpen && (
+          <Lightbox
+            mainSrc={visualFiles[lightboxIndex].file}
+            nextSrc={visualFiles[(lightboxIndex + 1) % visualFiles.length].file}
+            prevSrc={visualFiles[(lightboxIndex + visualFiles.length - 1) % visualFiles.length].file}
+            onCloseRequest={() => setLightboxOpen(false)}
+            onMovePrevRequest={() =>
+              setLightboxIndex((lightboxIndex + visualFiles.length - 1) % visualFiles.length)
+            }
+            onMoveNextRequest={() =>
+              setLightboxIndex((lightboxIndex + 1) % visualFiles.length)
+            }
+          />
+        )
+      }
     </Paper>
   );
 };

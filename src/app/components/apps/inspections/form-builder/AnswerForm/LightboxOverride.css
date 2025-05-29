@@ -1,0 +1,4 @@
+.ReactModal__Overlay {
+    z-index: 2000 !important;
+    /* maior que o Drawer */
+}
