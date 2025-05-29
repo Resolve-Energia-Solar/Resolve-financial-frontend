@@ -57,7 +57,7 @@ const LogisticsDashboard = () => {
   const fetchProjects = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await projectService.index({ user_types: 3, fields: 'id,project_number,sale.customer.complete_name,product.description,address.complete_address,sale.status,purchase_status,delivery_status,sale.id,delivery_type,distance_to_matriz_km', expand: 'sale.customer,product,address,expected_delivery_date', metrics: 'purchase_status,delivery_status,expected_delivery_date', page: page + 1, limit: rowsPerPage, ...filters });
+      const response = await projectService.index({ user_types: 3, fields: 'id,project_number,sale.customer.complete_name,product.description,address.complete_address,sale.status,sale.signature_date,purchase_status,delivery_status,sale.id,delivery_type,distance_to_matriz_km', expand: 'sale.customer,product,address,expected_delivery_date', metrics: 'purchase_status,delivery_status,expected_delivery_date', page: page + 1, limit: rowsPerPage, ...filters });
       setProjects(response.results);
       setTotalRows(response.meta.pagination.total_count);
     } catch (error) {
@@ -171,6 +171,12 @@ const LogisticsDashboard = () => {
   });
 
   const columns = [
+    {
+      field: 'sale.signature_date',
+      headerName: 'Data da Assinatura',
+      render: r => formatDate(r.sale?.signature_date) || '-',
+      sx: { width: 150, textAlign: 'center' }
+    },
     {
       field: 'project_number',
       headerName: 'Projeto',
