@@ -160,7 +160,7 @@ const AnswerForm = ({ answerData }) => {
 
     // outras extensões
     if (validImageExtensions.includes(ext)) {
-      return (
+      return (<Box key={file.id} textAlign="center">
         <Box
           component="img"
           src={file.file}
@@ -177,7 +177,8 @@ const AnswerForm = ({ answerData }) => {
             margin: 'auto',
           }}
         />
-      );
+        <Typography variant="h5">{file.file}:</Typography>
+      </Box>);
     }
 
     if (validVideoExtensions.includes(ext)) {
@@ -312,15 +313,15 @@ const AnswerForm = ({ answerData }) => {
                         }}
                       />
 
-                      <Box mt={1}>
+                      <Typography variant='h4'>
                         <Link
                           href={file.file}
                           target="_blank"
                           rel="noopener noreferrer"
                         >
-                          Baixar imagem
+                          {getFieldLabel(file.field_id)}
                         </Link>
-                      </Box>
+                      </Typography>
                     </Box>
                   );
                 }
