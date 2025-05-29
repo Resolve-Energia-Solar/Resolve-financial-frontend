@@ -62,14 +62,14 @@ const Menuitems = [
     title: 'Financeiro',
     icon: IconCurrencyDollar,
     href: '/apps/invoice',
-    permissions: ['financial.view_payment', 'financial.view_financialrecord'],
+    permissions: ['resolve_crm.can_manage_journey', 'financial.view_financialrecord'],
     children: [
       {
         id: uniqueId(),
         title: 'Faturamento',
         icon: IconCash,
         href: '/apps/invoice',
-        permissions: ['financial.view_payment'],
+        permissions: ['resolve_crm.can_manage_journey'],
       },
       {
         id: uniqueId(),
