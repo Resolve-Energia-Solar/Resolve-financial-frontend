@@ -1,4 +1,3 @@
-// Arquivo: onboarding.jsx
 import React, { Fragment, useContext, useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
 import Stepper from '@mui/material/Stepper';
@@ -58,30 +57,29 @@ function OnboardingCreateSaleContent({ onClose = null, onEdit = null }) {
   const [userSubmitTrigger, setUserSubmitTrigger] = useState(false);
   const [userSaveError, setUserSaveError] = useState(false);
   const [userSaving, setUserSaving] = useState(false); 
-
-
+  
   const formatFieldName = (fieldName) => {
     const fieldLabels = {
-      customer_id: 'Cliente',
-      seller_id: 'Vendedor',
-      sales_supervisor_id: 'Supervisor de Vendas',
-      sales_manager_id: 'Gerente de Vendas',
-      branch_id: 'Franquia',
+      customer: 'Cliente',
+      seller: 'Vendedor',
+      sales_supervisor: 'Supervisor de Vendas',
+      sales_manager: 'Gerente de Vendas',
+      branch: 'Franquia',
     };
     return fieldLabels[fieldName] || fieldName;
   };
-
+  
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
   };
-
-  const user = useSelector((state) => state.user);
-
+  
+  const user = useSelector((state) => state.user?.user);
+  
   const { customerId, productIds, saleId, setSaleId, totalValue, setCustomerId } =
-    useContext(OnboardingSaleContext);
-
+  useContext(OnboardingSaleContext);
+  
   const [isDisabledNext, setIsDisabledNext] = useState(false);
-
+  
   const isCompleteFinancial = async (id) => {
     try {
       const response = await saleService.find(id, { fields: ['can_generate_contract'] });
@@ -201,16 +199,16 @@ function OnboardingCreateSaleContent({ onClose = null, onEdit = null }) {
   customerId ? (formData.customerId = customerId) : null;
   totalValue ? (formData.totalValue = totalValue) : null;
   productIds ? (formData.productIds = productIds) : null;
-  user?.user ? (formData.sellerId = user.user.id) : null;
-  user?.user?.employee?.user_manager
-    ? (formData.salesSupervisorId = user?.user?.employee?.user_manager?.id)
+  user ? (formData.sellerId = user.id) : null;
+  user?.employee?.user_manager
+    ? (formData.salesSupervisorId = user?.employee?.user_manager?.id)
     : null;
-  user?.user?.employee?.user_manager
-    ? (formData.salesManagerId = user?.user?.employee?.user_manager?.id)
+  user?.employee?.user_manager
+    ? (formData.salesManagerId = user?.employee?.user_manager?.id)
     : null;
   formData.status = 'P';
   formData.payment_status = 'P';
-  user?.user?.employee?.branch ? (formData.branchId = user?.user?.employee?.branch) : null;
+  user?.employee?.branch ? (formData.branchId = user?.employee?.branch) : null;
 
   const handleBack = () => {
     if (activeStep > 1) {
