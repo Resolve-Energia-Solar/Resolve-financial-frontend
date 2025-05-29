@@ -57,7 +57,7 @@ export default function AgentRoutes({ projectId = null }) {
   const [formData, setFormData] = useState({});
 
   const permissions = useSelector((state) => state.user.permissions);
-  const canEdit = permissions.includes('field_services.can_see_admin_schedules');
+  const canEdit = permissions.includes('field_services.view_all_schedule');
 
   const handleRefresh = () => setRefresh((prev) => !prev);
 

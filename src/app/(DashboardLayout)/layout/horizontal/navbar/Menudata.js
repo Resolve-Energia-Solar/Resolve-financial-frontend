@@ -92,35 +92,36 @@ const Menuitems = [
     title: 'Serviços de Campo',
     icon: IconUserPin,
     href: '/apps/schedules',
-    permissions: ['field_services.view_all_schedule'],
+    permissions: ['field_services.can_see_admin_schedules'],
     children: [
       {
         id: uniqueId(),
         title: 'Agendamentos',
         icon: IconCalendarStar,
         href: '/apps/schedules',
-        permissions: ['field_services.view_all_schedule'],
+        permissions: ['field_services.can_see_admin_schedules'],
       },
       {
         id: uniqueId(),
         title: 'Rotas de Agentes',
         icon: IconMapRoute,
         href: '/apps/schedules/agents-routes',
-        permissions: ['field_services.view_all_schedule'],
+        permissions: ['field_services.can_see_admin_schedules'],
       },
     ],
-    permissions: ['field_services.view_all_schedule'],
   },
   {
     id: uniqueId(),
     title: 'Financiamento',
     icon: IconBuildingBank,
     href: '/apps/funding-request',
+    permissions: ['resolve_crm.can_view_funding_request'],
     children: [
       {
         id: uniqueId(),
         title: 'Solicitações Sicoob',
         icon: IconPigMoney,
+        permissions: ['resolve_crm.can_view_funding_request'],
         href: '/apps/funding-request/sicoob',
       },
     ],
@@ -189,7 +190,6 @@ const Menuitems = [
     title: 'Config. Sistema',
     icon: IconSettings,
     permissions: [
-      'accounts.view_user',
       'accounts.view_squad',
       'accounts.view_branch',
       'accounts.view_department',
