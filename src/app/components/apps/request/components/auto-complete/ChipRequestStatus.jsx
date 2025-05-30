@@ -8,18 +8,24 @@ import {
 const ChipRequestStatus = ({ status }) => {
   const getChipProps = (status) => {
     switch (status) {
+      case 'Pendente':
+        return { label: 'Pendente', color: 'warning', icon: <HourglassEmptyIcon /> };
       case 'Solicitada':
         return { label: 'Solicitada', color: 'warning', icon: <HourglassEmptyIcon /> };
+      case 'Indeferido':
+        return { label: 'Indeferido', color: 'error', icon: <ErrorIcon /> };
       case 'Indeferida':
         return { label: 'Indeferida', color: 'error', icon: <ErrorIcon /> };
       case 'Bloqueado':
         return { label: 'Bloqueado', color: 'error', icon: <ErrorIcon /> };
+      case 'Deferido':
+        return { label: 'Deferido', color: 'success', icon: <CheckCircleIcon /> };
       case 'Deferida':
         return { label: 'Deferida', color: 'success', icon: <CheckCircleIcon /> };
       case 'Não se aplica':
         return { label: 'Não se aplica', color: 'default', icon: null};
       default:
-        return { label: 'Não se aplica', color: 'default', icon: null};
+        return { label: 'Desconhecido', color: 'default', icon: null};
     }
   };
 

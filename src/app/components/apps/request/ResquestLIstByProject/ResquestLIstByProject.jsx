@@ -140,7 +140,7 @@ const ResquestLIstByProject = () => {
           expand:
             'requests_energy_company,sale.customer,homologator,requests_energy_company.type,product',
           metrics:
-            'is_released_to_engineering,supply_adquance_names,access_opnion_status,load_increase_status,branch_adjustment_status,new_contact_number_status,final_inspection_status,trt_pending,pending_material_list,trt_status',
+            'homologation_status,supply_adquance_names,trt_pending,pending_material_list,trt_status',
           ...stableFilters,
         });
         setProjectsList(data.results);
