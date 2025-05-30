@@ -186,7 +186,7 @@ const FinancialRecordDetailDrawer = ({ open, onClose, record }) => {
                 <IconPdf size={24} />
               </IconButton>
             </Tooltip>
-            {(user.employee?.department?.name === 'Tecnologia' || user.employee?.department?.name === 'Financeiro')
+            {(user.employee?.department?.name === 'Tecnologia' || user.employee?.department?.name?.toLowerCase().includes('financeiro'))
               && (record?.responsible_status === 'A' && record?.payment_status === 'P' && record?.integration_code === null)
               && (
                 <Tooltip title="Enviar ao Omie">
@@ -267,7 +267,7 @@ const FinancialRecordDetailDrawer = ({ open, onClose, record }) => {
                 <Typography sx={{ display: 'flex', alignItems: 'center' }}>
                   <strong>Status do Financeiro:</strong>
                   {(user.employee?.department?.name === 'Tecnologia' ||
-                    user.employee?.department?.name === 'Financeiro') &&
+                    user.employee?.department?.name?.toLowerCase().includes('financeiro')) &&
                     currentRecord.payment_status === 'P' ? (
                     <FormControl variant="outlined" size="small" sx={{ ml: 1 }}>
                       <Select
