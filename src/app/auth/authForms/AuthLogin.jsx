@@ -40,7 +40,7 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
   return (
     <>
       {title && (
-        <Typography fontWeight="700" fontSize="24px" >
+        <Typography fontWeight="700" fontSize="24px" color={'text.secondary'} mb={2}>
           {title}
         </Typography>
       )}
