@@ -18,12 +18,14 @@ import {
   Dialog,
   DialogContent,
   DialogTitle,
+  Button,
 } from '@mui/material';
 import { MoreVert } from '@mui/icons-material';
 import axios from 'axios';
 import contractService from '@/services/contract-submissions';
 import ContractChip from '../components/contractChip';
 import EventsTimeline from '../components/EventsTimeline';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 
 function ContractSubmissions({ sale }) {
   const [loading, setLoading] = useState(true);
@@ -73,6 +75,7 @@ function ContractSubmissions({ sale }) {
 
         const contracts = contractsResponse?.results || [];
         setContracts(contracts);
+        console.log(`Contratos encontrados: ${contracts}`);
 
         if (contracts.length === 0) {
           console.warn('Nenhum contrato encontrado para esta venda.');
@@ -99,7 +102,7 @@ function ContractSubmissions({ sale }) {
         const documentResponses = await Promise.all(documentPromises);
         const formattedContracts = documentResponses
           .filter((doc) => doc !== null)
-          .map((doc) => ({
+          .map((doc, index) => ({
             id: doc.data.id,
             filename: doc.data.attributes.filename,
             status: doc.data.attributes.status,
@@ -110,8 +113,10 @@ function ContractSubmissions({ sale }) {
             originalFileUrl: doc.data.links.files.original,
             signedFileUrl: doc.data.links.files.signed,
             zipedFileUrl: doc.data.links.files.ziped,
+            // Add the missing properties from the original contracts array
+            envelope_id: contracts[index].envelope_id,
+            key_number: contracts[index].key_number
           }));
-
         setContracts(formattedContracts);
       } catch (error) {
         console.error('Erro ao buscar contratos ou metadados do documento:', error.message);
@@ -214,6 +219,16 @@ function ContractSubmissions({ sale }) {
                             Abrir
                           </a>
                         </Typography>
+                        <Button
+                          startIcon={<ContentCopyIcon />}
+                          variant="contained"
+                          color="primary"
+                          onClick={() => navigator.clipboard.writeText(`https://app.clicksign.com/widget/notarial/${contract.envelope_id}/documents/${contract.key_number}`)}
+                          size='small'
+                          sx={{ mt: 1 }}
+                        >
+                          Copiar Link
+                        </Button>
                       </Box>
                     </CardContent>
                   </Card>
