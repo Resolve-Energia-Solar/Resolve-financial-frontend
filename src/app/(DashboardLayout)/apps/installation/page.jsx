@@ -27,11 +27,7 @@ import JourneyCounterChip from '@/app/components/apps/project/Costumer-journey/J
 const InstallationsDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [projects, setProjects] = useState([]);
-  const [indicators, setIndicators] = useState({
-    purchase_status: {},
-    delivery_status: {},
-    total_count: 0,
-  });
+  const [indicators, setIndicators] = useState({ installations_status_count: {} });
   const [loadingIndicators, setLoadingIndicators] = useState(true);
   const { filters, setFilters, clearFilters, refresh } = useContext(FilterContext);
   const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
@@ -46,31 +42,31 @@ const InstallationsDashboard = () => {
 
   const statusStats = [
     {
-      key: 'scheduled',
+      key: 'Agendado',
       label: 'Agendado',
       icon: <AssignmentTurnedIn />,
-      value: indicators?.installations_status_count?.Agendado || 0,
+      value: indicators?.installations_status_count?.['Agendado'] || 0,
       color: '#E3F2FD',
       filter: { installation_status__in: 'Agendado' }
     },
     {
-      key: 'blocked',
+      key: 'Bloqueado',
       label: 'Bloqueado',
       icon: <Lock />,
-      value: indicators?.installations_status_count?.Bloqueado || 0,
+      value: indicators?.installations_status_count?.['Bloqueado'] || 0,
       color: '#FFEBEE',
       filter: { installation_status__in: 'Bloqueado' }
     },
     {
-      key: 'cancelled',
+      key: 'Cancelado',
       label: 'Cancelado',
       icon: <Cancel />,
-      value: indicators?.installations_status_count?.Cancelado || 0,
+      value: indicators?.installations_status_count?.['Cancelado'] || 0,
       color: '#FFCDD2',
       filter: { installation_status__in: 'Cancelado' }
     },
     {
-      key: 'in_construction',
+      key: 'Em obra',
       label: 'Em obra',
       icon: <ConstructionRounded />,
       value: indicators?.installations_status_count?.['Em obra'] || 0,
@@ -78,18 +74,18 @@ const InstallationsDashboard = () => {
       filter: { installation_status__in: 'Em obra' }
     },
     {
-      key: 'installed',
+      key: 'Instalado',
       label: 'Instalado',
       icon: <CheckCircle />,
-      value: indicators?.installations_status_count?.Instalado || 0,
+      value: indicators?.installations_status_count?.['Instalado'] || 0,
       color: '#C8E6C9',
       filter: { installation_status__in: 'Instalado' }
     },
     {
-      key: 'released',
+      key: 'Liberado',
       label: 'Liberado',
       icon: <LockOpen />,
-      value: indicators?.installations_status_count?.Liberado || 0,
+      value: indicators?.installations_status_count?.['Liberado'] || 0,
       color: '#E8F5E9',
       filter: { installation_status__in: 'Liberado' }
     }
@@ -122,19 +118,19 @@ const InstallationsDashboard = () => {
   const fetchIndicators = useCallback(async () => {
     setLoadingIndicators(true);
     try {
-      const { indicators } = await projectService.installationIndicators({ ...filters });
-      setIndicators(indicators);
+      const indicators = await projectService.installationIndicators({ ...filters });
+      setIndicators(indicators.indicators || indicators);
     } catch {
       enqueueSnackbar('Erro ao carregar indicadores', { variant: 'error' });
     } finally {
       setLoadingIndicators(false);
     }
-  }, [enqueueSnackbar, filters]);
+  }, [filters, enqueueSnackbar]);
 
   useEffect(() => {
     fetchProjects();
     fetchIndicators();
-  }, [fetchProjects, fetchIndicators, filters, ordering, refresh]);
+  }, [fetchProjects, fetchIndicators]);
 
   const handleSort = (field) => {
     setPage(0);
