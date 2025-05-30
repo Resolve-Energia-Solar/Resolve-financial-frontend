@@ -2,35 +2,36 @@ const DarkThemeColors = [
   {
     name: 'RESOLVE_THEME',
     palette: {
-  primary: {
-    main: '#FFCC00',
-    light: '#FFE082', 
-    dark: '#DCB00D',
-    contrastText: '#ffffff',
-  },
-  secondary: {
-    main: '#303030',
-    light: '#9E9E9E', 
-    dark: '#000000',
-    neutral: '#7E8387',
-    contrastText: '#ffffff',
-  },
-  success: {
-    main: '#4CAF50',
-    light: '#66BB6A',
-  }, 
-  warning: {
-    main: '#FF9800',
-    light: '#FFB74D', 
-  },
-  info: {
-    main: '#006ED3', 
-    light: '#DAE9FF', 
-  },
-  action: {
-    hover: '#FFE082', 
-  },
-},
+      mode: 'dark',
+      primary: {
+        main: '#FFCC00',
+        light: '#FFE082',
+        dark: '#DCB00D',
+        contrastText: '#ffffff',
+      },
+      secondary: {
+        main: '#303030',
+        light: '#9E9E9E',
+        dark: '#000000',
+        neutral: '#7E8387',
+        contrastText: '#ffffff',
+      },
+      success: {
+        main: '#4CAF50',
+        light: '#66BB6A',
+      },
+      warning: {
+        main: '#FF9800',
+        light: '#FFB74D',
+      },
+      info: {
+        main: '#006ED3',
+        light: '#DAE9FF',
+      },
+      action: {
+        hover: '#FFE082',
+      },
+    },
   },
   {
     name: 'BLUE_THEME',

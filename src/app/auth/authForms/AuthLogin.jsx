@@ -40,7 +40,7 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
   return (
     <>
       {title && (
-        <Typography fontWeight="700" fontSize="24px" >
+        <Typography fontWeight="700" fontSize="24px" color={'text.secondary'} mb={2}>
           {title}
         </Typography>
       )}
@@ -48,7 +48,7 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
 
       <Stack spacing={2}>
         <Box>
-          <CustomFormLabel htmlFor="email" sx={{ fontWeight: "700", fontSize: "16px", mb: 1 }} >
+          <CustomFormLabel htmlFor="email" sx={{ fontWeight: "700", fontSize: "16px", mb: 1, color: 'text.secondary' }} >
             E-mail<span style={{ color: '#EA3209' }}>*</span>
           </CustomFormLabel>
           <CustomTextField
@@ -64,15 +64,19 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
-                  <EmailIcon sx={{ color: '#ADADAD' }} />
+                  <EmailIcon sx={{ color: 'text.secondary' }} />
                 </InputAdornment>
               ),
             }}
-            sx={{mt: 0, mb: 0}}
+            sx={{mt: 0, mb: 0,
+              input: {
+                color: 'text.secondary',
+              },
+             }}
           />
         </Box>
         <Box>
-          <CustomFormLabel htmlFor="password" sx={{ fontWeight: "700", fontSize: "16px", mb: 1, mt: 0 }} >
+          <CustomFormLabel htmlFor="password" sx={{ fontWeight: "700", fontSize: "16px", mb: 1, mt: 0, color: 'text.secondary' }} >
             Senha<span style={{ color: '#EA3209' }}>*</span>
           </CustomFormLabel>
           <CustomTextField
@@ -89,7 +93,7 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
-                  <GppGoodIcon sx={{ color: '#ADADAD' }} />
+                  <GppGoodIcon sx={{ color: 'text.secondary' }} />
                 </InputAdornment>
               ),
               endAdornment: (
@@ -99,12 +103,16 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
                     onMouseDown={handleMouseDownPassword}
                     edge="end"
                   >
-                    {showPassword ? <VisibilityOff sx={{ color: '#ADADAD' }} /> : <Visibility sx={{ color: '#ADADAD' }} />}
+                    {showPassword ? <VisibilityOff sx={{ color: 'text.secondary' }} /> : <Visibility sx={{ color: 'text.secondary' }} />}
                   </IconButton>
                 </InputAdornment>
               ),
             }}
-            sx={{mt: 0}}
+            sx={{mt: 0, mb: 0,
+              input: {
+                color: 'text.secondary',
+              },
+             }}
           />
         </Box>
 
@@ -112,7 +120,7 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
           <Typography
             sx={{
               textDecoration: 'none',
-              color: '#EA3209',
+              color: 'error.main',
               fontWeight: "500",
               fontSize: "12px"
             }}
@@ -140,7 +148,7 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
             <FormControlLabel
               control={<CustomCheckbox defaultChecked />}
               label="Lembrar deste dispositivo"
-              sx={{mb: 1}}
+              sx={{mb: 1, color: 'text.secondary'}}
             />
           </FormGroup>
           

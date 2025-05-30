@@ -1,6 +1,7 @@
 'use client';
 
 import { useSystemConfig } from '@/context/SystemConfigContext';
+import { useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import PageContainer from '@/app/components/container/PageContainer';
@@ -9,6 +10,7 @@ import AuthLogin from '../authForms/AuthLogin';
 import Image from 'next/image';
 
 export default function Login() {
+  const theme = useTheme();
   const { config } = useSystemConfig();
   const bgImage = config?.configs?.login_bg_img || '/images/login-bg.png';
   const logoImage = config?.configs?.login_logo_img || '/images/logos/black-resolve-logo.svg';
@@ -46,7 +48,14 @@ export default function Login() {
               backgroundSize: 'cover',
               backgroundPosition: 'center',
               backgroundRepeat: 'no-repeat',
-              // zIndex: 1,
+              '&::after': {
+                content: '""',
+                position: 'absolute',
+                inset: 0,
+                backgroundColor: theme.palette.mode === 'dark' ? 'rgba(0,0,0,0.5)' : 'transparent',
+                zIndex: 1,
+                pointerEvents: 'none',
+              },
             }}
           />
           <Box
