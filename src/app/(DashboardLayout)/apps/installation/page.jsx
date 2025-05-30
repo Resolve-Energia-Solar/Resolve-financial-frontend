@@ -100,7 +100,7 @@ const InstallationsDashboard = () => {
     try {
       const response = await projectService.index({
         fields:
-          'id,project_number,status,sale.customer.complete_name,sale.signature_date,sale.status,journey_counter,sale.branch.name,installation_status,sale.id,sale.customer.address,sale.customer.neighborhood,inspection.final_service_opinion.name,team,supervisor,purchase_order_number,panels_count,delivery_status,is_released_to_installation,latest_installation',
+          'id,project_number,designer_status,sale.customer.complete_name,sale.signature_date,sale.status,journey_counter,sale.branch.name,installation_status,sale.id,sale.customer.address,sale.customer.neighborhood,inspection.final_service_opinion.name,team,supervisor,purchase_order_number,panels_count,delivery_status,is_released_to_installation,latest_installation',
         expand:
           'sale,sale.customer,sale.branch,inspection.final_service_opinion',
         metrics: 'journey_counter,installation_status,delivery_status,is_released_to_installation,latest_installation',
@@ -164,29 +164,29 @@ const InstallationsDashboard = () => {
       sx: { opacity: 0.7 },
     },
     {
-      field: 'sale.status',
-      headerName: 'Status da Venda',
-      render: (r) => <StatusChip status={r.sale?.status} />,
-    },
-    {
-      field: 'status',
-      headerName: 'Status do Projeto',
-      render: (r) => <StatusChip status={r.status} />,
-    },
-    {
       field: 'inspection.status',
       headerName: 'Status da Vistoria',
       render: (r) => <ScheduleOpinionChip status={r.inspection?.final_service_opinion?.name} />,
     },
     {
-      field: 'is_released_to_installation',
-      headerName: 'Liberado para Instalação',
-      render: (r) => r.is_released_to_installation ? <Chip label="Sim" color="success" icon={<CheckCircle />} /> : <Chip label="Não" color="error" icon={<Cancel />} />,
+      field: 'sale.status',
+      headerName: 'Status da Venda\n(Documentação)',
+      render: (r) => <StatusChip status={r.sale?.status} />,
+    },
+    {
+      field: 'designer_status',
+      headerName: 'Status do Projeto\n(Engenharia)',
+      render: (r) => <StatusChip status={r.designer_status} />,
     },
     {
       field: 'delivery_status',
       headerName: 'Status de Entrega',
       render: (r) => <DeliveryStatusChip status={r.delivery_status} />,
+    },
+    {
+      field: 'is_released_to_installation',
+      headerName: 'Liberado para Instalação',
+      render: (r) => r.is_released_to_installation ? <Chip label="Sim" color="success" icon={<CheckCircle />} /> : <Chip label="Não" color="error" icon={<Cancel />} />,
     },
     {
       field: 'installation_status',
