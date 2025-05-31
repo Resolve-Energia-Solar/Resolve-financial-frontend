@@ -61,8 +61,9 @@ export default function EditRequestCompany({
 
   const statusOptions = [
     { value: 'S', label: 'Solicitada' },
-    { value: 'I', label: 'Indeferida' },
     { value: 'D', label: 'Deferida' },
+    { value: 'I', label: 'Indeferida' },
+    { value: 'ID', label: 'Indeferida com Débito' },
   ];
 
   if (loading || !formData) {
