@@ -39,7 +39,6 @@ function AddSchedulePage({ form = null, onRefresh = null, onClose = null }) {
   form.schedule_date ? (formData.schedule_date = form.schedule_date) : null;
   form.project ? (formData.project = form.project) : null;
 
-  console.log('formData: ', formData)
   useEffect(() => {
     const loadProjectData = async () => {
       if (form?.project) {
@@ -141,16 +140,41 @@ function AddSchedulePage({ form = null, onRefresh = null, onClose = null }) {
           <Typography variant="body2">Horários disponíveis:</Typography>
           <ul>{timeSlots}</ul>
         </div>,
-        { variant: 'warning' },
+        { variant: 'warning' }
       );
     }
-
-    // Caso tenha erros no formulário e seja um projeto
-    if (formErrors && Object.keys(formErrors).length > 0 && isProject && !'available_time' in formErrors) {
+  
+    if ('non_field_errors' in formErrors && Array.isArray(formErrors.non_field_errors)) {
+      formErrors.non_field_errors.forEach((error, index) => {
+        enqueueSnackbar(
+          <div style={{ maxWidth: '400px' }}>
+            <Typography variant="body1">{error}</Typography>
+          </div>,
+          { variant: 'warning' }
+        );
+      });
+    }
+  
+    if (
+      formErrors &&
+      Object.keys(formErrors).length > 0 &&
+      isProject &&
+      !('available_time' in formErrors)
+    ) {
       Object.keys(formErrors).forEach((key) => {
-        if (formErrors[key] && formErrors[key].length > 0) {
+        if (
+          key !== 'non_field_errors' &&
+          formErrors[key] &&
+          Array.isArray(formErrors[key]) &&
+          formErrors[key].length > 0
+        ) {
           const label = fieldLabels[key] || key;
-          enqueueSnackbar(`${label}: ${formErrors[key][0]}`, { variant: 'error' });
+          enqueueSnackbar(
+            <div style={{ maxWidth: '400px' }}>
+              <Typography variant="body1">{`${label}: ${formErrors[key][0]}`}</Typography>
+            </div>,
+            { variant: 'error' }
+          );
         }
       });
     }
@@ -212,7 +236,7 @@ function AddSchedulePage({ form = null, onRefresh = null, onClose = null }) {
         if (onClose) onClose();
       }
     } catch (error) {
-      console.error('Error saving form:', error);
+      console.log('Error saving form:', error.message.data);
       enqueueSnackbar('Erro ao salvar o agendamento', { variant: 'error' });
       setFormLoading(false);
     }
