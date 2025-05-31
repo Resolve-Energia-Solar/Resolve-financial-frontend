@@ -32,6 +32,7 @@ import ChipRequest from '../../request/components/auto-complete/ChipRequest';
 import { IconCheck } from '@tabler/icons-react';
 import JourneyCounterChip from '../Costumer-journey/JourneyCounterChip';
 import { on } from 'events';
+import ChipRequestStatus from '../../request/components/auto-complete/ChipRequestStatus';
 
 const pulse = keyframes`
   0% {
@@ -89,30 +90,30 @@ const getStatusChip = (status) => {
   return <Chip label={label} color={color} />;
 };
 
-function useAnimatedNumber(targetValue, duration = 800) {
-  const [displayValue, setDisplayValue] = useState(0);
+// function useAnimatedNumber(targetValue, duration = 800) {
+//   const [displayValue, setDisplayValue] = useState(0);
 
-  useEffect(() => {
-    let startTime;
-    const animate = (timestamp) => {
-      if (!startTime) startTime = timestamp;
-      const progress = Math.min((timestamp - startTime) / duration, 1);
-      setDisplayValue(Math.floor(progress * targetValue));
-      if (progress < 1) {
-        requestAnimationFrame(animate);
-      }
-    };
-    requestAnimationFrame(animate);
-  }, [targetValue, duration]);
+//   useEffect(() => {
+//     let startTime;
+//     const animate = (timestamp) => {
+//       if (!startTime) startTime = timestamp;
+//       const progress = Math.min((timestamp - startTime) / duration, 1);
+//       setDisplayValue(Math.floor(progress * targetValue));
+//       if (progress < 1) {
+//         requestAnimationFrame(animate);
+//       }
+//     };
+//     requestAnimationFrame(animate);
+//   }, [targetValue, duration]);
 
-  return displayValue;
-}
+//   return displayValue;
+// }
 
 const ProjectList = ({ onClick }) => {
   const [projectsList, setProjectsList] = useState([]);
   const [loadingProjects, setLoadingProjects] = useState(true);
-  const [indicators, setIndicators] = useState({});
-  const [loadingIndicators, setLoadingIndicators] = useState(true);
+  // const [indicators, setIndicators] = useState({});
+  // const [loadingIndicators, setLoadingIndicators] = useState(true);
   const [error, setError] = useState(null);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -393,7 +394,7 @@ const ProjectList = ({ onClick }) => {
   useEffect(() => {
     const fetchProjectsAndIndicators = async () => {
       setLoadingProjects(true);
-      setLoadingIndicators(true);
+      // setLoadingIndicators(true);
       try {
         const data = await projectService.index({
           page: page + 1,
@@ -422,14 +423,14 @@ const ProjectList = ({ onClick }) => {
         setProjectsList(projectsWithStatus);
         setTotalRows(data.meta.pagination.total_count);
 
-        const indicatorsData = await projectService.getIndicators({ ...filters, is_pre_sale: false });
-        setIndicators(indicatorsData.indicators);
+        // const indicatorsData = await projectService.getIndicators({ ...filters, is_pre_sale: false });
+        // setIndicators(indicatorsData.indicators);
 
       } catch (err) {
         setError('Erro ao carregar Projetos e Indicadores');
       } finally {
         setLoadingProjects(false);
-        setLoadingIndicators(false);
+        // setLoadingIndicators(false);
       }
     };
 
@@ -454,14 +455,14 @@ const ProjectList = ({ onClick }) => {
     setPage(0);
   }, []);
 
-  const blockedToEngineering = useAnimatedNumber(indicators?.blocked_to_engineering || 0);
-  const pendingMaterialList = useAnimatedNumber(indicators?.pending_material_list || 0);
-  const releasedToEngineering = useAnimatedNumber(
-    indicators?.is_released_to_engineering_count || 0,
-  );
-  const designerInProgress = useAnimatedNumber(indicators?.designer_in_progress_count || 0);
-  const designerComplete = useAnimatedNumber(indicators?.designer_complete_count || 0);
-  const designerCanceled = useAnimatedNumber(indicators?.designer_canceled_count || 0);
+  // const blockedToEngineering = useAnimatedNumber(indicators?.blocked_to_engineering || 0);
+  // const pendingMaterialList = useAnimatedNumber(indicators?.pending_material_list || 0);
+  // const releasedToEngineering = useAnimatedNumber(
+  //   indicators?.is_released_to_engineering_count || 0,
+  // );
+  // const designerInProgress = useAnimatedNumber(indicators?.designer_in_progress_count || 0);
+  // const designerComplete = useAnimatedNumber(indicators?.designer_complete_count || 0);
+  // const designerCanceled = useAnimatedNumber(indicators?.designer_canceled_count || 0);
 
   const columns = [
     {
@@ -532,7 +533,7 @@ const ProjectList = ({ onClick }) => {
     {
       field: 'final_inspection_status',
       headerName: 'Status Homologação',
-      render: (r) => <ScheduleOpinionChip status={r.final_inspection_status} />,
+      render: (r) => <ChipRequestStatus status={r.final_inspection_status} />,
     },
   ];
 

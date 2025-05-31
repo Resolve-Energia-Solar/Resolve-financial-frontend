@@ -3,33 +3,64 @@ import {
   CheckCircle as CheckCircleIcon,
   HourglassEmpty as HourglassEmptyIcon,
   Error as ErrorIcon,
+  Block as BlockIcon,              
+  Send as SendIcon,                
+  DoNotDisturb as DoNotDisturbIcon,
 } from '@mui/icons-material';
 
 const ChipRequestStatus = ({ status }) => {
   const getChipProps = (status) => {
     switch (status) {
+      // Status de solicitação em andamento
       case 'Pendente':
-        return { label: 'Pendente', color: 'warning', icon: <HourglassEmptyIcon /> };
+        return { 
+          label: 'Pendente', 
+          color: 'warning', 
+          icon: <HourglassEmptyIcon /> 
+        };
+      
+      // Status de solicitação enviada
       case 'Solicitada':
-        return { label: 'Solicitada', color: 'warning', icon: <HourglassEmptyIcon /> };
       case 'Solicitado':
-        return { label: 'Solicitado', color: 'warning', icon: <HourglassEmptyIcon /> };
+        return { 
+          label: status, 
+          color: 'info', 
+          icon: <SendIcon /> 
+        };
+      
+      // Status negativos/rejeição
       case 'Indeferido':
-        return { label: 'Indeferido', color: 'error', icon: <ErrorIcon /> };
       case 'Indeferida':
-        return { label: 'Indeferida', color: 'error', icon: <ErrorIcon /> };
       case 'Bloqueado':
-        return { label: 'Bloqueado', color: 'error', icon: <ErrorIcon /> };
       case 'Bloqueada':
-        return { label: 'Bloqueada', color: 'error', icon: <ErrorIcon /> };
+        return { 
+          label: status, 
+          color: 'error', 
+          icon: <BlockIcon /> 
+        };
+      
+      // Status positivos/aprovação
       case 'Deferido':
-        return { label: 'Deferido', color: 'success', icon: <CheckCircleIcon /> };
       case 'Deferida':
-        return { label: 'Deferida', color: 'success', icon: <CheckCircleIcon /> };
+        return { 
+          label: status, 
+          color: 'success', 
+          icon: <CheckCircleIcon /> 
+        };
+      
+      // Status neutro/não aplicável
       case 'Não se aplica':
-        return { label: 'Não se aplica', color: 'default', icon: null};
+        return { 
+          label: 'Não se aplica', 
+          color: 'default', 
+          icon: <DoNotDisturbIcon /> 
+        };
+      
       default:
-        return { label: 'Desconhecido', color: 'default', icon: null};
+        return { 
+          label: status, 
+          color: 'default' 
+        };
     }
   };
 
