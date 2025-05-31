@@ -58,7 +58,7 @@ const CreateChecklistPage = ({ projectId = null, onClosedModal = null, onRefresh
   // Função para buscar opções de endereço
   const fetchAddress = async (search) => {
     try {
-      const response = await addressService.index({ q: search, limit: 20 });
+      const response = await addressService.index({ q: search, limit: 20, project_customer_id: projectId });
       return response.results;
     } catch (error) {
       console.error('Erro na busca de opções:', error);
