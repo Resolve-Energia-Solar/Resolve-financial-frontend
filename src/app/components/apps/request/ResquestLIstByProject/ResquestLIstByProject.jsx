@@ -421,7 +421,7 @@ const ResquestLIstByProject = () => {
 
   const handleSideDrawerClose = () => {
     setOpenSideDrawer(false);
-    refreshData();
+    // refreshData();
   };
 
   const handleAddDialogClose = () => {
