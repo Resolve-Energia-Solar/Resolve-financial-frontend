@@ -253,10 +253,11 @@ const ResquestLIstByProject = () => {
       type: 'multiselect',
       options: [
         { value: 'Bloqueado', label: 'Bloqueado' },
-        { value: 'Pendete', label: 'Pendente' },
+        { value: 'Pendente', label: 'Pendente' },
         { value: 'Solicitado', label: 'Solicitado' },
         { value: 'Deferido', label: 'Deferido' },
-        { value: 'Indeferido', label: 'Indeferido' },
+        { value: 'Indeferida', label: 'Indeferida' },
+        { value: 'Indeferida Debito', label: 'Indeferido por Débito' },
       ],
     },
     {
@@ -265,10 +266,11 @@ const ResquestLIstByProject = () => {
       type: 'multiselect',
       options: [
         { value: 'Bloqueado', label: 'Bloqueado' },
-        { value: 'Pendete', label: 'Pendente' },
+        { value: 'Pendente', label: 'Pendente' },
         { value: 'Solicitado', label: 'Solicitado' },
         { value: 'Deferido', label: 'Deferido' },
-        { value: 'Indeferido', label: 'Indeferido' },
+        { value: 'Indeferida', label: 'Indeferida' },
+        { value: 'Indeferida Debito', label: 'Indeferido por Débito' },
       ],
     },
     {
@@ -277,10 +279,11 @@ const ResquestLIstByProject = () => {
       type: 'multiselect',
       options: [
         { value: 'Bloqueado', label: 'Bloqueado' },
-        { value: 'Pendete', label: 'Pendente' },
+        { value: 'Pendente', label: 'Pendente' },
         { value: 'Solicitado', label: 'Solicitado' },
         { value: 'Deferido', label: 'Deferido' },
-        { value: 'Indeferido', label: 'Indeferido' },
+        { value: 'Indeferida', label: 'Indeferida' },
+        { value: 'Indeferida Debito', label: 'Indeferido por Débito' },
       ],
     },
     {
@@ -289,10 +292,11 @@ const ResquestLIstByProject = () => {
       type: 'multiselect',
       options: [
         { value: 'Bloqueado', label: 'Bloqueado' },
-        { value: 'Pendete', label: 'Pendente' },
+        { value: 'Pendente', label: 'Pendente' },
         { value: 'Solicitado', label: 'Solicitado' },
         { value: 'Deferido', label: 'Deferido' },
-        { value: 'Indeferido', label: 'Indeferido' },
+        { value: 'Indeferida', label: 'Indeferida' },
+        { value: 'Indeferida Debito', label: 'Indeferido por Débito' },
       ],
     },
     {
@@ -301,10 +305,11 @@ const ResquestLIstByProject = () => {
       type: 'multiselect',
       options: [
         { value: 'Bloqueado', label: 'Bloqueado' },
-        { value: 'Pendete', label: 'Pendente' },
+        { value: 'Pendente', label: 'Pendente' },
         { value: 'Solicitado', label: 'Solicitado' },
         { value: 'Deferido', label: 'Deferido' },
-        { value: 'Indeferido', label: 'Indeferido' },
+        { value: 'Indeferida', label: 'Indeferida' },
+        { value: 'Indeferida Debito', label: 'Indeferido por Débito' },
       ],
     },
     {
@@ -380,27 +385,27 @@ const ResquestLIstByProject = () => {
     Bloqueado: {
       label: 'Bloqueado',
       color: theme.palette.error.light,
-      icon: <CancelIcon color='light' />,
+      icon: <CancelIcon color="light" />,
     },
     Reprovada: {
       label: 'Reprovada',
       color: theme.palette.error.light,
-      icon: <CancelIcon color='light' />,
+      icon: <CancelIcon color="light" />,
     },
     'Em Andamento': {
       label: 'Em Andamento',
       color: theme.palette.info.light,
-      icon: <HourglassFullIcon color='light' />,
+      icon: <HourglassFullIcon color="light" />,
     },
     Concluída: {
       label: 'Concluída',
       color: theme.palette.success.light,
-      icon: <CheckCircleIcon color='light' />,
+      icon: <CheckCircleIcon color="light" />,
     },
     Pendente: {
       label: 'Pendente',
       color: theme.palette.warning.light,
-      icon: <HourglassEmptyIcon color='light' />,
+      icon: <HourglassEmptyIcon color="light" />,
     },
   };
 
@@ -695,7 +700,7 @@ const ResquestLIstByProject = () => {
           projectId={requestSelected?.id}
           projectData={requestSelected}
           onClosedModal={handleSideDrawerClose}
-          onRefresh={refreshData}
+          // onRefresh={refreshData}
         />
       </SideDrawer>
 

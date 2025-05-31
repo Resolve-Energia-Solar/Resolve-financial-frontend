@@ -238,7 +238,7 @@ const DeliveryLIstByProject = () => {
       type: 'multiselect',
       options: [
         { value: 'Bloqueado', label: 'Bloqueado' },
-        { value: 'Pendete', label: 'Pendente' },
+        { value: 'Pendente', label: 'Pendente' },
         { value: 'Solicitado', label: 'Solicitado' },
         { value: 'Deferido', label: 'Deferido' },
         { value: 'Indeferido', label: 'Indeferido' },
