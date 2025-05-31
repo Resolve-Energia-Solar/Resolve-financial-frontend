@@ -91,7 +91,7 @@ const EditSale = ({
 
   const { formattedValue, handleValueChange } = useCurrencyFormatter(
     formData.totalValue,
-    (newValue) => handleChange('totalValue', newValue)
+    (newValue) => handleChange('totalValue', newValue),
   );
 
   const statusOptions = [
@@ -269,13 +269,26 @@ const EditSale = ({
           </Grid>
         </HasPermission>
 
-        {saleData?.sale_products.map((saleProduct, index) => (
-          <SaleProductItem
-            key={saleProduct.id}
-            initialData={saleProduct}
-            productName={productNames[index]}
-          />
-        ))}
+        {(() => {
+          // 1. Monta o dicionário projectByProductId
+          const projectByProductId = {};
+          saleData?.projects?.forEach((project) => {
+            if (project.product) {
+              projectByProductId[project.product] = project;
+            }
+          });
+
+          // 2. Renderiza cada SaleProductItem, passando o project correspondente (ou null)
+          return (saleData?.sale_products || []).map((saleProduct, index) => (
+            <SaleProductItem
+              key={saleProduct.id}
+              initialData={saleProduct}
+              productName={productNames[index]}
+              project={projectByProductId[saleProduct.product] || null}
+            />
+          ));
+        })()}
+
       </Grid>
     </Box>
   );

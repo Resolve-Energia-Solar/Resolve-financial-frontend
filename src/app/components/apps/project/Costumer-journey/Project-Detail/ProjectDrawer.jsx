@@ -10,6 +10,8 @@ import {
   Card,
   CardContent,
   Divider,
+  Chip,
+  Stack,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { useSnackbar } from 'notistack';
@@ -30,6 +32,9 @@ import ConstructionsTab from './Construction/ConstructionsTab';
 import LossesTab from './Losses/LossesTab';
 import { useSelector } from 'react-redux';
 import CustomerTab from './Customer/CustomerTab';
+import LocalShippingIcon from '@mui/icons-material/LocalShipping';
+import TagList from '@/app/components/tags/TagList';
+import { formatDateTime } from '@/utils/inspectionFormatDate';
 
 function TabPanel({ children, value, index }) {
   return (
@@ -70,7 +75,7 @@ export default function ProjectDetailDrawer({ projectId, saleId, open, onClose, 
       const [proj, proc] = await Promise.all([
         projectService.find(projectId, {
           fields:
-            'id,project_number,sale,customer.complete_name,field_services.service.name,field_services.final_service_opinion.name',
+            'id,project_number,sale.id,sale.customer.complete_name,sale.signature_date,field_services.service.name,field_services.final_service_opinion.name,delivery_type,distance_to_matriz_km',
           expand: 'sale.customer,field_services.service,field_services.final_service_opinion,sale',
         }),
       ]);
@@ -201,6 +206,8 @@ export default function ProjectDetailDrawer({ projectId, saleId, open, onClose, 
     [project, projectId, hasConstructionTab],
   );
 
+  console.log('ProjectDetailDrawer', project);
+
   return (
     <Drawer
       anchor="right"
@@ -219,10 +226,76 @@ export default function ProjectDetailDrawer({ projectId, saleId, open, onClose, 
           bgcolor: 'grey.100',
         }}
       >
-        <Typography variant="h5">
-          Detalhes do Projeto nº {project?.project_number} -{' '}
-          {project?.sale?.customer?.complete_name}
-        </Typography>
+        <Box
+          sx={{
+            pb: 2,
+            mb: 3,
+            borderBottom: '1px solid',
+            borderColor: 'divider',
+          }}
+        >
+          {/* Título simples */}
+          <Typography variant="h6" fontWeight="medium" color="text.primary">
+            Projeto nº {project?.project_number} – {project?.sale?.customer?.complete_name}
+          </Typography>
+
+          {/* Detalhes sutis em linha única */}
+          <Stack
+            direction="row"
+            spacing={4}
+            alignItems="center"
+            mt={1}
+          >
+            {/* Data de assinatura em texto pequeno */}
+            {project?.sale?.signature_date && (
+              <Typography variant="caption" color="text.secondary">
+                Data de Assinatura: {formatDateTime(project.sale.signature_date)}
+              </Typography>
+            )}
+
+            {/* Distância até a matriz */}
+            <Typography variant="caption" color="text.secondary">
+              Distância: {project?.distance_to_matriz_km != null
+                ? `${project.distance_to_matriz_km} km`
+                : 'N/A'}
+            </Typography>
+
+            {/* Chip de tipo de entrega, discreto e tamanho reduzido */}
+            {project?.delivery_type && (
+              <Chip
+                icon={<LocalShippingIcon sx={{ fontSize: '1rem' }} />}
+                label={
+                  project.delivery_type === 'C'
+                    ? 'Entrega CD'
+                    : project.delivery_type === 'D'
+                    ? 'Entrega Direta'
+                    : project.delivery_type
+                }
+                size="small"
+                variant="outlined"
+                color="primary"
+              />
+            )}
+          </Stack>
+
+          {/* Tags (opcional), minimalistas, com margem superior leve */}
+          <Box mt={1}>
+            <TagList
+              appLabel="resolve_crm"
+              model="project"
+              objectId={project?.sale?.id}
+              sx={{
+                '& .MuiChip-root': {
+                  height: 24,
+                  fontSize: '0.75rem',
+                  marginRight: 0.5,
+                  marginBottom: 0.5,
+                },
+              }}
+            />
+          </Box>
+        </Box>
+
         <IconButton onClick={handleClose}>
           <CloseIcon />
         </IconButton>

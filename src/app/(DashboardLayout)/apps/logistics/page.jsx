@@ -17,14 +17,14 @@ import {
   CheckCircle as CheckCircleIcon,
   CreditCard as CreditCardIcon,
   Event as EventIcon,
-  HourglassEmpty as HourglassEmptyIcon
+  HourglassEmpty as HourglassEmptyIcon,
 } from '@mui/icons-material';
 
 // App components
 import Breadcrumb from '@/app/(DashboardLayout)/layout/shared/breadcrumb/Breadcrumb';
 import PageContainer from '@/app/components/container/PageContainer';
-import { Table } from "@/app/components/Table";
-import { TableHeader } from "@/app/components/TableHeader";
+import { Table } from '@/app/components/Table';
+import { TableHeader } from '@/app/components/TableHeader';
 import { KPICard } from '@/app/components/charts/KPICard';
 import GenericFilterDrawer from '@/app/components/filters/GenericFilterDrawer';
 import ProjectDetailDrawer from '@/app/components/apps/project/Costumer-journey/Project-Detail/ProjectDrawer';
@@ -42,7 +42,11 @@ import filterConfig from './filterConfig';
 const LogisticsDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [projects, setProjects] = useState([]);
-  const [indicators, setIndicators] = useState({ purchase_status: {}, delivery_status: {}, total_count: 0 });
+  const [indicators, setIndicators] = useState({
+    purchase_status: {},
+    delivery_status: {},
+    total_count: 0,
+  });
   const [loadingIndicators, setLoadingIndicators] = useState(true);
   const [filters, setFilters] = useState({});
   const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
@@ -57,7 +61,16 @@ const LogisticsDashboard = () => {
   const fetchProjects = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await projectService.index({ user_types: 3, fields: 'id,project_number,sale.customer.complete_name,product.description,address.complete_address,sale.status,sale.signature_date,purchase_status,delivery_status,sale.id,delivery_type,distance_to_matriz_km', expand: 'sale.customer,product,address,expected_delivery_date', metrics: 'purchase_status,delivery_status,expected_delivery_date', page: page + 1, limit: rowsPerPage, ...filters });
+      const response = await projectService.index({
+        user_types: 3,
+        fields:
+          'id,project_number,sale.signature_date,sale.customer.complete_name,product.description,address.complete_address,sale.status,sale.signature_date,purchase_status,delivery_status,sale.id,delivery_type,distance_to_matriz_km',
+        expand: 'sale.customer,product,address,expected_delivery_date',
+        metrics: 'purchase_status,delivery_status,expected_delivery_date',
+        page: page + 1,
+        limit: rowsPerPage,
+        ...filters,
+      });
       setProjects(response.results);
       setTotalRows(response.meta.pagination.total_count);
     } catch (error) {
@@ -85,17 +98,14 @@ const LogisticsDashboard = () => {
   }, [fetchProjects, fetchIndicators]);
 
   const handleKpiClick = (key, value) => {
-    setFilters(prev => ({
+    setFilters((prev) => ({
       ...prev,
-      [key]: value
+      [key]: value,
     }));
     setPage(0);
   };
 
-  const BCrumb = [
-    { to: '/', title: 'Home' },
-    { title: 'Logística' },
-  ];
+  const BCrumb = [{ to: '/', title: 'Home' }, { title: 'Logística' }];
 
   // Build purchase indicators with vivid icon colors
   const purchaseStats = Object.entries(indicators.purchase_status).map(([status, count]) => {
@@ -134,7 +144,7 @@ const LogisticsDashboard = () => {
       value: count,
       icon,
       color: '',
-      filter: { purchase_status: status }
+      filter: { purchase_status: status },
     };
   });
 
@@ -166,7 +176,7 @@ const LogisticsDashboard = () => {
       value: count,
       icon,
       color: '',
-      filter: { delivery_status: status }
+      filter: { delivery_status: status },
     };
   });
 
@@ -174,64 +184,60 @@ const LogisticsDashboard = () => {
     {
       field: 'sale.signature_date',
       headerName: 'Data da Assinatura',
-      render: r => formatDate(r.sale?.signature_date) || '-',
-      sx: { width: 150, textAlign: 'center' }
+      render: (r) => formatDate(r.sale?.signature_date) || '-',
+      sx: { width: 150, textAlign: 'center' },
     },
     {
       field: 'project_number',
       headerName: 'Projeto',
-      render: r => `${r.project_number} - ${r.sale?.customer?.complete_name}` || 'SEM NÚMERO',
-      sx: { opacity: 0.7 }
+      render: (r) => `${r.project_number} - ${r.sale?.customer?.complete_name}` || 'SEM NÚMERO',
+      sx: { opacity: 0.7 },
     },
     {
       field: 'product.description',
       headerName: 'Produto',
-      render: r => r.product?.description || '-'
+      render: (r) => r.product?.description || '-',
     },
     {
       field: 'address',
       headerName: 'Endereço',
-      render: r => r.address?.complete_address || '-'
+      render: (r) => r.address?.complete_address || '-',
     },
     {
       field: 'distance_to_matriz_km',
       headerName: 'Distância à CD',
-      render: r =>
+      render: (r) =>
         r.distance_to_matriz_km !== undefined && r.distance_to_matriz_km !== null
           ? `${r.distance_to_matriz_km} km`
           : '-',
-      sx: { fontWeight: 500, textAlign: 'center' }
+      sx: { fontWeight: 500, textAlign: 'center' },
     },
     {
       field: 'sale.status',
       headerName: 'Status da Venda',
-      render: r => <StatusChip status={r.sale?.status} />
+      render: (r) => <StatusChip status={r.sale?.status} />,
     },
     {
       field: 'purchase_status',
       headerName: 'Status da Compra',
-      render: r => <PurchaseStatusChip status={r.purchase_status} />
+      render: (r) => <PurchaseStatusChip status={r.purchase_status} />,
     },
     {
       field: 'delivery_status',
       headerName: 'Status da Entrega',
-      render: r => <DeliveryStatusChip status={r.delivery_status} />
+      render: (r) => <DeliveryStatusChip status={r.delivery_status} />,
     },
     {
       field: 'delivery_type',
       headerName: 'Tipo de Entrega',
-      render: r =>
-        r.delivery_type === 'C'
-          ? 'Entrega CD'
-          : r.delivery_type === 'D'
-          ? 'Entrega Direta'
-          : '-'
+      render: (r) =>
+        r.delivery_type === 'C' ? 'Entrega CD' : r.delivery_type === 'D' ? 'Entrega Direta' : '-',
     },
     {
       field: 'expected_delivery_date',
       headerName: 'Previsão de Entrega',
-      render: r => formatDate(r.expected_delivery_date) || '-'
-    }
+      render: (r) => formatDate(r.expected_delivery_date) || '-',
+    },
   ];
 
   const handleRowClick = (row) => {
@@ -257,7 +263,18 @@ const LogisticsDashboard = () => {
       {/* Indicadores */}
       <Box sx={{ width: '100%', mb: 2 }}>
         <Typography variant="h6">Indicadores de Compra</Typography>
-        <Box sx={{ width: '100%', display: 'flex', justifyContent: 'space-evenly', gap: 2, flexWrap: 'wrap', mt: 1, mb: 4, p: 2 }}>
+        <Box
+          sx={{
+            width: '100%',
+            display: 'flex',
+            justifyContent: 'space-evenly',
+            gap: 2,
+            flexWrap: 'wrap',
+            mt: 1,
+            mb: 4,
+            p: 2,
+          }}
+        >
           {purchaseStats.map(({ key, label, value, icon, color, filter }) => {
             const isActive = filters.purchase_status === filter.purchase_status;
             return (
@@ -276,7 +293,17 @@ const LogisticsDashboard = () => {
         </Box>
 
         <Typography variant="h6">Indicadores de Entrega</Typography>
-        <Box sx={{ width: '100%', display: 'flex', justifyContent: 'space-evenly', gap: 2, flexWrap: 'wrap', mt: 1, p: 2 }}>
+        <Box
+          sx={{
+            width: '100%',
+            display: 'flex',
+            justifyContent: 'space-evenly',
+            gap: 2,
+            flexWrap: 'wrap',
+            mt: 1,
+            p: 2,
+          }}
+        >
           {deliveryStats.map(({ key, label, value, icon, color, filter }) => {
             const isActive = filters.delivery_status === filter.delivery_status;
             return (
@@ -308,12 +335,14 @@ const LogisticsDashboard = () => {
         <TableHeader.Title
           title="Total"
           totalItems={totalRows}
-          objNameNumberReference={totalRows === 1 ? "Projeto" : "Projetos"}
+          objNameNumberReference={totalRows === 1 ? 'Projeto' : 'Projetos'}
         />
         <TableHeader.Button
           buttonLabel="Filtros"
           icon={<FilterAlt />}
-          onButtonClick={() => { setFilterDrawerOpen(true); }}
+          onButtonClick={() => {
+            setFilterDrawerOpen(true);
+          }}
           sx={{ width: 200, marginLeft: 2 }}
         />
       </TableHeader.Root>
@@ -326,7 +355,10 @@ const LogisticsDashboard = () => {
         onPageChange={handlePageChange}
         onRowsPerPageChange={handleRowsPerPageChange}
         onRowClick={handleRowClick}
-        onClose={() => { setOpenDrawer(false); setSelectedRow(null); }}
+        onClose={() => {
+          setOpenDrawer(false);
+          setSelectedRow(null);
+        }}
         noWrap={true}
       >
         <Table.Head columns={columns} />
@@ -334,15 +366,20 @@ const LogisticsDashboard = () => {
           loading={loading}
           columns={columns.length}
           onRowClick={handleRowClick}
-          sx={{ cursor: "pointer", '&:hover': { backgroundColor: 'rgba(236, 242, 255, 0.35)' } }}
+          sx={{ cursor: 'pointer', '&:hover': { backgroundColor: 'rgba(236, 242, 255, 0.35)' } }}
         >
-          {columns.map(col => (
+          {columns.map((col) => (
             <Table.Cell key={col.field} render={col.render} sx={col.sx} />
           ))}
         </Table.Body>
         <Table.Pagination />
       </Table.Root>
-      <ProjectDetailDrawer projectId={selectedRow} saleId={selectedSaleId} open={openDrawer} onClose={() => setOpenDrawer(false)} />
+      <ProjectDetailDrawer
+        projectId={selectedRow}
+        saleId={selectedSaleId}
+        open={openDrawer}
+        onClose={() => setOpenDrawer(false)}
+      />
     </PageContainer>
   );
 };
