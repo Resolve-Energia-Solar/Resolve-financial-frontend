@@ -402,7 +402,7 @@ const ProjectList = ({ onClick }) => {
             'sale,sale.customer,designer,homologator,product,sale,sale.branch,requests_energy_company,requests_energy_company.type,inspection.final_service_opinion',
           fields:
             'id,journey_counter,sale.id,sale.customer.complete_name,sale.signature_date,sale.total_value,sale.payment_status,sale.branch.name,is_documentation_completed,homologator.complete_name,designer_status,material_list_is_completed,trt_pending,peding_request,access_opnion,product.name,product.params,status,sale.status,is_released_to_engineering,requests_energy_company.status,requests_energy_company.type.name,delivery_status,installation_status,final_inspection_status,inspection.final_service_opinion.name',
-          metrics: 'journey_counter,delivery_status,installation_status,homologation_status',
+          metrics: 'journey_counter,delivery_status,installation_status,final_inspection_status',
           is_pre_sale: false,
           ordering,
           ...filters,
