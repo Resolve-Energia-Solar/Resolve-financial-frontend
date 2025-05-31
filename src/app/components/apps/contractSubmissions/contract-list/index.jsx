@@ -114,7 +114,7 @@ function ContractSubmissions({ sale }) {
             signedFileUrl: doc.data.links.files.signed,
             zipedFileUrl: doc.data.links.files.ziped,
             // Add the missing properties from the original contracts array
-            envelope_id: contracts[index].envelope_id,
+            request_signature_key: contracts[index].request_signature_key,
             key_number: contracts[index].key_number
           }));
         setContracts(formattedContracts);
@@ -223,7 +223,7 @@ function ContractSubmissions({ sale }) {
                           startIcon={<ContentCopyIcon />}
                           variant="contained"
                           color="primary"
-                          onClick={() => navigator.clipboard.writeText(`https://app.clicksign.com/widget/notarial/${contract.envelope_id}/documents/${contract.key_number}`)}
+                          onClick={() => navigator.clipboard.writeText(`https://app.clicksign.com/widget/notarial/${contract.request_signature_key}/documents/${contract.key_number}`)}
                           size='small'
                           sx={{ mt: 1 }}
                         >
