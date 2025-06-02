@@ -64,6 +64,7 @@ export default function ConstructionFormModal({
                     start_date: data.start_date,
                     end_date: data.end_date,
                     work_responsibility: data.work_responsibility,
+                    is_customer_aware: data.is_customer_aware || false,
                     repass_value: data.repass_value || '',
                     budget_value: data.budget_value || '',
                     service_description: data.service_description,
