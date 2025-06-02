@@ -3,6 +3,7 @@ import {
   CheckCircle as CheckCircleIcon,
   HourglassEmpty as HourglassEmptyIcon,
   Error as ErrorIcon,
+  MoneyOff as MoneyOffIcon
 } from '@mui/icons-material';
 
 const ChipRequestStatus = ({ status }) => {
@@ -16,6 +17,8 @@ const ChipRequestStatus = ({ status }) => {
         return { label: 'Bloqueado', color: 'error', icon: <ErrorIcon /> };
       case 'Deferida':
         return { label: 'Deferida', color: 'success', icon: <CheckCircleIcon /> };
+      case 'Indeferida Debito':
+        return { label: 'Indeferida por Débito', color: 'error', icon: <MoneyOffIcon /> };
       case 'Não se aplica':
         return { label: 'Não se aplica', color: 'default', icon: null};
       default:
