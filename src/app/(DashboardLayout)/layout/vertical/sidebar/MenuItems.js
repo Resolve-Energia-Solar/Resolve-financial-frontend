@@ -115,13 +115,13 @@ const Menuitems = [
     title: 'Financiamento',
     icon: IconBuildingBank,
     href: '/apps/funding-request',
-    permissions: ['resolve_crm.can_view_funding_request'],
+    permissions: ['contracts.view_sicoobrequest'],
     children: [
       {
         id: uniqueId(),
         title: 'Solicitações Sicoob',
         icon: IconPigMoney,
-        permissions: ['resolve_crm.can_view_funding_request'],
+        permissions: ['contracts.view_sicoobrequest'],
         href: '/apps/funding-request/sicoob',
       },
     ],
