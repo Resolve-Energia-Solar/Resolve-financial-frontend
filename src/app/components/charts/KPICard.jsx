@@ -55,7 +55,7 @@ export function KPICard({
           <Typography variant="subtitle2" sx={{ mt: 1 }}>
             {label}
           </Typography>
-          <Typography variant="h6">{format ? format(!!value) : value}</Typography>
+          <Typography variant="h6">{format ? format(value) : value}</Typography>
         </Box>
       )}
     </>

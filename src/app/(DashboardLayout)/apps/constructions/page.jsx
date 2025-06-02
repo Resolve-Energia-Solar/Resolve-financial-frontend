@@ -18,7 +18,7 @@ import {
   RemoveCircleOutline,
 } from '@mui/icons-material';
 import ProjectDetailDrawer from '@/app/components/apps/project/Costumer-journey/Project-Detail/ProjectDrawer';
-import { Chip, Tooltip, Button, Box, Typography, Skeleton } from '@mui/material';
+import { Chip, Tooltip, Button, Box, Typography, Skeleton, useTheme } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import GenericFilterDrawer from '@/app/components/filters/GenericFilterDrawer';
 import filterConfig from './filterConfig';
@@ -53,6 +53,7 @@ const ConstructionsDashboard = () => {
   const [openDrawer, setOpenDrawer] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
   const [selectedSaleId, setSelectedSaleId] = useState(null);
+  const theme = useTheme();
   const { enqueueSnackbar } = useSnackbar();
 
   console.log('indicators', indicators);
@@ -297,6 +298,7 @@ const ConstructionsDashboard = () => {
             mt: 1,
             mb: 4,
             p: 2,
+            background: theme.palette.mode === 'dark' ? '#424242' : '#f5f5f5'
           }}
         >
           {stats.map(({ key, label, value, icon, color, filter, format }) => {

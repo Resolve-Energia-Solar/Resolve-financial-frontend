@@ -14,7 +14,7 @@ import {
   CheckCircle
 } from '@mui/icons-material';
 import ProjectDetailDrawer from '@/app/components/apps/project/Costumer-journey/Project-Detail/ProjectDrawer';
-import { Chip, Box, Typography } from '@mui/material';
+import { Chip, Box, Typography, useTheme } from '@mui/material';
 import GenericFilterDrawer from '@/app/components/filters/GenericFilterDrawer';
 import filterConfig from './filterConfig';
 import { FilterContext } from '@/context/FilterContext';
@@ -38,6 +38,7 @@ const InstallationsDashboard = () => {
   const [openDrawer, setOpenDrawer] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
   const [selectedSaleId, setSelectedSaleId] = useState(null);
+  const theme = useTheme();
   const { enqueueSnackbar } = useSnackbar();
 
   const statusStats = [
@@ -271,6 +272,7 @@ const InstallationsDashboard = () => {
             mt: 1,
             mb: 4,
             p: 2,
+            background: theme.palette.mode === 'dark' ? '#424242' : '#f5f5f5'
           }}
         >
           {statusStats.map(({ key, label, value, icon, color, filter, format }) => {

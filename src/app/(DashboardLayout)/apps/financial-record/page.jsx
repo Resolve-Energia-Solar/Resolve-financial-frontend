@@ -24,6 +24,7 @@ import {
   TablePagination,
   TableRow,
   Typography,
+  useTheme,
 } from '@mui/material';
 
 import { AddBoxRounded, Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
@@ -43,6 +44,7 @@ import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+import { KPICard } from '@/app/components/charts/KPICard';
 
 const financialRecordList = () => {
   const router = useRouter();
@@ -61,21 +63,22 @@ const financialRecordList = () => {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [totalRows, setTotalRows] = useState(0);
   const [page, setPage] = useState(0);
-
+  const theme = useTheme();
 
   const stats = [
     {
       key: 'total_records',
       label: 'Total de registros',
-      value: indicators.total_records,
+      value: indicators?.total_records,
       icon: <InsertDriveFileIcon />,
       color: '#e3f2fd',
-      filter: {}
+      filter: {},
+      format: v => v.toLocaleString('pt-BR'),
     },
     {
       key: 'total_value',
       label: 'Valor total',
-      value: indicators.total_value,
+      value: indicators?.total_value,
       icon: <MonetizationOnIcon />,
       color: '#e8f5e9',
       filter: {},
@@ -84,18 +87,20 @@ const financialRecordList = () => {
     {
       key: 'total_in_progress',
       label: 'Em andamento',
-      value: indicators.total_in_progress,
+      value: indicators?.total_in_progress,
       icon: <HourglassEmptyIcon />,
       color: '#fff3e0',
-      filter: { responsible_status__in: 'A', payment_status__in: 'P' }
+      filter: { responsible_status__in: 'A', payment_status__in: 'P' },
+      format: v => v.toLocaleString('pt-BR'),
     },
     {
       key: 'total_with_error',
       label: 'Com erro',
-      value: indicators.total_with_error,
+      value: indicators?.total_with_error,
       icon: <ErrorOutlineIcon />,
       color: '#ffebee',
-      filter: { bug: true }
+      filter: { bug: true },
+      format: v => v.toLocaleString('pt-BR'),
     },
   ];
 
@@ -234,79 +239,26 @@ const financialRecordList = () => {
           {/* Indicadores */}
           <Box sx={{ width: '100%', mb: 2 }}>
             <Typography variant="h6">Indicadores</Typography>
-            {loadingIndicators ? (
-              <Box sx={{ width: '100%', display: 'flex', justifyContent: 'space-evenly', gap: 2, flexWrap: 'wrap', mt: 1, mb: 4, background: '#f5f5f5', p: 2 }}>
-                {Array.from({ length: 4 }).map((_, index) => (
-                  <Skeleton
-                    key={index}
-                    variant="rectangular"
-                    width="100%"
-                    height={120}
-                    sx={{
-                      flex: '1 1 150px',
-                      p: 2,
-                      display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      backgroundColor: 'grey.300',
-                      borderRadius: 1,
-                      maxWidth: '200px',
-                      aspectRatio: '4 / 2.5',
-                      textAlign: 'center',
-                      '&:hover': { transform: 'scale(1.05)', transition: 'transform 0.2s' },
-                    }}
+            <Box sx={{
+              width: '100%', display: 'flex', justifyContent: 'space-evenly', gap: 2, flexWrap: 'wrap', mt: 1, mb: 4, p: 2, background: theme.palette.mode === 'dark' ? '#424242' : '#f5f5f5'
+            }}>
+              {stats.map(({ key, label, value, icon, color, filter, format }) => {
+                const isActive = filters && Object.keys(filters).some((filterKey) => filterKey in filter);
+                return (
+                  <KPICard
+                    key={key}
+                    label={label}
+                    value={value}
+                    icon={icon}
+                    color={color}
+                    active={isActive}
+                    loading={loadingIndicators}
+                    format={format}
+                    onClick={() => handleKPIClick(key)}
                   />
-                ))}
-              </Box>
-            ) : (
-              <Box
-                sx={{
-                  width: '100%',
-                  display: 'flex',
-                  justifyContent: 'space-evenly',
-                  gap: 2,
-                  flexWrap: 'wrap',
-                  mt: 1,
-                  mb: 4,
-                  background: '#f5f5f5',
-                  p: 2,
-                }}
-              >
-                {stats.map(({ key, label, value, icon, color, filter, format }) => {
-                  const isActive = filters && Object.keys(filters).some((filterKey) => filterKey in filter);
-                  return (
-                    <Box
-                      key={key}
-                      sx={{
-                        flex: '1 1 150px',
-                        p: 2,
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        backgroundColor: color,
-                        borderRadius: 1,
-                        maxWidth: '200px',
-                        aspectRatio: '4 / 2.5',
-                        textAlign: 'center',
-                        '&:hover': { transform: 'scale(1.05)', transition: 'transform 0.2s' },
-                        border: isActive ? '2px solid green' : 'none',
-                      }}
-                      onClick={() => handleKPIClick(key)}
-                    >
-                      {icon}
-                      <Typography variant="subtitle2" sx={{ mt: 1 }}>
-                        {label}
-                      </Typography>
-                      <Typography variant="h6">
-                        {format ? format(value) : value}
-                      </Typography>
-                    </Box>
-                  )
-                })}
-              </Box>
-            )}
+                );
+              })}
+            </Box>
           </Box>
 
           <Typography variant="h6" gutterBottom>

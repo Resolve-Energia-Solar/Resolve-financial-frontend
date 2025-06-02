@@ -9,7 +9,7 @@ import { TableHeader } from '@/app/components/TableHeader';
 import StatusChip from '@/utils/status/DocumentStatusIcon';
 import { FilterAlt } from '@mui/icons-material';
 import ProjectDetailDrawer from '@/app/components/apps/project/Costumer-journey/Project-Detail/ProjectDrawer';
-import { Chip, Box, Typography } from '@mui/material';
+import { Chip, Box, Typography, useTheme } from '@mui/material';
 import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
@@ -40,6 +40,7 @@ const InspectionsDashboard = () => {
   const [selectedRow, setSelectedRow] = useState(null);
   const [selectedSaleId, setSelectedSaleId] = useState(null);
   const { enqueueSnackbar } = useSnackbar();
+  const theme = useTheme();
 
   const stats = [
     {
@@ -221,7 +222,7 @@ const InspectionsDashboard = () => {
             flexWrap: 'wrap',
             mt: 1,
             mb: 4,
-            background: '#f5f5f5',
+            background: theme.palette.mode === 'dark' ? '#424242' : '#f5f5f5',
             p: 2,
           }}
         >

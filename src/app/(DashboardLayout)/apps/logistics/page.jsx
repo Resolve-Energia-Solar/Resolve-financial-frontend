@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useSnackbar } from 'notistack';
 
 // Material UI Components
-import { Box, Chip, Typography } from '@mui/material';
+import { Box, Chip, Typography, useTheme } from '@mui/material';
 
 // Material UI Icons
 import {
@@ -56,6 +56,7 @@ const LogisticsDashboard = () => {
   const [openDrawer, setOpenDrawer] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
   const [selectedSaleId, setSelectedSaleId] = useState(null);
+  const theme = useTheme();
   const { enqueueSnackbar } = useSnackbar();
 
   const fetchProjects = useCallback(async () => {
@@ -110,40 +111,50 @@ const LogisticsDashboard = () => {
   // Build purchase indicators with vivid icon colors
   const purchaseStats = Object.entries(indicators.purchase_status).map(([status, count]) => {
     let icon;
+    let color;
     switch (status) {
       case 'Bloqueado':
-        icon = <BlockIcon sx={{ color: '#dc3545' }} />;
+        icon = <BlockIcon />;
+        color = '#dc3545';
         break;
       case 'Liberado':
-        icon = <LockOpen sx={{ color: '#17a2b8' }} />;
+        icon = <LockOpen />;
+        color = '#17a2b8';
         break;
       case 'Pendente':
-        icon = <HourglassEmptyIcon sx={{ color: '#ffc107' }} />;
+        icon = <HourglassEmptyIcon />;
+        color = '#ffc107';
         break;
       case 'Compra Realizada':
-        icon = <CheckCircleIcon sx={{ color: '#28a745' }} />;
+        icon = <CheckCircleIcon />;
+        color = '#28a745';
         break;
       case 'Cancelado':
-        icon = <CancelIcon sx={{ color: '#dc3545' }} />;
+        icon = <CancelIcon />;
+        color = '#dc3545';
         break;
       case 'Distrato':
-        icon = <RemoveCircleOutline sx={{ color: '#6c757d' }} />;
+        icon = <RemoveCircleOutline />;
+        color = '#6c757d';
         break;
       case 'Aguardando Previsão de Entrega':
-        icon = <AccessTimeIcon sx={{ color: '#007bff' }} />;
+        icon = <AccessTimeIcon />;
+        color = '#007bff';
         break;
       case 'Aguardando Pagamento':
-        icon = <CreditCardIcon sx={{ color: '#fd7e14' }} />;
+        icon = <CreditCardIcon />;
+        color = '#fd7e14';
         break;
       default:
-        icon = <BuildCircleIcon sx={{ color: '#6f42c1' }} />;
+        icon = <BuildCircleIcon />;
+        color = '#6f42c1';
     }
     return {
       key: status,
       label: status,
       value: count,
       icon,
-      color: '',
+      color: color,
       filter: { purchase_status: status },
     };
   });
@@ -151,31 +162,38 @@ const LogisticsDashboard = () => {
   // Build delivery indicators with vivid icon colors
   const deliveryStats = Object.entries(indicators.delivery_status).map(([status, count]) => {
     let icon;
+    let color;
     switch (status) {
       case 'Bloqueado':
-        icon = <BlockIcon sx={{ color: '#dc3545' }} />;
+        icon = <BlockIcon />;
+        color = '#dc3545';
         break;
       case 'Liberado':
-        icon = <LockOpen sx={{ color: '#17a2b8' }} />;
+        icon = <LockOpen />;
+        color = '#17a2b8';
         break;
       case 'Agendado':
-        icon = <EventIcon sx={{ color: '#007bff' }} />;
+        icon = <EventIcon />;
+        color = '#007bff';
         break;
       case 'Entregue':
-        icon = <CheckCircleIcon sx={{ color: '#28a745' }} />;
+        icon = <CheckCircleIcon />;
+        color = '#28a745';
         break;
       case 'Cancelado':
-        icon = <CancelIcon sx={{ color: '#dc3545' }} />;
+        icon = <CancelIcon />;
+        color = '#dc3545';
         break;
       default:
-        icon = <BuildCircleIcon sx={{ color: '#6f42c1' }} />;
+        icon = <BuildCircleIcon />;
+        color = '#6f42c1';
     }
     return {
       key: status,
       label: status,
       value: count,
       icon,
-      color: '',
+      color: color,
       filter: { delivery_status: status },
     };
   });
@@ -273,6 +291,7 @@ const LogisticsDashboard = () => {
             mt: 1,
             mb: 4,
             p: 2,
+            background: theme.palette.mode === 'dark' ? '#424242' : '#f5f5f5'
           }}
         >
           {purchaseStats.map(({ key, label, value, icon, color, filter }) => {
@@ -302,6 +321,7 @@ const LogisticsDashboard = () => {
             flexWrap: 'wrap',
             mt: 1,
             p: 2,
+            background: theme.palette.mode === 'dark' ? '#424242' : '#f5f5f5'
           }}
         >
           {deliveryStats.map(({ key, label, value, icon, color, filter }) => {
