@@ -260,7 +260,7 @@ const ConstructionsDashboard = () => {
     }
 
     const filterKey = Object.keys(kpiFilter)[0];
-    
+
     if (filters && filters[filterKey] === kpiFilter[filterKey]) {
       const newFilters = { ...filters };
       delete newFilters[filterKey];
@@ -329,6 +329,46 @@ const ConstructionsDashboard = () => {
               />
             );
           })}
+        </Box>
+        <Box
+          sx={{
+            width: '100%',
+            display: 'flex',
+            justifyContent: 'space-evenly',
+            gap: 2,
+            flexWrap: 'wrap',
+            mt: 1,
+            mb: 4,
+            p: 2,
+            background: theme.palette.mode === 'dark' ? '#424242' : '#f5f5f5'
+          }}
+        >
+          <KPICard
+            key="total_customer_aware"
+            label="Clientes cientes"
+            value={indicators.total_customer_aware}
+            icon={<CheckCircleIcon />}
+            color={theme.palette.success.main}
+            active={
+              Object.entries({ is_customer_aware_of_construction: true }).some(
+                ([filterKey, filterValue]) => filters?.[filterKey] === filterValue,
+              )
+            }
+            loading={loadingIndicators}
+          />
+          <KPICard
+            key="total_not_customer_aware"
+            label="Clientes não cientes"
+            value={indicators.total_not_customer_aware}
+            icon={<RemoveCircleOutline />}
+            color={theme.palette.error.main}
+            active={
+              Object.entries({ is_customer_aware_of_construction: false }).some(
+                ([filterKey, filterValue]) => filters?.[filterKey] === filterValue,
+              )
+            }
+            loading={loadingIndicators}
+          />
         </Box>
       </Box>
 
