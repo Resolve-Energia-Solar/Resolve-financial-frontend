@@ -75,7 +75,7 @@ const InspectionsDashboard = () => {
       const response = await projectService.index({
         fields:
           'id,project_number,sale.customer.complete_name,sale.signature_date,sale.status,journey_counter,sale.branch.name,inspection.schedule_date,inspection.final_service_opinion.name,inspection.final_service_opinion_date,inspection.final_service_opinion_user,sale.id',
-        expand: 'sale,sale.customer,sale.branch,inspection',
+        expand: 'sale,sale.customer,sale.branch,inspection,inspection.final_service_opinion',
         metrics: 'journey_counter',
         page: page + 1,
         limit: rowsPerPage,
