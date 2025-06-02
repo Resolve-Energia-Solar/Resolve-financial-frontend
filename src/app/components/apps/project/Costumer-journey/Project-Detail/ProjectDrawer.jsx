@@ -35,6 +35,7 @@ import CustomerTab from './Customer/CustomerTab';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 import TagList from '@/app/components/tags/TagList';
 import { formatDateTime } from '@/utils/inspectionFormatDate';
+import CustomerServiceTab from './customer-service/CustomerServiceTab';
 
 function TabPanel({ children, value, index }) {
   return (
@@ -191,6 +192,12 @@ export default function ProjectDetailDrawer({ projectId, saleId, open, onClose, 
               enableIndicators={false}
               viewOnly={!canEdit}
             />
+          ),
+        },
+        {
+          label: 'Pós-Venda',
+          content: (
+            <CustomerServiceTab projectId={projectId} viewOnly={!canEdit} />
           ),
         },
         { label: 'Perdas', content: <LossesTab projectId={projectId} viewOnly={!canEdit} /> },
