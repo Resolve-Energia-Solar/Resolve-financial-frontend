@@ -36,6 +36,7 @@ const InspectionsDashboard = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [totalRows, setTotalRows] = useState(0);
+  const [ordering, setOrdering] = useState('-created_at');
   const [openDrawer, setOpenDrawer] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
   const [selectedSaleId, setSelectedSaleId] = useState(null);
@@ -79,6 +80,7 @@ const InspectionsDashboard = () => {
         metrics: 'journey_counter',
         page: page + 1,
         limit: rowsPerPage,
+        ordering,
         remove_termination_cancelled_and_pre_sale: true,
         ...filters,
       });
@@ -89,7 +91,7 @@ const InspectionsDashboard = () => {
     } finally {
       setLoading(false);
     }
-  }, [page, rowsPerPage, filters, enqueueSnackbar]);
+  }, [page, rowsPerPage, filters, ordering, enqueueSnackbar]);
 
   const fetchIndicators = useCallback(async () => {
     setLoadingIndicators(true);
@@ -110,6 +112,15 @@ const InspectionsDashboard = () => {
     fetchProjects();
     fetchIndicators();
   }, [fetchProjects, fetchIndicators, refresh, filters]);
+
+  const handleSort = (field) => {
+    setPage(0);
+    if (ordering === field) {
+      setOrdering(`-${field}`);
+    } else {
+      setOrdering(field);
+    }
+  };
 
   const BCrumb = [{ to: '/', title: 'Home' }, { title: 'Vistoria' }];
 
@@ -134,6 +145,7 @@ const InspectionsDashboard = () => {
       field: 'journey_counter',
       headerName: 'Contador',
       render: (r) => <JourneyCounterChip count={r.journey_counter} />,
+      sortable: true,
     },
     {
       field: 'sale.branch',
@@ -141,9 +153,10 @@ const InspectionsDashboard = () => {
       render: (r) => r.sale?.branch?.name || '-',
     },
     {
-      field: 'inspection.date',
+      field: 'inspection.schedule_date',
       headerName: 'Data de Vistoria',
       render: (r) => formatDate(r.inspection?.schedule_date),
+      sortable: true,
     },
     {
       field: 'inspection.final_service_opinion.name',
@@ -291,7 +304,7 @@ const InspectionsDashboard = () => {
         }}
         noWrap={true}
       >
-        <Table.Head columns={columns} />
+        <Table.Head columns={columns} onSort={handleSort} />
         <Table.Body
           loading={loading}
           columns={columns.length}
