@@ -62,6 +62,20 @@ const useAddressForm = (initialData, id) => {
       user: formData.user_id ? formData.user_id : undefined,
     };
 
+    if (!dataToSend.zip_code || !dataToSend.street || !dataToSend.city || !dataToSend.state || !dataToSend.neighborhood || !dataToSend.number) {
+      setFormErrors({
+        zip_code: 'CEP é obrigatório',
+        street: 'Rua é obrigatória',
+        city: 'Cidade é obrigatória',
+        state: 'Estado é obrigatório',
+        neighborhood: 'Bairro é obrigatório',
+        number: 'Número é obrigatório',
+      });
+      enqueueSnackbar('Por favor, preencha os campos obrigatórios.', { variant: 'warning' });
+      setLoading(false);
+      return;
+    }
+
     try {
       let request;
       if (id) {

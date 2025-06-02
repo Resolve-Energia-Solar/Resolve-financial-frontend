@@ -49,9 +49,10 @@ const CreateAddressPage = ({
 }) => {
   const { enqueueSnackbar } = useSnackbar();
   const API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
-
-  console.log('userId', userId);
-
+  if (!API_KEY) {
+    console.error('Chave da API do Google Maps não definida.');
+    return <div>Chave da API do Google Maps não definida.</div>;
+  }
   const {
     formData,
     handleChange,
@@ -152,7 +153,7 @@ const CreateAddressPage = ({
         const friendlyErrors = Object.entries(formErrors).map(
           ([field, messages]) => (
             <div key={field}>
-              <strong>{fieldLabels[field] || field}:</strong> {messages.join(', ')}
+              <strong>{fieldLabels[field] || field}:</strong> {Array.isArray(messages) ? messages.join(', ') : messages}
             </div>
           )
         );
@@ -288,7 +289,7 @@ const CreateAddressPage = ({
           <Alert severity="error" sx={{ mb: 2 }}>
             {Object.entries(formErrors).map(([field, messages]) => (
               <div key={field}>
-                <strong>{fieldLabels[field] || field}:</strong> {messages.join(', ')}
+                <strong>{fieldLabels[field] || field}:</strong> {Array.isArray(messages) ? messages.join(', ') : messages}
               </div>
             ))}
           </Alert>
@@ -340,23 +341,23 @@ const CreateAddressPage = ({
                     </Grid>
                     <Grid container xs={12}>
                       <Grid item xs={11} >
-                    <CustomTextField
-                      fullWidth
-                      variant="outlined"
-                      value={formData.complement}
-                      onChange={(e) => handleChange('complement', e.target.value)}
-                      error={!!formErrors.complement}
-                      helperText={formErrors.complement}
-                      sx={{ mt: 0.5, mb: 1, height: 30 }}
-                    />
-                    </Grid>
-                    <Grid item xs={1} sx={{ display: "flex", justifyContent: "end", alignItems: "end" }}>
-                    <Tooltip title="Insira informações adicionais, ex: apto, bloco, complemento." placement="top">
-                        <IconButton size="small">
+                        <CustomTextField
+                          fullWidth
+                          variant="outlined"
+                          value={formData.complement}
+                          onChange={(e) => handleChange('complement', e.target.value)}
+                          error={!!formErrors.complement}
+                          helperText={formErrors.complement}
+                          sx={{ mt: 0.5, mb: 1, height: 30 }}
+                        />
+                      </Grid>
+                      <Grid item xs={1} sx={{ display: "flex", justifyContent: "end", alignItems: "end" }}>
+                        <Tooltip title="Insira informações adicionais, ex: apto, bloco, complemento." placement="top">
+                          <IconButton size="small">
                             <HelpOutlineIcon fontSize="small" />
-                        </IconButton>
-                    </Tooltip>
-                    </Grid>
+                          </IconButton>
+                        </Tooltip>
+                      </Grid>
                     </Grid>
                   </Box>
                 </Grid>
