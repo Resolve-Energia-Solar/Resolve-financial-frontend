@@ -13,12 +13,14 @@ import {
   Button,
   Skeleton,
   Tooltip,
+  useTheme,
 } from '@mui/material';
 import { motion } from 'framer-motion';
 import { useSelector } from 'react-redux';
 
 import getContentType from '@/utils/getContentType';
 import CommentService from '@/services/commentService';
+
 
 const itemVariants = {
   hidden: { opacity: 0, y: 20 },
@@ -32,6 +34,7 @@ export default function Comment({ appLabel, model, objectId, label = 'Comentári
   const [newComment, setNewComment] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [contentTypeId, setContentTypeId] = useState(null);
+  const theme = useTheme();
 
   const user = useSelector((state) => state?.user?.user);
   const listRef = useRef(null);
@@ -55,8 +58,8 @@ export default function Comment({ appLabel, model, objectId, label = 'Comentári
         const data = await CommentService.index({
           object_id: objectId,
           content_type: contentTypeId,
-          fields: 'author.complete_name,created_at,text',
-          expand: 'author',
+          fields: 'author.id,author.complete_name,author.email,author.employee.role.name,author.employee.department.name,author.employee.branch.name,created_at,text',
+          expand: 'author,author.employee.role,author.employee.department,author.employee.branch',
         });
         setComments(data.results || []);
       } catch (err) {
@@ -108,11 +111,18 @@ export default function Comment({ appLabel, model, objectId, label = 'Comentári
     }
   }, [comments]);
 
+  const commentBgColor = (authorId) => {
+    if (authorId === user?.id) {
+      return theme.palette.mode === 'dark' ? '#1a73e8' : '#e3f2fd';
+    }
+    return theme.palette.mode === 'dark' ? '#424242' : '#f5f5f5';
+  };
+
   // Skeleton para placeholder de mensagens
   const SkeletonList = () => (
     <>
       {[1, 2, 3].map((_, i) => (
-        <ListItem key={i} sx={{ maxWidth: '70%', mb: 1, bgcolor: 'grey.200', borderRadius: 2 }}>
+        <ListItem key={i} sx={{ maxWidth: '70%', mb: 1, borderRadius: 2 }}>
           <ListItemAvatar>
             <Skeleton variant="circular" width={40} height={40} />
           </ListItemAvatar>
@@ -179,15 +189,15 @@ export default function Comment({ appLabel, model, objectId, label = 'Comentári
                       </Typography>
                       <Typography variant="body2">
                         <strong>Cargo:</strong>{' '}
-                        {comment.author?.employee_data?.role || 'Desconhecido'}
+                        {comment.author?.employee?.role?.name || 'Desconhecido'}
                       </Typography>
                       <Typography variant="body2">
                         <strong>Setor:</strong>{' '}
-                        {comment.author?.employee_data?.department || 'Desconhecido'}
+                        {comment.author?.employee?.department?.name || 'Desconhecido'}
                       </Typography>
                       <Typography variant="body2">
                         <strong>Unidade:</strong>{' '}
-                        {comment.author?.employee_data?.branch || 'Desconhecido'}
+                        {comment.author?.employee?.branch?.name || 'Desconhecido'}
                       </Typography>
                       <Typography variant="body2">
                         <strong>Data:</strong> {new Date(comment.created_at).toLocaleString()}
@@ -202,14 +212,15 @@ export default function Comment({ appLabel, model, objectId, label = 'Comentári
                   <ListItem
                     sx={{
                       maxWidth: '90%',
-                      bgcolor: comment.author?.id === user?.id ? 'primary.light' : 'grey.300',
+                      bgcolor: commentBgColor(comment.author?.id),
+                      color: theme.palette.getContrastText(commentBgColor(comment.author?.id)),
                       borderRadius: 2,
                       padding: 1,
                       alignSelf: comment.author?.id === user?.id ? 'flex-end' : 'flex-start',
                     }}
                   >
                     <ListItemAvatar>
-                      <Avatar sx={{ bgcolor: 'primary.main', color: 'white' }}>
+                      <Avatar sx={{ bgcolor: 'primary.main' }}>
                         {getInitials(comment.author?.complete_name || comment.author?.email || 'D')}
                       </Avatar>
                     </ListItemAvatar>
@@ -217,11 +228,11 @@ export default function Comment({ appLabel, model, objectId, label = 'Comentári
                       primary={
                         comment.author?.complete_name
                           ? comment.author.complete_name.charAt(0).toUpperCase() +
-                            comment.author.complete_name.slice(1).toLowerCase()
+                          comment.author.complete_name.slice(1).toLowerCase()
                           : comment.author?.email
-                          ? comment.author.email.charAt(0).toUpperCase() +
+                            ? comment.author.email.charAt(0).toUpperCase() +
                             comment.author.email.slice(1).toLowerCase()
-                          : 'Desconhecido'
+                            : 'Desconhecido'
                       }
                       secondary={
                         <Box
@@ -229,12 +240,12 @@ export default function Comment({ appLabel, model, objectId, label = 'Comentári
                             display: 'flex',
                             justifyContent: 'space-between',
                             alignItems: 'center',
+                            color: theme.palette.getContrastText(commentBgColor(comment.author?.id)),
                           }}
                         >
-                          <Typography variant="body1">{comment?.text}</Typography>
+                          <Typography variant="body1" >{comment?.text}</Typography>
                           <Typography
                             variant="caption"
-                            color="textSecondary"
                             sx={{ marginLeft: '10px' }}
                           >
                             {new Date(comment.created_at).toLocaleString()}
