@@ -50,17 +50,23 @@ export default [
     ],
   },
   {
-    key: 'final_service_opinion_name',
-    label: 'Parecer da vistoria',
-    type: 'multiselect',
-    options: [
-      { value: 'Aprovado com  Obra', label: 'Aprovado com  Obra' },
-      {
-        value: 'APROVADO COM OBRA + APROVADO COM SOMBREAMENTO',
-        label: 'Aprovado com  Obra e Sombreamento',
-      },
-      { value: 'Aprovado com Sombreamento', label: 'Aprovado com Sombreamento' },
-    ],
+    key: 'inspection_status',
+    label: 'Parecer Final da Vistoria',
+    type: 'async-multiselect',
+    endpoint: '/api/service-opinions',
+    queryParam: 'name__icontains',
+    extraParams: {
+      is_final_opinion: true,
+      limit: 20,
+      fields: ['id', 'name', 'service.name'],
+      expand: 'service',
+      service__in: process.env.NEXT_PUBLIC_SERVICE_INSPECTION_ID,
+    },
+    mapResponse: (data) =>
+      data.results.map((opinion) => ({
+        label: `${opinion.name} - ${opinion.service?.name}`,
+        value: opinion.id,
+      })),
   },
   {
     key: 'project_status',
