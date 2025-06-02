@@ -255,14 +255,21 @@ const ConstructionsDashboard = () => {
   const handleKPIClick = (kpiType) => {
     const kpiFilter = stats.find((stat) => stat.key === kpiType)?.filter;
 
-    if (kpiFilter && Object.keys(kpiFilter).length > 0) {
-      clearFilters();
+    if (!kpiFilter) {
+      return;
+    }
+
+    const filterKey = Object.keys(kpiFilter)[0];
+    
+    if (filters && filters[filterKey] === kpiFilter[filterKey]) {
+      const newFilters = { ...filters };
+      delete newFilters[filterKey];
+      setFilters(newFilters);
+    } else {
       setFilters((prevFilters) => ({
         ...prevFilters,
         ...kpiFilter,
       }));
-    } else {
-      clearFilters();
     }
   };
 
