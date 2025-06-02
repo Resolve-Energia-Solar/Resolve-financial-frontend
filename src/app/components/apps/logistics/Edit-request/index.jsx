@@ -62,7 +62,7 @@ export default function EditRequestCompany({
     { value: 'S', label: 'Solicitada' },
     { value: 'I', label: 'Indeferida' },
     { value: 'D', label: 'Deferida' },
-    { value: 'ID', label: 'Indeferida com Débito' },
+    { value: 'ID', label: 'Indeferida por Débito' },
   ];
 
   if (loading || !formData) {
