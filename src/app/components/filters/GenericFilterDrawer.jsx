@@ -124,11 +124,11 @@ const GenericFilterDrawer = ({ filters, initialValues, onApply, open, onClose })
 
   useEffect(() => {
     if (open) {
-      setFilterValues((prev) => {
-        if (Object.keys(prev).length > 0) return prev;
-        const defaultValues = {};
-        filters.forEach((filterConfig) => {
-          if (filterConfig.type === 'number-range') {
+      const defaultValues = {};
+
+      filters.forEach((filterConfig) => {
+        switch (filterConfig.type) {
+          case 'number-range':
             if (
               initialValues &&
               initialValues[filterConfig.subkeys.min] !== undefined &&
@@ -141,21 +141,25 @@ const GenericFilterDrawer = ({ filters, initialValues, onApply, open, onClose })
             } else {
               defaultValues[filterConfig.key] = { min: '', max: '' };
             }
-          } else if (filterConfig.type === 'range') {
+            break;
+
+          case 'range':
             if (initialValues && initialValues[filterConfig.key]) {
               if (typeof initialValues[filterConfig.key] === 'object') {
                 defaultValues[filterConfig.key] = initialValues[filterConfig.key];
               } else if (typeof initialValues[filterConfig.key] === 'string') {
                 const [start, end] = initialValues[filterConfig.key].split(',');
                 defaultValues[filterConfig.key] = { start: start || '', end: end || '' };
+              } else {
+                defaultValues[filterConfig.key] = { start: '', end: '' };
               }
             } else {
               defaultValues[filterConfig.key] = { start: '', end: '' };
             }
-          } else if (
-            filterConfig.type === 'multiselect' ||
-            filterConfig.type === 'async-multiselect'
-          ) {
+            break;
+
+          case 'multiselect':
+          case 'async-multiselect':
             if (initialValues && initialValues[filterConfig.key] !== undefined) {
               const value = initialValues[filterConfig.key];
               if (value === undefined || value === null) {
@@ -170,25 +174,32 @@ const GenericFilterDrawer = ({ filters, initialValues, onApply, open, onClose })
             } else {
               defaultValues[filterConfig.key] = [];
             }
-          } else if (filterConfig.type === 'checkbox') {
+            break;
+
+          case 'checkbox':
             defaultValues[filterConfig.key] =
               initialValues && initialValues[filterConfig.key] !== undefined
                 ? initialValues[filterConfig.key]
                 : false;
-          } else if (filterConfig.type === 'custom') {
+            break;
+
+          case 'custom':
             defaultValues[filterConfig.key] =
               initialValues && initialValues[filterConfig.key]
                 ? initialValues[filterConfig.key]
                 : '';
-          } else {
+            break;
+
+          default:
             defaultValues[filterConfig.key] =
-              initialValues && initialValues[filterConfig.key]
+              initialValues && initialValues[filterConfig.key] !== undefined
                 ? initialValues[filterConfig.key]
                 : '';
-          }
-        });
-        return defaultValues;
+            break;
+        }
       });
+
+      setFilterValues(defaultValues);
     }
   }, [initialValues, filters, open]);
 
