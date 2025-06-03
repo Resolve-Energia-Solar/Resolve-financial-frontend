@@ -23,6 +23,7 @@ import {
   IconPigMoney,
   IconPaperclip,
   IconFileArrowRight,
+  IconHeadset,
 } from '@tabler/icons-react';
 import { uniqueId } from 'lodash';
 
@@ -85,6 +86,13 @@ const Menuitems = [
         href: '/apps/financial-record/attachments',
         permissions: ['financial.view_financialrecord_attachment'],
       },
+      {
+        id: uniqueId(),
+        title: 'Solicitações Sicoob',
+        icon: IconPigMoney,
+        permissions: ['contracts.view_sicoobrequest'],
+        href: '/apps/funding-request/sicoob',
+      },
     ],
   },
   {
@@ -112,22 +120,6 @@ const Menuitems = [
   },
   {
     id: uniqueId(),
-    title: 'Financiamento',
-    icon: IconBuildingBank,
-    href: '/apps/funding-request',
-    permissions: ['contracts.view_sicoobrequest'],
-    children: [
-      {
-        id: uniqueId(),
-        title: 'Solicitações Sicoob',
-        icon: IconPigMoney,
-        permissions: ['contracts.view_sicoobrequest'],
-        href: '/apps/funding-request/sicoob',
-      },
-    ],
-  },
-  {
-    id: uniqueId(),
     title: 'Jornada do cliente',
     icon: IconMapRoute,
     href: '/apps/project',
@@ -135,22 +127,7 @@ const Menuitems = [
   },
   {
     id: uniqueId(),
-    title: 'Engenharia',
-    icon: IconTools,
-    permissions: ['resolve_crm.can_manage_journey'],
-    children: [
-      {
-        id: uniqueId(),
-        title: 'Homologação',
-        icon: IconFileArrowRight,
-        href: '/apps/request',
-        permissions: ['resolve_crm.can_manage_journey'],
-      },
-    ],
-  },
-  {
-    id: uniqueId(),
-    title: 'Rel. c/ Cliente',
+    title: 'Relacionamento',
     icon: IconUsers,
     permissions: ['resolve_crm.can_manage_journey'],
     children: [
@@ -159,6 +136,13 @@ const Menuitems = [
         title: 'Agendamentos',
         icon: IconUserPin,
         href: '/apps/relationship/schedules',
+        permissions: ['field_services.view_schedule'],
+      },
+      {
+        id: uniqueId(),
+        title: 'Tickets',
+        icon: IconHeadset,
+        href: '/apps/customer-service',
         permissions: ['field_services.view_schedule'],
       },
     ],
@@ -196,6 +180,13 @@ const Menuitems = [
         icon: IconBuilding,
         href: '/apps/constructions',
         permissions: ['engineering.view_civilconstruction'],
+      },
+      {
+        id: uniqueId(),
+        title: 'Homologação',
+        icon: IconFileArrowRight,
+        href: '/apps/request',
+        permissions: ['resolve_crm.can_manage_journey'],
       },
     ],
   },

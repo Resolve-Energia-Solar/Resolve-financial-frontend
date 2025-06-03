@@ -19,9 +19,10 @@ import { fetchTickets, DeleteTicket, SearchTicket } from '@/store/apps/tickets/T
 import { IconTrash } from '@tabler/icons-react';
 import { Switch } from '@mui/material';
 
-const ListItem = async () => {
+const ListItem = () => {
   const dispatch = useDispatch();
   const theme = useTheme();
+  const [materials, setMaterials] = useState([]);
 
   useEffect(() => {
     dispatch(fetchTickets());
@@ -82,17 +83,27 @@ const ListItem = async () => {
       : 'primary';
   };
 
-  let data = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/material-types`, {
-    method: 'GET',
-    headers: {
-      Authorization: `Bearer `,
-    },
-  });
-  let posts = await data.json();
+  useEffect(() => {
+    const fetchMaterials = async () => {
+      try {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/material-types`, {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer `,
+          },
+        });
+        const posts = await res.json();
+        setMaterials(posts);
+      } catch (error) {
+        console.error('Erro ao buscar materiais:', error);
+      }
+    };
+
+    fetchMaterials();
+  }, []);
 
   return (
     <Box mt={4}>
-      {console.log(posts)}
       <Box sx={{ maxWidth: '260px', ml: 'auto' }} mb={3}>
         <TextField
           size="small"
