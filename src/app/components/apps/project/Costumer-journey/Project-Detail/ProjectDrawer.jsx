@@ -36,6 +36,7 @@ import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 import TagList from '@/app/components/tags/TagList';
 import { formatDateTime } from '@/utils/inspectionFormatDate';
 import CustomerServiceTab from './customer-service/CustomerServiceTab';
+import FinancialRecordsTab from './FinancialRecords/FinancialRecordsTab';
 
 function TabPanel({ children, value, index }) {
   return (
@@ -201,6 +202,7 @@ export default function ProjectDetailDrawer({ projectId, saleId, open, onClose, 
           ),
         },
         { label: 'Perdas', content: <LossesTab projectId={projectId} viewOnly={!canEdit} /> },
+        { label: 'Registros Financeiros', content: <FinancialRecordsTab projectId={projectId} viewOnly={!canEdit} /> },
         {
           label: 'Histórico',
           content: <History objectId={projectId} appLabel="resolve_crm" model="project" />,
@@ -212,8 +214,6 @@ export default function ProjectDetailDrawer({ projectId, saleId, open, onClose, 
       ].filter(Boolean),
     [project, projectId, hasConstructionTab],
   );
-
-  console.log('ProjectDetailDrawer', project);
 
   return (
     <Drawer
@@ -275,8 +275,8 @@ export default function ProjectDetailDrawer({ projectId, saleId, open, onClose, 
                   project.delivery_type === 'C'
                     ? 'Entrega CD'
                     : project.delivery_type === 'D'
-                    ? 'Entrega Direta'
-                    : project.delivery_type
+                      ? 'Entrega Direta'
+                      : project.delivery_type
                 }
                 size="small"
                 variant="outlined"
