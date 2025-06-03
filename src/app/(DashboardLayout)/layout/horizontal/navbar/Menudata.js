@@ -137,7 +137,6 @@ const Menuitems = [
     id: uniqueId(),
     title: 'Engenharia',
     icon: IconTools,
-    href: '',
     permissions: ['resolve_crm.can_manage_journey'],
     children: [
       {
