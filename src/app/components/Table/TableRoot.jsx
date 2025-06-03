@@ -1,10 +1,11 @@
 import React, { createContext } from 'react';
-import { TableContainer, Table as MuiTable, Grid, Box } from '@mui/material';
+import { TableContainer, Table as MuiTable, Grid, Box, useTheme } from '@mui/material';
 import { Table } from './index';
 
 export const TableCtxt = createContext({});
 
 export function TableRoot({ children, noWrap, ...ctx }) {
+  const theme = useTheme();
   return (
     <TableCtxt.Provider value={ctx}>
       <Grid
@@ -25,11 +26,11 @@ export function TableRoot({ children, noWrap, ...ctx }) {
             width: 6,
           },
           '&::-webkit-scrollbar-thumb': {
-            backgroundColor: 'rgba(0,0,0,0.3)',
+            backgroundColor: theme.palette.mode === 'light' ? 'rgba(0,0,0,0.3)' : 'rgba(255,255,255,0.3)',
             borderRadius: 3,
           },
           scrollbarWidth: 'thin',
-          scrollbarColor: 'rgba(0,0,0,0.3) transparent'
+          scrollbarColor: theme.palette.mode === 'light' ? 'rgba(0,0,0,0.3) transparent' : 'rgba(255,255,255,0.3) transparent',
         }}
         >
           <MuiTable sx={{
