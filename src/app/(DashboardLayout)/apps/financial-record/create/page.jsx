@@ -66,6 +66,15 @@ export default function CreateFinancialRecord() {
   const [bankInstitutions, setBankInstitutions] = useState([]);
 
   useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search);
+    const projectId = searchParams.get('project');
+
+    if (projectId) {
+      handleChange('project', parseInt(projectId, 10));
+    }
+  }, []);
+
+  useEffect(() => {
     async function fetchContentTypeId() {
       try {
         const id = await getContentType('financial', 'financialrecord');
