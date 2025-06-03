@@ -25,11 +25,7 @@ import JourneyCounterChip from '@/app/components/apps/project/Costumer-journey/J
 const InspectionsDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [projects, setProjects] = useState([]);
-  const [indicators, setIndicators] = useState({
-    purchase_status: {},
-    delivery_status: {},
-    total_count: 0,
-  });
+  const [indicators, setIndicators] = useState({});
   const [loadingIndicators, setLoadingIndicators] = useState(true);
   const { filters, setFilters, clearFilters, refresh } = useContext(FilterContext);
   const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
@@ -193,14 +189,32 @@ const InspectionsDashboard = () => {
   const handleKPIClick = (kpiType) => {
     const kpiFilter = stats.find((stat) => stat.key === kpiType)?.filter;
 
-    if (kpiFilter && Object.keys(kpiFilter).length > 0) {
-      clearFilters();
-      setFilters((prevFilters) => ({
-        ...prevFilters,
-        ...kpiFilter,
-      }));
+    if (!kpiFilter) {
+      return;
+    }
+
+    const filterKey = Object.keys(kpiFilter)[0];
+    const inspectionFilterKeys = ['inspection_is_finished', 'inspection_is_pending', 'inspection_isnull'];
+
+    if (filters && filters[filterKey] === kpiFilter[filterKey]) {
+      // If clicking the same filter again, remove it
+      const newFilters = { ...filters };
+      delete newFilters[filterKey];
+      setFilters(newFilters);
     } else {
-      clearFilters();
+      // If clicking a different filter, apply it and remove any other inspection filters
+      const newFilters = { ...filters };
+
+      // Remove all inspection filter keys
+      inspectionFilterKeys.forEach(key => {
+        delete newFilters[key];
+      });
+
+      // Add the selected filter
+      setFilters({
+        ...newFilters,
+        ...kpiFilter,
+      });
     }
   };
 
