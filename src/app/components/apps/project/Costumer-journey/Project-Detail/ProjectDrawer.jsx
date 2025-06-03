@@ -29,7 +29,6 @@ import RequestList from '../../../request/Request-list';
 import History from '../../../history';
 import CheckListRateio from '../../../checklist/Checklist-list';
 import ConstructionsTab from './Construction/ConstructionsTab';
-import LossesTab from './Losses/LossesTab';
 import { useSelector } from 'react-redux';
 import CustomerTab from './Customer/CustomerTab';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
@@ -201,8 +200,7 @@ export default function ProjectDetailDrawer({ projectId, saleId, open, onClose, 
             <CustomerServiceTab projectId={projectId} viewOnly={!canEdit} />
           ),
         },
-        { label: 'Perdas', content: <LossesTab projectId={projectId} viewOnly={!canEdit} /> },
-        { label: 'Registros Financeiros', content: <FinancialRecordsTab projectId={projectId} viewOnly={!canEdit} /> },
+        { label: 'Sol. de Pagamento', content: <FinancialRecordsTab projectId={projectId} viewOnly={!canEdit} /> },
         {
           label: 'Histórico',
           content: <History objectId={projectId} appLabel="resolve_crm" model="project" />,

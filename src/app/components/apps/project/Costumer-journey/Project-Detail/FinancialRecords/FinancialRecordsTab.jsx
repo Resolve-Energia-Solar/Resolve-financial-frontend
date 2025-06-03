@@ -7,6 +7,7 @@ import { Table } from "@/app/components/Table";
 import { TableHeader } from "@/app/components/TableHeader";
 import financialRecordService from "@/services/financialRecordService";
 import { Add } from "@mui/icons-material";
+import { Box, Switch } from "@mui/material";
 
 export default function FinancialRecordsTab({ projectId, viewOnly = false }) {
     const { enqueueSnackbar } = useSnackbar();
@@ -14,6 +15,7 @@ export default function FinancialRecordsTab({ projectId, viewOnly = false }) {
     const [loading, setLoading] = useState(true);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
+    const [lossesOnly, setLossesOnly] = useState(false);
     const router = useRouter();
 
     const getStatusLabel = (status) => {
@@ -33,7 +35,8 @@ export default function FinancialRecordsTab({ projectId, viewOnly = false }) {
             const response = await financialRecordService.index({
                 fields: "id,protocol,due_date,client_supplier_name,value,status,lost_reason.name",
                 expand: "lost_reason",
-                project__in: projectId
+                project__in: projectId,
+                category_name__icontains: lossesOnly ? 'Perdas' : null,
             });
             setFinancialRecords(response.results);
         } catch (error) {
@@ -41,7 +44,7 @@ export default function FinancialRecordsTab({ projectId, viewOnly = false }) {
         } finally {
             setLoading(false);
         }
-    }, [projectId, enqueueSnackbar]);
+    }, [projectId, lossesOnly, enqueueSnackbar]);
 
     useEffect(() => { fetchFinancialRecords(); }, [fetchFinancialRecords]);
 
@@ -59,10 +62,19 @@ export default function FinancialRecordsTab({ projectId, viewOnly = false }) {
         { field: 'due_date', headerName: 'Data de Vencimento', render: r => formatDate(r.due_date) },
         { field: 'value', headerName: 'Valor', render: r => parseFloat(r.value).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) },
         { field: 'status', headerName: 'Status', render: r => getStatusLabel(r.status) },
+        ...(lossesOnly ? [{ field: 'lost_reason', headerName: 'Motivo da Perda', render: r => (r.lost_reason?.name) }] : [])
     ];
 
     return (
         <>
+            <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                <Switch
+                    checked={lossesOnly}
+                    onChange={() => {setLossesOnly(!lossesOnly);}}
+                    color="primary"
+                />
+                <span>Exibir apenas Perdas</span>
+            </Box>
             <TableHeader.Root>
                 <TableHeader.Title
                     title="Total"
