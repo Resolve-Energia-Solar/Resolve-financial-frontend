@@ -1,4 +1,4 @@
-import Menudata from '../Menudata';
+import Menuitems from "../../../vertical/sidebar/MenuItems";
 import { usePathname } from "next/navigation";
 import Box from '@mui/material/Box';
 import List from '@mui/material/List';
@@ -25,7 +25,7 @@ const NavListing = () => {
   return (
     <Box>
       <List sx={{ p: 0, display: 'flex', gap: '3px', zIndex: '100' }}>
-        {Menudata.map((item) => {
+        {Menuitems.map((item) => {
           if (!hasPermission(item.permissions)) {
             return null; 
           }
