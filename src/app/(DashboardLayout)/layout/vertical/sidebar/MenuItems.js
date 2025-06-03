@@ -150,6 +150,21 @@ const Menuitems = [
   },
   {
     id: uniqueId(),
+    title: 'Rel. c/ Cliente',
+    icon: IconUsers,
+    permissions: ['resolve_crm.can_manage_journey'],
+    children: [
+      {
+        id: uniqueId(),
+        title: 'Agendamentos',
+        icon: IconUserPin,
+        href: '/apps/relationship/schedules',
+        permissions: ['field_services.view_schedule'],
+      },
+    ],
+  },
+  {
+    id: uniqueId(),
     title: 'Gestão Operacional',
     icon: IconUserBolt,
     permissions: ['resolve_crm.can_manage_journey'],
