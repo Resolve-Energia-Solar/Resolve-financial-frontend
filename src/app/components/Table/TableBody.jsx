@@ -32,8 +32,8 @@ export function TableBody({ loading, columns = 0, children }) {
           >
             <TableRow
               sx={{
-                cursor: "pointer",
-                "&:hover": { backgroundColor: theme.palette.primary.light },
+                cursor: onRowClick ? "pointer" : "default",
+                "&:hover": { backgroundColor: theme.palette.mode === "dark" ? "#333" : "#f5f5f5" },
               }}
               onClick={() => onRowClick && onRowClick(row)}
             >
