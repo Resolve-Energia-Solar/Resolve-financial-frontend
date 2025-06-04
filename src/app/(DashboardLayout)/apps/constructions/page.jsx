@@ -26,6 +26,7 @@ import { formatDate } from '@/utils/dateUtils';
 import { FilterContext } from '@/context/FilterContext';
 import { IconBuilding, IconTools, IconUserBolt } from '@tabler/icons-react';
 import { KPICard } from '@/app/components/charts/KPICard';
+import JourneyCounterChip from '@/app/components/apps/project/Costumer-journey/JourneyCounterChip';
 
 const CONSTRUCTION_STATUS_MAP = {
   P: { label: 'Pendente', color: 'default', icon: <HourglassEmpty /> },
@@ -106,11 +107,11 @@ const ConstructionsDashboard = () => {
     try {
       const response = await projectService.index({
         fields:
-          'id,project_number,sale.customer.complete_name,sale.signature_date,sale.status,sale.branch.name,inspection.status,inspection.service_opinion,inspection.schedule_date,inspection.final_service_opinion.name,inspection.final_service_opinion_date,inspection.final_service_opinion_user,civil_construction.work_responsibility,civil_construction.status,civil_construction.is_customer_aware,civil_construction.start_date,civil_construction.end_date,constructions-indicators.total_pending,constructions-indicators.total_in_progress,civil_construction.repass_value,constructions-indicators.total_finished,constructions-indicators.total_canceld,constructions-indicators.total_without_construction,constructions-indicators.total_not_applicable',
+          'id,project_number,sale.customer.complete_name,sale.signature_date,sale.status,sale.branch.name,inspection.status,inspection.service_opinion,inspection.schedule_date,inspection.final_service_opinion.name,inspection.final_service_opinion_date,inspection.final_service_opinion_user,civil_construction.work_responsibility,civil_construction.status,civil_construction.is_customer_aware,civil_construction.start_date,civil_construction.end_date,constructions-indicators.total_pending,constructions-indicators.total_in_progress,civil_construction.repass_value,constructions-indicators.total_finished,constructions-indicators.total_canceld,constructions-indicators.total_without_construction,constructions-indicators.total_not_applicable,journey_counter',
         expand:
           'sale,sale.customer,sale.branch,inspection,inspection.final_service_opinion,inspection.final_service_opinion_date,inspection,civil_construction,constructions-indicators',
         in_construction: true,
-        metrics: 'in_construction,construction_status',
+        metrics: 'in_construction,construction_status,journey_counter',
         page: page + 1,
         limit: rowsPerPage,
         remove_termination_cancelled_and_pre_sale: true,
@@ -153,6 +154,11 @@ const ConstructionsDashboard = () => {
       headerName: 'Projeto',
       render: (r) => `${r.project_number} - ${r.sale?.customer?.complete_name}` || 'SEM NÚMERO',
       sx: { opacity: 0.7 },
+    },
+    {
+      field: 'journey_counter',
+      headerName: 'Contador',
+      render: (r) => <JourneyCounterChip count={r.journey_counter} />
     },
     {
       field: 'inspection.final_service_opinion.name',
