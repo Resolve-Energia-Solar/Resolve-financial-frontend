@@ -90,11 +90,10 @@ function AddSchedulePage({ form = null, onRefresh = null, onClose = null }) {
 
 
   const timeOptions = [
-    { value: '08:30:00', label: '08:30', value_end: '09:30:00' },
-    { value: '10:00:00', label: '10:00', value_end: '11:00:00' },
-    { value: '13:00:00', label: '13:00', value_end: '14:00:00' },
-    { value: '14:30:00', label: '14:30', value_end: '15:30:00' },
-    { value: '16:00:00', label: '16:00', value_end: '17:00:00' },
+    { value: '08:00:00', label: '08:00', value_end: '10:00:00' },
+    { value: '10:00:00', label: '10:00', value_end: '12:00:00' },
+    { value: '14:00:00', label: '14:00', value_end: '16:00:00' },
+    { value: '16:00:00', label: '16:00', value_end: '18:00:00' },
   ];
 
   const statusOptions = [

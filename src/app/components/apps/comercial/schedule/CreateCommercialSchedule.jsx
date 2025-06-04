@@ -27,10 +27,9 @@ import CreateAddressPage from '../../address/Add-address';
 import AddUser from '../../users/Add-user/addUser';
 
 const timeOptions = [
-  { value: '08:30:00', label: '08:30' },
+  { value: '08:00:00', label: '08:00' },
   { value: '10:00:00', label: '10:00' },
-  { value: '13:00:00', label: '13:00' },
-  { value: '14:30:00', label: '14:30' },
+  { value: '14:00:00', label: '14:00' },
   { value: '16:00:00', label: '16:00' },
 ];
 
