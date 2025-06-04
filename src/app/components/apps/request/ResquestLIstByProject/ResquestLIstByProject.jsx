@@ -96,58 +96,58 @@ const ResquestLIstByProject = () => {
     const fetchProjects = async () => {
       setLoading(true);
       try {
-        const data = await projectService.index({
-          page: page + 1,
-          limit: rowsPerPage,
-          fields: [
-            'id',
-            'project_number',
-            'sale.id',
-            'sale.status',
-            'sale.customer.id',
-            'sale.customer.email',
-            'sale.customer.complete_name',
-            'product.id',
-            'product.name',
-            'homologator.complete_name',
-            'designer_status',
-            'material_list_is_completed',
-            'trt_pending',
-            'peding_request',
-            'access_opnion',
-            'status',
-            'is_released_to_engineering',
-            'requests_energy_company.id',
-            'requests_energy_company.type.name',
-            'requests_energy_company.type.id',
-            'requests_energy_company.interim_protocol',
-            'requests_energy_company.status',
-            'requests_energy_company.request_date',
-            'requests_energy_company.conclusion_date',
-            'supply_adquance',
-            'access_opnion_status',
-            'access_opnion_days_int',
-            'load_increase_status',
-            'load_increase_days_int',
-            'branch_adjustment_status',
-            'branch_adjustment_days_int',
-            'new_contact_number_status',
-            'new_contact_number_days_int',
-            'final_inspection_status',
-            'final_inspection_days_int',
-            'supply_adquance_names',
-          ].join(','),
-          expand:
-            'requests_energy_company,sale.customer,homologator,requests_energy_company.type,product',
-          metrics:
-            'homologation_status,supply_adquance_names,trt_pending,pending_material_list,trt_status',
-          ...stableFilters,
-        });
-        setProjectsList(data.results);
+        // const data = await projectService.index({
+        //   page: page + 1,
+        //   limit: rowsPerPage,
+        //   fields: [
+        //     'id',
+        //     'project_number',
+        //     'sale.id',
+        //     'sale.status',
+        //     'sale.customer.id',
+        //     'sale.customer.email',
+        //     'sale.customer.complete_name',
+        //     'product.id',
+        //     'product.name',
+        //     'homologator.complete_name',
+        //     'designer_status',
+        //     'material_list_is_completed',
+        //     'trt_pending',
+        //     'peding_request',
+        //     'access_opnion',
+        //     'status',
+        //     'is_released_to_engineering',
+        //     'requests_energy_company.id',
+        //     'requests_energy_company.type.name',
+        //     'requests_energy_company.type.id',
+        //     'requests_energy_company.interim_protocol',
+        //     'requests_energy_company.status',
+        //     'requests_energy_company.request_date',
+        //     'requests_energy_company.conclusion_date',
+        //     'supply_adquance',
+        //     'access_opnion_status',
+        //     'access_opnion_days_int',
+        //     'load_increase_status',
+        //     'load_increase_days_int',
+        //     'branch_adjustment_status',
+        //     'branch_adjustment_days_int',
+        //     'new_contact_number_status',
+        //     'new_contact_number_days_int',
+        //     'final_inspection_status',
+        //     'final_inspection_days_int',
+        //     'supply_adquance_names',
+        //   ].join(','),
+        //   expand:
+        //     'requests_energy_company,sale.customer,homologator,requests_energy_company.type,product',
+        //   metrics:
+        //     'homologation_status,supply_adquance_names,trt_pending,pending_material_list,trt_status',
+        //   ...stableFilters,
+        // });
+        setProjectsList(data.results || []);
         setTotalRows(data.meta.pagination.total_count);
         setError(null);
       } catch (err) {
-        setError('Erro ao carregar Solicitações');
+        setError('ESTA TELA ESTÁ EM MANUTENÇÃO, PARA MAIS INFORMAÇÕES, ENTRE EM CONTATO COM O DEPARTAMENTO DE TI PELO TEAMS.');
       } finally {
         setLoading(false);
       }
