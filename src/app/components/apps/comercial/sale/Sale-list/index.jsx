@@ -121,7 +121,7 @@ const SaleList = () => {
         limit: rowsPerPage,
         page: page + 1,
         expand: 'customer,branch,documents_under_analysis,projects',
-        fields: 'id,documents_under_analysis,customer.complete_name,contract_number,signature_date,total_value,signature_status,is_pre_sale,status,final_service_opinion,is_released_to_engineering,created_at,branch.name,projects.journey_counter',
+        fields: 'id,documents_under_analysis,customer.complete_name,contract_number,signature_date,total_value,signature_status,is_pre_sale,status,final_service_opinion,is_released_to_engineering,created_at,branch.name,projects.project_number,projects.journey_counter',
         ...filters,
       });
 
@@ -463,7 +463,7 @@ const SaleList = () => {
                         <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                           {item.projects.map((project) => {
                             return (
-                              <JourneyCounterChip key={project.id} count={project.journey_counter} />
+                              <JourneyCounterChip key={project.id} count={project.journey_counter} tooltip_text={project.project_number} />
                             );
                           })}
                         </Box>

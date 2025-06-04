@@ -1,6 +1,6 @@
-import { Chip, useTheme } from "@mui/material";
+import { Chip, Tooltip, useTheme } from "@mui/material";
 
-export default function JourneyCounterChip({ count, is_finished = false }) {
+export default function JourneyCounterChip({ count, tooltip_text = '', is_finished = false }) {
     const theme = useTheme();
 
     const getBgColor = (count, is_finished) => {
@@ -13,13 +13,15 @@ export default function JourneyCounterChip({ count, is_finished = false }) {
     const bgColor = getBgColor(count, is_finished);
 
     return (
-        <Chip
-            label={`${count || 0} dias`}
-            size="small"
-            sx={{
-                bgcolor: bgColor,
-                color: theme.palette.getContrastText(bgColor),
-            }}
-        />
+        <Tooltip title={tooltip_text}>
+            <Chip
+                label={`${count || 0} dias`}
+                size="small"
+                sx={{
+                    bgcolor: bgColor,
+                    color: theme.palette.getContrastText(bgColor),
+                }}
+            />
+        </Tooltip>
     );
 }
