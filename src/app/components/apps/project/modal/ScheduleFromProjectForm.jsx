@@ -33,7 +33,7 @@ import { useSnackbar } from 'notistack';
 import { useSelector } from 'react-redux';
 import FinalServiceOpinionChip from '../../inspections/schedule/StatusChip/FinalServiceOpinionChip';
 
-const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = () => { }, loading, errors = {}, displayAgent = true, useSupplier = false }) => {
+const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = () => { }, errors = {}, displayAgent = true, useSupplier = false }) => {
   const { enqueueSnackbar } = useSnackbar();
   const [project, setProject] = useState(null);
   const [schedule, setSchedule] = useState(null);
@@ -58,6 +58,7 @@ const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = (
     status: 'Pendente',
   });
   const [formErrors, setFormErrors] = useState({});
+  const [loading, setLoading] = useState(false);
   const [deadlineDuration, setDeadlineDuration] = useState({ hours: 0, minutes: 0, seconds: 0 });
   const [minEndDate, setMinEndDate] = useState(null);
   const [minEndTime, setMinEndTime] = useState(null);
@@ -73,7 +74,7 @@ const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = (
   };
 
   useEffect(() => {
-    // fetch project defaults
+    setLoading(true);
     const fetchProject = async () => {
       if (!projectId) return;
       const data = await projectService.find(projectId, {
@@ -90,10 +91,11 @@ const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = (
       }));
     };
     fetchProject();
+    setLoading(false);
   }, [projectId]);
 
   useEffect(() => {
-    // fetch existing schedule
+    setLoading(true);
     const fetchSchedule = async () => {
       if (!scheduleId) return;
       try {
@@ -127,10 +129,11 @@ const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = (
       }
     };
     fetchSchedule();
+    setLoading(false);
   }, [scheduleId]);
 
   useEffect(() => {
-    // fetch deadline duration
+    setLoading(true);
     const fetchDeadline = async () => {
       if (!formData.service) return;
       try {
@@ -147,6 +150,7 @@ const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = (
       }
     };
     fetchDeadline();
+    setLoading(false);
   }, [formData.service]);
 
   useEffect(() => {
@@ -192,6 +196,7 @@ const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = (
   };
 
   useEffect(() => {
+    setLoading(true);
     if (projectId) {
       const projectContentType = getContentType('resolve_crm', 'project');
       const saleContentType = getContentType('resolve_crm', 'sale');
@@ -221,9 +226,11 @@ const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = (
         })
         .catch((err) => console.error('Erro ao carregar anexos:', err));
     }
+    setLoading(false);
   }, [formData.project, formData.sale]);
 
   const handleSubmit = async () => {
+    setLoading(true);
     const { schedule_date, schedule_start_time, schedule_end_date, schedule_end_time, observation, service, address, customer, products, branch } = formData;
     const missingFields = [];
     if (!schedule_date) missingFields.push('Data Início');
@@ -271,9 +278,8 @@ const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = (
       console.error('Erro ao salvar agendamento:', err);
       enqueueSnackbar(err.response?.data?.error || 'Erro ao salvar agendamento.', { variant: 'error' });
     }
+    setLoading(false);
   };
-
-  console.log('FormData:', formData);
 
   return (
     <Box>
