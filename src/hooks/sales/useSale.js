@@ -42,6 +42,7 @@ const useSale = (id) => {
             "product.name",
           ],
           fields: [
+            "contract_number",
             "customer.id",
             "customer.complete_name",
             "customer.email",
