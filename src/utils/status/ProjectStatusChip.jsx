@@ -23,6 +23,8 @@ const StatusChip = ({ status }) => {
         return { label: 'Distrato', color: theme.palette.secondary.light, icon: <RemoveCircleIcon sx={{ color: '#fff' }} /> };
       case 'F':
         return { label: 'Finalizado', color: theme.palette.success.light, icon: <CheckCircleIcon sx={{ color: '#fff' }} /> };
+      case 'ED':
+        return { label: 'Em Processo de Distrato', color: theme.palette.secondary.light, icon: <RemoveCircleIcon sx={{ color: '#fff' }} /> };
       default:
         return { label: 'Desconhecido', color: theme.palette.grey.light, icon: <CancelIcon sx={{ color: '#fff' }} /> };
     }
