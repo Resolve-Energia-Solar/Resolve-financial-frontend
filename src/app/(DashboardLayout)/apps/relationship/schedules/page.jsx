@@ -1,301 +1,263 @@
 'use client';
-import { useState, useEffect, useCallback, useContext } from 'react';
+import { useState, useEffect, useMemo, useCallback, useContext } from 'react';
+import { useRouter } from 'next/navigation';
 import { useSelector } from 'react-redux';
-import Link from 'next/link';
+import { useSnackbar } from 'notistack';
 import {
-  Box,
-  Button,
-  FormControl,
-  Grid,
-  InputLabel,
-  Select,
-  MenuItem,
-  Chip,
-  CardContent,
-  Typography
+  Box, Button, FormControl, Grid, InputLabel, Select, MenuItem, Chip,
+  CardContent, Typography
 } from '@mui/material';
-import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
-import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-
-import Breadcrumb from '@/app/(DashboardLayout)/layout/shared/breadcrumb/Breadcrumb';
-import PageContainer from '@/app/components/container/PageContainer';
-import BlankCard from '@/app/components/shared/BlankCard';
-import ScheduleStatusChip from '@/app/components/apps/inspections/schedule/StatusChip';
-import GenericFilterDrawer from '@/app/components/filters/GenericFilterDrawer';
+import {
+  ArrowDropUp, ArrowRightOutlined, ArrowDropDown,
+  Add
+} from '@mui/icons-material';
 
 import { FilterContext } from '@/context/FilterContext';
 import scheduleService from '@/services/scheduleService';
 import serviceCatalogService from '@/services/serviceCatalogService';
 import { formatDate } from '@/utils/dateUtils';
+import PageContainer from '@/app/components/container/PageContainer';
+import Breadcrumb from '@/app/(DashboardLayout)/layout/shared/breadcrumb/Breadcrumb';
+import BlankCard from '@/app/components/shared/BlankCard';
+import GenericFilterDrawer from '@/app/components/filters/GenericFilterDrawer';
 import DetailsDrawer from '@/app/components/apps/schedule/DetailsDrawer';
 import UserCard from '@/app/components/apps/users/userCard';
 import ScheduleOpinionChip from '@/app/components/apps/inspections/schedule/StatusChip/ScheduleOpinionChip';
+import { TableHeader } from '@/app/components/TableHeader';
 import { Table } from '@/app/components/Table';
-import { TableHeader } from "@/app/components/TableHeader";
 import filterConfig from './filterConfig';
-import { useSnackbar } from 'notistack';
-import { Add } from '@mui/icons-material';
 
-const BCrumb = [{ to: '/', title: 'Início' }, { title: 'Agendamentos do Pós-Venda' }];
+const BCrumb = [
+  { to: '/', title: 'Início' },
+  { title: 'Agendamentos do Pós-Venda' }
+];
 
-const CustomerServiceSchedules = () => {
+export default function CustomerServiceSchedules() {
+  const router = useRouter();
   const { enqueueSnackbar } = useSnackbar();
   const { filters, setFilters, clearFilters, refresh } = useContext(FilterContext);
-  const activeCount = Object.keys(filters || {}).filter(key => {
-    const v = filters[key];
-    return v !== null && v !== undefined && !(Array.isArray(v) && v.length === 0);
-  }).length;
-  const [loading, setLoading] = useState(true);
-  const [scheduleList, setScheduleList] = useState([]);
+
   const [services, setServices] = useState([]);
   const [selectedServices, setSelectedServices] = useState([]);
+  const [scheduleList, setScheduleList] = useState([]);
+  const [totalRows, setTotalRows] = useState(0);
   const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const [totalRows, setTotalRows] = useState(0);
-  const [orderDirection, setOrderDirection] = useState('asc');
-  const userPermissions = useSelector((state) => state.user.permissions);
+  const [ordering, setOrdering] = useState('-created_at');
+  const [loading, setLoading] = useState(true);
   const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
   const [detailsDrawerOpen, setDetailsDrawerOpen] = useState(false);
   const [selectedScheduleId, setSelectedScheduleId] = useState(null);
-  const [ordering, setOrdering] = useState('-created_at');
+
+  const activeCount = useMemo(() =>
+    Object.values(filters || {})
+      .filter(v => v != null && !(Array.isArray(v) && v.length === 0))
+      .length
+    , [filters]);
 
   useEffect(() => {
-    serviceCatalogService
-      .index({ fields: 'id,name', limit: 100, category__in: 11 })
-      .then((data) => {
-        const list = data.results || [];
-        setServices(list);
-        if (list.length > 0) {
-          setSelectedServices(list.map((s) => s.id));
-        }
+    let alive = true;
+    serviceCatalogService.index({ fields: 'id,name', limit: 100, category__in: 11 })
+      .then(({ results = [] }) => {
+        if (!alive) return;
+        setServices(results);
+        setSelectedServices(results.map(s => s.id));
       })
-      .catch((err) => { enqueueSnackbar('Erro ao buscar tipos de serviços'); console.error('Erro ao buscar tipos de serviços:', err) });
-  }, []);
+      .catch(() => enqueueSnackbar('Erro ao buscar tipos de serviços', { variant: 'error' }));
+    return () => { alive = false; };
+  }, [enqueueSnackbar]);
 
+  // buscar agendamentos
   useEffect(() => {
-    if (selectedServices.length === 0) return;
+    if (!selectedServices.length) return;
+    let alive = true;
     setLoading(true);
-    scheduleService
-      .index({
-        page,
-        limit: rowsPerPage,
-        expand: ['customer', 'service_opinion', 'final_service_opinion', 'address', 'service', 'project'],
-        service__in: selectedServices.join(','),
-        fields: [
-          'id',
-          'protocol',
-          'service.name',
-          'service_opinion.name',
-          'final_service_opinion.name',
-          'schedule_agent',
-          'project.project_number',
-          'customer.complete_name',
-          'schedule_date',
-          'schedule_start_time',
-          'address.complete_address',
-        ],
-        ordering,
-        ...filters,
-      })
-      .then((data) => {
+    scheduleService.index({
+      page, limit: rowsPerPage, ordering,
+      service__in: selectedServices.join(','),
+      expand: ['customer', 'service', 'address', 'service_opinion', 'final_service_opinion', 'project', 'project.sale.branch'],
+      fields: [
+        'id', 'protocol', 'severity', 'schedule_agent',
+        'project.project_number', 'customer.complete_name',
+        'schedule_date', 'schedule_start_time', 'address.complete_address',
+        'service.name', 'service_opinion.name', 'final_service_opinion.name',
+        'project.sale.branch.name'
+      ],
+      ...filters
+    })
+      .then(data => {
+        if (!alive) return;
         setScheduleList(data.results);
         setTotalRows(data.meta.pagination.total_count);
       })
-      .catch((err) => {
-        console.error('Erro:', err);
+      .catch(err => {
+        console.error(err);
         enqueueSnackbar('Erro ao buscar agendamentos', { variant: 'error' });
       })
-      .finally(() => setLoading(false));
-  }, [selectedServices, page, rowsPerPage, ordering, filters, refresh]);
+      .finally(() => alive && setLoading(false));
+    return () => { alive = false; };
+  }, [selectedServices, page, rowsPerPage, ordering, filters, refresh, enqueueSnackbar]);
 
-  const handlePageChange = useCallback((event, newPage) => {
-    setPage(newPage);
+  // handlers
+  const handlePageChange = useCallback((_, newPage) => setPage(newPage), []);
+  const handleRowsChange = useCallback(e => setRowsPerPage(+e.target.value), []);
+  const handleSort = useCallback(f => {
+    setPage(1);
+    setOrdering(prev => (prev === f ? `-${f}` : f));
   }, []);
+  const goToAdd = useCallback(() => router.push('/apps/relationship/schedules/add'), [router]);
 
-  const handleRowsPerPageChange = useCallback((event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-  }, []);
-
-  const columns = [
-    {
-      field: 'protocol',
-      headerName: 'Protocolo',
-      render: r => r.protocol || 'Sem Protocolo'
-    },
-    {
-      field: 'service.name',
-      headerName: 'Serviço',
-      render: r => r.service.name,
-      sx: { minWidth: 230 },
-    },
+  // colunas memoizadas
+  const columns = useMemo(() => [
+    { field: 'protocol', headerName: 'Protocolo', render: ({ protocol }) => protocol || 'Sem Protocolo' },
+    { field: 'service.name', headerName: 'Serviço', render: ({ service }) => service.name, sx: { minWidth: 230 } },
     {
       field: 'project.project_number,customer.complete_name',
       headerName: 'Projeto',
-      render: r => `${r.project.project_number} - ${r.customer.complete_name}`,
+      render: r => `${r.project?.project_number} - ${r.customer.complete_name}`,
       sx: { minWidth: 350 },
     },
     {
-      field: 'schedule_date,schedule_start_time',
-      headerName: 'Data e Hora',
-      render: r => {
-        const date = formatDate(r.schedule_date, 'DD/MM/YYYY');
-        const time = r.schedule_start_time ? r.schedule_start_time.slice(0, 5) : '';
-        return `${date} ${time}`;
+      field: 'project.sale.branch.name',
+      headerName: 'Unidade',
+      render: ({ project }) => project?.sale?.branch?.name || 'Sem unidade',
+      sx: { minWidth: 200 }
+    },
+    {
+      field: 'schedule_date', headerName: 'Data e Hora', sortable: true,
+      render: ({ schedule_date, schedule_start_time }) => {
+        const d = formatDate(schedule_date, 'DD/MM/YYYY');
+        const t = schedule_start_time?.slice(0, 5) || '';
+        return `${d} ${t}`;
       },
-      sortable: true,
-      sx: { minWidth: 180 },
+      sx: { minWidth: 180 }
     },
-
     {
-      field: 'schedule_agent',
-      headerName: 'Agente',
-      render: r => {
-        const agent = r.schedule_agent;
-        return agent ? <UserCard userId={agent} /> : "Sem agente";
+      field: 'severity', headerName: 'Prioridade', sortable: true,
+      render: ({ severity }) => {
+        if (!severity) return '-';
+        const icons = { C: <ArrowDropUp color='error' />, B: <ArrowRightOutlined color='warning' />, A: <ArrowDropDown color='success' /> };
+        const labels = { C: 'Alta (C)', B: 'Média (B)', A: 'Baixa (A)' };
+        const colors = { C: 'error.main', B: 'warning.main', A: 'success.main' };
+        return (
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            {icons[severity]}
+            <Typography variant="body2" color={colors[severity]}>
+              {labels[severity]}
+            </Typography>
+          </Box>
+        );
       },
-      sx: { minWidth: 380 },
+      sx: { minWidth: 110 }
     },
     {
-      field: 'service_opinion',
-      headerName: 'Parecer Inicial',
-      render: r => <ScheduleOpinionChip status={r.service_opinion?.name} />,
-      sortable: true,
-      sx: { minWidth: 150 },
+      field: 'schedule_agent', headerName: 'Agente', sx: { minWidth: 380 },
+      render: ({ schedule_agent }) => schedule_agent ? <UserCard userId={schedule_agent} /> : 'Sem agente'
     },
     {
-      field: 'final_service_opinion',
-      headerName: 'Parecer Final',
-      render: r => <ScheduleOpinionChip status={r.final_service_opinion?.name} />,
-      sortable: true,
-      sx: { minWidth: 150 },
+      field: 'service_opinion', headerName: 'Parecer Inicial', sortable: true,
+      render: ({ service_opinion }) => <ScheduleOpinionChip status={service_opinion?.name} />
     },
     {
-      field: 'address.complete_address',
-      headerName: 'Endereço',
-      render: r => r.address?.complete_address || 'Sem endereço',
-      sx: { minWidth: 480 },
+      field: 'final_service_opinion', headerName: 'Parecer Final', sortable: true,
+      render: ({ final_service_opinion }) => <ScheduleOpinionChip status={final_service_opinion?.name} />
+    },
+    {
+      field: 'address', headerName: 'Endereço', sx: { minWidth: 480 },
+      render: ({ address }) => address?.complete_address || 'Sem endereço'
     }
-  ];
+  ], []);
 
   return (
-    <PageContainer title="Agendamentos do Pós-Venda" description="Listagem de Agendamentos do Pós-Venda">
+    <PageContainer title="Agendamentos do Pós-Venda">
       <Breadcrumb items={BCrumb} />
       <BlankCard>
         <CardContent>
-          <Typography variant="h5" gutterBottom alignContent={'center'}>
-            Lista de Agendamentos do Pós-Venda
+          <Typography variant="h5" gutterBottom>
+            Lista de Agendamentos
           </Typography>
-          <Grid container alignItems="center" justifyContent={'space-between'} my={2}>
+
+          {/* select de serviços */}
+          <Grid container spacing={2} alignItems="center">
             <Grid item xs={10}>
               <FormControl fullWidth>
-                <InputLabel id="services-select-label">Serviços</InputLabel>
+                <InputLabel>Serviços</InputLabel>
                 <Select
-                  labelId="services-select-label"
-                  id="services-select"
-                  multiple
-                  value={selectedServices}
-                  onChange={(e) => {
-                    setSelectedServices(e.target.value);
-                    setPage(1);
-                  }}
-                  renderValue={(selected) => (
-                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                      {selected.map((value) => {
-                        const service = services.find((s) => s.id === value);
-                        return <Chip key={value} label={service ? service.name : value} />;
-                      })}
+                  multiple value={selectedServices}
+                  onChange={e => { setSelectedServices(e.target.value); setPage(1); }}
+                  renderValue={vals => (
+                    <Box sx={{ display: 'flex', gap: .5, flexWrap: 'wrap' }}>
+                      {vals.map(id => (
+                        <Chip key={id} label={services.find(s => s.id === id)?.name || id} />
+                      ))}
                     </Box>
                   )}
-                  label="Serviços"
                 >
-                  {services.map((service) => (
-                    <MenuItem key={service.id} value={service.id}>
-                      {service.name}
-                    </MenuItem>
+                  {services.map(s => (
+                    <MenuItem key={s.id} value={s.id}>{s.name}</MenuItem>
                   ))}
                 </Select>
               </FormControl>
             </Grid>
-            <Grid container xs={2} justifyContent="flex-end" alignItems="center">
+
+            <Grid item xs={2} container justifyContent="flex-end">
               {activeCount > 0 && (
                 <Chip
                   label={`${activeCount} filtro${activeCount > 1 ? 's' : ''} ativo${activeCount > 1 ? 's' : ''}`}
                   onDelete={clearFilters}
-                  variant="outlined"
-                  size="small"
+                  size="small" variant="outlined"
                   sx={{ mr: 1 }}
                 />
               )}
-              <Button variant="outlined" onClick={() => setFilterDrawerOpen(true)}>
-                Abrir Filtros
-              </Button>
+              <Button onClick={() => setFilterDrawerOpen(true)}>Filtros</Button>
             </Grid>
           </Grid>
-          <TableHeader.Root
-            onRowClick={(row) => {
-              setSelectedScheduleId(row.id);
-              setDetailsDrawerOpen(true);
-            }}
-          >
+
+          {/* header e botão nova */}
+          <TableHeader.Root onRowClick={row => { setSelectedScheduleId(row.id); setDetailsDrawerOpen(true); }}>
             <TableHeader.Title
               title="Total"
               totalItems={totalRows}
-              objNameNumberReference={totalRows === 1 ? "Agendamento" : "Agendamentos"}
+              objNameNumberReference={totalRows === 1 ? 'Agendamento' : 'Agendamentos'}
             />
             <TableHeader.Button
-              buttonLabel="Agendar"
-              icon={<Add />}
-              onButtonClick={() => { window.location.href = '/apps/relationship/schedules/add' }}
-              sx={{
-                width: 200,
-              }}
+              buttonLabel="Agendar" icon={<Add />}
+              onButtonClick={goToAdd} sx={{ width: 200 }}
             />
           </TableHeader.Root>
 
+          {/* tabela */}
           <Table.Root
-            data={scheduleList}
-            totalRows={totalRows}
-            page={page}
-            rowsPerPage={rowsPerPage}
+            data={scheduleList} totalRows={totalRows}
+            page={page} rowsPerPage={rowsPerPage}
             onPageChange={handlePageChange}
-            onRowsPerPageChange={handleRowsPerPageChange}
-            onRowClick={(schedule) => {
-              setSelectedScheduleId(schedule.id);
-              setDetailsDrawerOpen(true);
-            }}
+            onRowsPerPageChange={handleRowsChange}
+            onRowClick={row => { setSelectedScheduleId(row.id); setDetailsDrawerOpen(true); }}
           >
-            <Table.Head columns={columns}>
-            </Table.Head>
-            <Table.Body
-              loading={loading}
-              columns={columns.length}
-            >
+            <Table.Head columns={columns} onSort={handleSort} />
+            <Table.Body loading={loading} columns={columns.length}>
               {columns.map(col => (
-                <Table.Cell
-                  key={col.field}
-                  render={col.render}
-                  sx={{ cursor: 'pointer', ...col.sx }}
-                />
+                <Table.Cell key={col.field} render={col.render} sx={{ cursor: 'pointer', ...col.sx }} />
               ))}
             </Table.Body>
             <Table.Pagination />
           </Table.Root>
         </CardContent>
       </BlankCard>
+
       <GenericFilterDrawer
         filters={filterConfig}
         initialValues={filters}
         open={filterDrawerOpen}
         onClose={() => setFilterDrawerOpen(false)}
-        onApply={(newFilters) => setFilters(newFilters)}
+        onApply={setFilters}
       />
+
       <DetailsDrawer
         open={detailsDrawerOpen}
         onClose={() => setDetailsDrawerOpen(false)}
         scheduleId={selectedScheduleId}
       />
-    </PageContainer >
+    </PageContainer>
   );
-};
-
-export default CustomerServiceSchedules;
+}
