@@ -5,11 +5,13 @@ import { useSelector } from 'react-redux';
 import { useSnackbar } from 'notistack';
 import {
   Box, Button, FormControl, Grid, InputLabel, Select, MenuItem, Chip,
-  CardContent, Typography
+  CardContent, Typography,
+  useTheme
 } from '@mui/material';
 import {
   ArrowDropUp, ArrowRightOutlined, ArrowDropDown,
-  Add
+  Add,
+  FilterAlt
 } from '@mui/icons-material';
 
 import { FilterContext } from '@/context/FilterContext';
@@ -34,6 +36,7 @@ const BCrumb = [
 
 export default function CustomerServiceSchedules() {
   const router = useRouter();
+  const theme = useTheme();
   const { enqueueSnackbar } = useSnackbar();
   const { filters, setFilters, clearFilters, refresh } = useContext(FilterContext);
 
@@ -67,7 +70,6 @@ export default function CustomerServiceSchedules() {
     return () => { alive = false; };
   }, [enqueueSnackbar]);
 
-  // buscar agendamentos
   useEffect(() => {
     if (!selectedServices.length) return;
     let alive = true;
@@ -98,7 +100,6 @@ export default function CustomerServiceSchedules() {
     return () => { alive = false; };
   }, [selectedServices, page, rowsPerPage, ordering, filters, refresh, enqueueSnackbar]);
 
-  // handlers
   const handlePageChange = useCallback((_, newPage) => setPage(newPage), []);
   const handleRowsChange = useCallback(e => setRowsPerPage(+e.target.value), []);
   const handleSort = useCallback(f => {
@@ -107,7 +108,6 @@ export default function CustomerServiceSchedules() {
   }, []);
   const goToAdd = useCallback(() => router.push('/apps/relationship/schedules/add'), [router]);
 
-  // colunas memoizadas
   const columns = useMemo(() => [
     { field: 'protocol', headerName: 'Protocolo', render: ({ protocol }) => protocol || 'Sem Protocolo' },
     { field: 'service.name', headerName: 'Serviço', render: ({ service }) => service.name, sx: { minWidth: 230 } },
@@ -177,7 +177,6 @@ export default function CustomerServiceSchedules() {
             Lista de Agendamentos
           </Typography>
 
-          {/* select de serviços */}
           <Grid container spacing={2} alignItems="center">
             <Grid item xs={10}>
               <FormControl fullWidth>
@@ -209,11 +208,10 @@ export default function CustomerServiceSchedules() {
                   sx={{ mr: 1 }}
                 />
               )}
-              <Button onClick={() => setFilterDrawerOpen(true)}>Filtros</Button>
+              <Button onClick={() => setFilterDrawerOpen(true)} startIcon={<FilterAlt />} sx={{ backgroundColor: theme.palette.primary.main, color: theme.palette.getContrastText(theme.palette.primary.main) }}>Filtros</Button>
             </Grid>
           </Grid>
 
-          {/* header e botão nova */}
           <TableHeader.Root onRowClick={row => { setSelectedScheduleId(row.id); setDetailsDrawerOpen(true); }}>
             <TableHeader.Title
               title="Total"
@@ -226,7 +224,6 @@ export default function CustomerServiceSchedules() {
             />
           </TableHeader.Root>
 
-          {/* tabela */}
           <Table.Root
             data={scheduleList} totalRows={totalRows}
             page={page} rowsPerPage={rowsPerPage}
