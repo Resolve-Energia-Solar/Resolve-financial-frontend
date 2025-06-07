@@ -1,101 +1,32 @@
 'use client';
-import React, { useState, useEffect, useContext, useCallback } from 'react';
+import { useState, useEffect, useContext, useCallback } from 'react';
 import {
-  Chip,
-  TableContainer,
-  Paper,
-  Typography,
-  Box,
   Button,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
-  Skeleton,
-  Tooltip,
+  Chip,
   Grid,
+  Typography,
 } from '@mui/material';
-import { IconListDetails, IconX } from '@tabler/icons-react';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { IconCheck, IconX } from '@tabler/icons-react';
+
+// Services
 import projectService from '@/services/projectService';
-import GenericFilterDrawer from '@/app/components/filters/GenericFilterDrawer';
-import StatusChip from '@/utils/status/ProjectStatusChip';
-import ProjectCards from '../../inforCards/InforQuantity';
-import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
-import { keyframes } from '@mui/system';
+
+// Context
 import { FilterContext } from '@/context/FilterContext';
-import HorizontalProcessCards from '../Costumer-journey/HorizontalProcessCards';
+
+// Components
 import { Table } from '@/app/components/Table';
 import { TableHeader } from '@/app/components/TableHeader';
-import ScheduleOpinionChip from '../../inspections/schedule/StatusChip';
-import StatusFinancialChip from '@/utils/status/FinancialChip';
-import ChipRequest from '../../request/components/auto-complete/ChipRequest';
-import { IconCheck } from '@tabler/icons-react';
+import GenericFilterDrawer from '@/app/components/filters/GenericFilterDrawer';
 import JourneyCounterChip from '../Costumer-journey/JourneyCounterChip';
-import { on } from 'events';
+import StatusChip from '@/utils/status/ProjectStatusChip';
+import StatusFinancialChip from '@/utils/status/FinancialChip';
+import ScheduleOpinionChip from '../../inspections/schedule/StatusChip';
 import ChipRequestStatus from '../../request/components/auto-complete/ChipRequestStatus';
-
-const pulse = keyframes`
-  0% {
-    transform: scale(1);
-    opacity: 0.6;
-  }
-  100% {
-    transform: scale(2);
-    opacity: 0;
-  }
-`;
-
-const getStatusChip = (status) => {
-  let label = '';
-  let color = 'default';
-
-  switch (status) {
-    case 'P':
-      label = 'Pendente';
-      color = 'warning';
-      break;
-    case 'CO':
-      label = 'Concluído';
-      color = 'success';
-      break;
-    case 'EA':
-      label = 'Em Andamento';
-      color = 'primary';
-      break;
-    case 'C':
-      label = 'Cancelado';
-      color = 'error';
-      break;
-    case 'D':
-      label = 'Distrato';
-      color = 'default';
-      break;
-    case 'L':
-      label = 'Liberado';
-      color = 'success';
-      break;
-    case 'CA':
-      label = 'Cancelado';
-      color = 'error';
-      break;
-    case 'F':
-      label = 'Finalizado';
-      color = 'success';
-      break;
-    default:
-      label = 'Desconhecido';
-      color = 'grey';
-  }
-
-  return <Chip label={label} color={color} />;
-};
 
 const ProjectList = ({ onClick }) => {
   const [projectsList, setProjectsList] = useState([]);
   const [loadingProjects, setLoadingProjects] = useState(true);
-  // const [indicators, setIndicators] = useState({});
-  // const [loadingIndicators, setLoadingIndicators] = useState(true);
-  const [error, setError] = useState(null);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [totalRows, setTotalRows] = useState(0);
