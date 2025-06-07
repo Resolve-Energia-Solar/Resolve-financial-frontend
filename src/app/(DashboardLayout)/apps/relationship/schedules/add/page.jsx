@@ -31,9 +31,9 @@ const RelationshipScheduleFormPage = () => {
   const router = useRouter();
   const [formData, setFormData] = useState({
     schedule_date: '',
-    schedule_start_time: '',
+    schedule_start_time: '08:00',
     schedule_end_date: '',
-    schedule_end_time: '',
+    schedule_end_time: '12:00',
     service: null,
     customer: null,
     project: null,
@@ -42,6 +42,8 @@ const RelationshipScheduleFormPage = () => {
     address: null,
     observation: '',
     parent_schedules: [],
+    severity: null,
+    schedule_creator: null
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -63,7 +65,9 @@ const RelationshipScheduleFormPage = () => {
     branch: 'Unidade',
     address: 'Endereço',
     observation: 'Observação',
-    schedule_creator: 'Criador do Agendamento',
+    schedule_creator: 'Solicitante',
+    parent_schedules: 'Serviços Relacionados',
+    severity: 'Prioridade',
   };
 
   const handleSubmit = async (e) => {
@@ -74,12 +78,12 @@ const RelationshipScheduleFormPage = () => {
     const requiredFields = [
       'schedule_date',
       'schedule_start_time',
-      'schedule_end_date',
       'schedule_end_time',
       'service',
       'customer',
       'branch',
       'address',
+      'severity',
     ];
 
     for (const field of requiredFields) {
@@ -92,14 +96,15 @@ const RelationshipScheduleFormPage = () => {
 
     const submitData = {
       ...formData,
+      schedule_end_date: formData.schedule_date,
       service: formData.service?.value,
       customer: formData.customer?.value,
       project: formData.project?.value,
       schedule_agent: formData.schedule_agent?.value,
       branch: formData.branch?.value,
       address: formData.address?.value,
-      schedule_creator: user.id,
       products: formData.product ? [formData.product.value] : [],
+      schedule_creator: formData.schedule_creator?.value || user?.id,
       parent_schedules: Array.isArray(formData.parent_schedules)
         ? formData.parent_schedules.filter((ps) => ps && ps.value).map((ps) => ps.value)
         : [],
@@ -107,7 +112,7 @@ const RelationshipScheduleFormPage = () => {
 
     try {
       await scheduleService.create(submitData);
-      router.push('/apps/schedules');
+      router.push('/apps/relationship/schedules');
     } catch (err) {
       if (err.response && err.response.data && typeof err.response.data === 'object') {
         if ('available_time' in err.response.data) {
@@ -143,38 +148,9 @@ const RelationshipScheduleFormPage = () => {
 
   const breadcrumbItems = [
     { to: '/', title: 'Início' },
-    { to: '/apps/schedules', title: 'Agendamentos' },
+    { to: '/apps/relationship/schedules', title: 'Agendamentos do Relacionamento com Cliente' },
     { title: 'Criar Agendamento' },
   ];
-
-  useEffect(() => {
-    if (
-      formData.service &&
-      formData.schedule_date &&
-      formData.schedule_start_time &&
-      formData.service.deadline &&
-      formData.service.deadline.hours
-    ) {
-      const [addHours, addMinutes, addSeconds] = formData.service.deadline.hours
-        .split(':')
-        .map(Number);
-      const [year, month, day] = formData.schedule_date.split('-').map(Number);
-      const [hour, minute] = formData.schedule_start_time.split(':').map(Number);
-      const startDate = new Date(year, month - 1, day, hour, minute);
-      startDate.setHours(
-        startDate.getHours() + addHours,
-        startDate.getMinutes() + addMinutes,
-        startDate.getSeconds() + addSeconds,
-      );
-      const computedDate = startDate.toISOString().split('T')[0];
-      const computedTime = startDate.toTimeString().slice(0, 5);
-      setFormData((prev) => ({
-        ...prev,
-        schedule_end_date: computedDate,
-        schedule_end_time: computedTime,
-      }));
-    }
-  }, [formData.service, formData.schedule_date, formData.schedule_start_time]);
 
   const formatCurrency = (value) =>
     new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
@@ -274,46 +250,45 @@ const RelationshipScheduleFormPage = () => {
                 InputLabelProps={{ shrink: true }}
                 helperText={errors.schedule_date?.[0] || ''}
               />
-                  </Grid>
-                  <Grid item xs={12} sm={6}>
-                    <FormControl component="fieldset">
-                    <FormLabel component="legend">Horário do Agendamento</FormLabel>
-                    <RadioGroup
-                      row
-                      name="schedule_shift"
-                      value={formData.schedule_start_time === '08:00' ? 'morning' : 'afternoon'}
-                      onChange={(e) => {
-                      const shift = e.target.value;
-                      const startTime = shift === 'morning' ? '08:00' : '14:00';
-                      const endTime = shift === 'morning' ? '12:00' : '16:00';
-                      setFormData({
-                        ...formData,
-                        schedule_start_time: startTime,
-                        schedule_end_time: endTime,
-                        schedule_end_date: formData.schedule_date
-                      });
-                      }}
-                    >
-                      <FormControlLabel 
-                      value="morning" 
-                      control={<Radio />} 
-                      label="Manhã (8h - 12h)" 
-                      />
-                      <FormControlLabel 
-                      value="afternoon" 
-                      control={<Radio />} 
-                      label="Tarde (14h - 18h)" 
-                      />
-                    </RadioGroup>
-                    </FormControl>
-                  </Grid>
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <FormControl component="fieldset">
+                <FormLabel component="legend">Horário do Agendamento</FormLabel>
+                <RadioGroup
+                  row
+                  name="schedule_shift"
+                  value={formData.schedule_start_time === '08:00' ? 'morning' : 'afternoon'}
+                  onChange={(e) => {
+                    const shift = e.target.value;
+                    const startTime = shift === 'morning' ? '08:00' : '14:00';
+                    const endTime = shift === 'morning' ? '12:00' : '16:00';
+                    setFormData({
+                      ...formData,
+                      schedule_start_time: startTime,
+                      schedule_end_time: endTime
+                    });
+                  }}
+                >
+                  <FormControlLabel
+                    value="morning"
+                    control={<Radio />}
+                    label="Manhã (8h - 12h)"
+                  />
+                  <FormControlLabel
+                    value="afternoon"
+                    control={<Radio />}
+                    label="Tarde (14h - 18h)"
+                  />
+                </RadioGroup>
+              </FormControl>
+            </Grid>
 
-                  <>
-                    <Grid item xs={12} sm={6}>
-                    <GenericAsyncAutocompleteInput
-                      label="Projeto"
-                      value={formData.project}
-                      onChange={(newValue) => {
+            <>
+              <Grid item xs={12} sm={6}>
+                <GenericAsyncAutocompleteInput
+                  label="Projeto"
+                  value={formData.project}
+                  onChange={(newValue) => {
                     if (newValue) {
                       setFormData({
                         ...formData,
@@ -531,7 +506,56 @@ const RelationshipScheduleFormPage = () => {
                 </>
               )}
             </>
-
+            <Grid item xs={12} sm={6}>
+              <FormControl component="fieldset">
+                <FormLabel component="legend">Prioridade</FormLabel>
+                <RadioGroup
+                  row
+                  name="severity"
+                  value={formData.severity}
+                  onChange={(e) => {
+                    setFormData({
+                      ...formData,
+                      severity: e.target.value
+                    });
+                  }}
+                >
+                  <FormControlLabel
+                    value="A"
+                    control={<Radio color='success' />}
+                    label="Baixa (A)"
+                  />
+                  <FormControlLabel
+                    value="B"
+                    control={<Radio color='warning' />}
+                    label="Média (B)"
+                  />
+                  <FormControlLabel
+                    value="C"
+                    control={<Radio color='error' />}
+                    label="Alta (C)"
+                  />
+                </RadioGroup>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <GenericAsyncAutocompleteInput
+                label="Solicitante"
+                value={formData.schedule_creator}
+                onChange={(newValue) => {
+                  setFormData({ ...formData, schedule_creator: newValue });
+                }}
+                endpoint="/api/users"
+                queryParam="complete_name__icontains"
+                extraParams={{ fields: ['id', 'complete_name'], limit: 10 }}
+                mapResponse={(data) =>
+                  data.results.map((u) => ({ label: u.complete_name, value: u.id }))
+                }
+                fullWidth
+                helperText={errors.schedule_creator?.[0] || ''}
+                error={!!errors.schedule_creator}
+              />
+            </Grid>
             {(formData.customer || formData.project) && (
               <Grid item xs={12} sm={6}>
                 <GenericAsyncAutocompleteInput
