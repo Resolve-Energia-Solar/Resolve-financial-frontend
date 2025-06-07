@@ -12,6 +12,7 @@ import {
   Typography,
   CircularProgress,
   Alert,
+  useTheme
 } from '@mui/material';
 import { useSnackbar } from 'notistack';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
@@ -30,6 +31,7 @@ import HasPermission from '@/app/components/permissions/HasPermissions';
 import SaleProductItem from '@/app/components/apps/saleProduct/SaleProductItem';
 import AutoCompleteReasonMultiple from '../../components/auto-complete/Auto-Input-Reasons';
 import ProductService from '@/services/productsService';
+import GenerateAddendum from '@/app/components/apps/sale/GenerateAddedum';
 
 const EditSale = ({
   saleId = null,
@@ -42,9 +44,10 @@ const EditSale = ({
   const params = useParams();
   let id = saleId;
   if (!saleId) id = params.id;
-
+  const theme = useTheme();
   const userPermissions = useSelector((state) => state.user.permissions);
   const { enqueueSnackbar } = useSnackbar();
+  const [openGenerateAddendum, setOpenGenerateAddendum] = useState(false);
 
   const hasPermission = (permissions) => {
     if (!permissions) return true;
@@ -255,6 +258,9 @@ const EditSale = ({
                 label={formData.isSale ? 'Pré-Venda' : 'Venda'}
               />
             </Box>
+            <Button color='warning' onClick={() => setOpenGenerateAddendum(true)} sx={{ color: theme.palette.getContrastText(theme.palette.warning.main) }}>
+              Gerar termo aditivo
+            </Button>
             {hasPermission(['resolve_crm.can_change_fineshed_sale']) && !onSubmit && (
               <Button
                 variant="contained"
@@ -288,8 +294,8 @@ const EditSale = ({
             />
           ));
         })()}
-
       </Grid>
+      <GenerateAddendum sale={saleData} open={openGenerateAddendum} onClose={() => setOpenGenerateAddendum(false)} />
     </Box>
   );
 };
