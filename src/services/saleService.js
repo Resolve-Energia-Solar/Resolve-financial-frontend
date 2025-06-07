@@ -48,7 +48,23 @@ const saleService = {
       throw error;
     }
   },
+  generateAddendum: async ({ sale_id, before_addendum, after_addendum }) => {
+    const formData = new FormData();
+    formData.append("sale_id", sale_id);
+    formData.append("before_addendum", before_addendum);
+    formData.append("after_addendum", after_addendum);
 
+    const response = await apiClient.post(
+      "/api/generate-addendum-pdf/",
+      formData,
+      {
+        headers: { "Content-Type": "multipart/form-data" },
+        responseType: "blob",
+      }
+    );
+
+    return response;
+  },
   getSales: async ({
     ordering,
     nextPage,
