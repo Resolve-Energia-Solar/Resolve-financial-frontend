@@ -98,7 +98,7 @@ const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = (
       if (!scheduleId) return;
       try {
         const data = await scheduleService.find(scheduleId, {
-          fields: 'id,protocol,schedule_date,schedule_start_time,schedule_end_date,schedule_end_time,observation,address.id,service.id,service.name,schedule_agent,service_opinion,final_service_opinion,status,attachments',
+          fields: 'id,protocol,schedule_date,schedule_start_time,schedule_end_date,schedule_end_time,schedule_creator,observation,address.id,service.id,service.name,schedule_agent,service_opinion,final_service_opinion,status,attachments',
           expand: 'address,service',
         });
         setSchedule(data);
@@ -244,7 +244,7 @@ const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = (
       const fmt = t => (t instanceof Date ? t.toTimeString().split(' ')[0] : String(t));
       const payload = {
         project: projectId,
-        schedule_creator: userId,
+        schedule_creator: schedule?.schedule_creator || userId,
         schedule_date,
         schedule_start_time: fmt(schedule_start_time),
         schedule_end_date,
