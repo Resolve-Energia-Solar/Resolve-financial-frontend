@@ -7,7 +7,7 @@ import {
   RemoveCircle as RemoveCircleIcon,
 } from '@mui/icons-material';
 
-const StatusChip = ({ status }) => {
+const StatusChip = ({ status, size }) => {
   const getChipProps = (status) => {
     switch (status) {
       case 'P':
@@ -31,7 +31,7 @@ const StatusChip = ({ status }) => {
 
   const { label, color, icon } = getChipProps(status);
 
-  return <Chip label={label} color={color} icon={icon} />;
+  return <Chip label={label} color={color} icon={icon} size={size} />;
 };
 
 export default StatusChip;
