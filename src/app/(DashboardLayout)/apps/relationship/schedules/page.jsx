@@ -245,7 +245,7 @@ const CustomerServiceSchedules = () => {
             <TableHeader.Button
               buttonLabel="Agendar"
               icon={<Add />}
-              onButtonClick={() => { window.location.href = '/apps/relationship/schedules/create' }}
+              onButtonClick={() => { window.location.href = '/apps/relationship/schedules/add' }}
               sx={{
                 width: 200,
               }}
