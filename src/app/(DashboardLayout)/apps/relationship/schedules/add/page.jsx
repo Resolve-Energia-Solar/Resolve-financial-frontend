@@ -285,7 +285,7 @@ const RelationshipScheduleFormPage = () => {
                       onChange={(e) => {
                       const shift = e.target.value;
                       const startTime = shift === 'morning' ? '08:00' : '14:00';
-                      const endTime = shift === 'morning' ? '12:00' : '18:00';
+                      const endTime = shift === 'morning' ? '12:00' : '16:00';
                       setFormData({
                         ...formData,
                         schedule_start_time: startTime,
