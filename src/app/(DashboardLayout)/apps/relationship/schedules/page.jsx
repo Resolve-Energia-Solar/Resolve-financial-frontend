@@ -1,7 +1,6 @@
 'use client';
 import { useState, useEffect, useMemo, useCallback, useContext } from 'react';
 import { useRouter } from 'next/navigation';
-import { useSelector } from 'react-redux';
 import { useSnackbar } from 'notistack';
 import {
   Box, Button, FormControl, Grid, InputLabel, Select, MenuItem, Chip,
@@ -22,7 +21,7 @@ import PageContainer from '@/app/components/container/PageContainer';
 import Breadcrumb from '@/app/(DashboardLayout)/layout/shared/breadcrumb/Breadcrumb';
 import BlankCard from '@/app/components/shared/BlankCard';
 import GenericFilterDrawer from '@/app/components/filters/GenericFilterDrawer';
-import DetailsDrawer from '@/app/components/apps/schedule/DetailsDrawer';
+import RelationshipScheduleDetail from '@/app/components/apps/relationship/schedules/RelationshipScheduleDetail';
 import UserCard from '@/app/components/apps/users/userCard';
 import ScheduleOpinionChip from '@/app/components/apps/inspections/schedule/StatusChip/ScheduleOpinionChip';
 import { TableHeader } from '@/app/components/TableHeader';
@@ -250,7 +249,7 @@ export default function CustomerServiceSchedules() {
         onApply={setFilters}
       />
 
-      <DetailsDrawer
+      <RelationshipScheduleDetail
         open={detailsDrawerOpen}
         onClose={() => setDetailsDrawerOpen(false)}
         scheduleId={selectedScheduleId}
