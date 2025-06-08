@@ -73,7 +73,6 @@ export default function RelationshipScheduleForm({ scheduleId = null, breadcrumb
 
   const handleSubmit = useCallback(async (e) => {
     e.preventDefault(); setLoading(true); setErrors({});
-    // basic validation
     const required = ['schedule_date', 'schedule_start_time', 'service', 'customer', 'branch', 'address', 'severity'];
     for (let f of required) {
       if (!formData[f]) {
@@ -97,7 +96,13 @@ export default function RelationshipScheduleForm({ scheduleId = null, breadcrumb
     };
 
     try {
-      await scheduleService.create(payload);
+      if (scheduleId) {
+        await scheduleService.update(scheduleId, payload);
+        enqueueSnackbar('Agendamento atualizado com sucesso', { variant: 'success' });
+      } else {
+        await scheduleService.create(payload);
+        enqueueSnackbar('Agendamento criado com sucesso', { variant: 'success' });
+      }
       router.push('/apps/relationship/schedules');
     } catch (err) {
       const resp = err.response?.data;
