@@ -158,7 +158,7 @@ const DetailsDrawer = ({ open, onClose, scheduleId, dialogMode = false }) => {
 
   if (loading) {
     return (
-      <Drawer anchor="right" open={open} onClose={onClose} sx={{zIndex: 1400}}>
+      <Drawer anchor="right" open={open} onClose={onClose} sx={{ zIndex: 1400 }}>
         <Box
           sx={{
             width: 500,
@@ -214,9 +214,6 @@ const DetailsDrawer = ({ open, onClose, scheduleId, dialogMode = false }) => {
         <Box>
           <Typography variant="h4">nº {schedule.protocol}</Typography>
           <Chip
-            size="small"
-            color="secondary"
-            variant="outlined"
             label={new Date(schedule.created_at).toLocaleString('pt-BR')}
             sx={{ mt: 1 }}
           />
