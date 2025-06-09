@@ -23,7 +23,7 @@ import { timelineItemClasses } from '@mui/lab/TimelineItem';
 import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import EditIcon from '@mui/icons-material/Edit';
-import { Add, MoreVert } from '@mui/icons-material';
+import { Add, Cancel, MoreVert } from '@mui/icons-material';
 import ModalChooseOption from '@/app/components/apps/inspections/schedule/AgentRoutes/components/ModalChooseOption';
 
 export default function CardAgentRoutes({
@@ -36,12 +36,15 @@ export default function CardAgentRoutes({
   onCreateSchedule,
   onListSchedule,
   onOpenMap,
+  availabilityDetails,
   canEdit = false,
 }) {
   const [hoveredIndex, setHoveredIndex] = React.useState(null);
   const [openModal, setOpenModal] = React.useState(false);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const openMenu = Boolean(anchorEl);
+
+  console.log('availabilityDetails card: ', availabilityDetails?.is_blocked);
 
   const isDateTodayOrLater = (date) => {
     const today = new Date();
@@ -109,9 +112,17 @@ export default function CardAgentRoutes({
           fontWeight={500}
           sx={{ display: 'flex', alignItems: 'center', mb: 1 }}
         >
-          <CheckCircleIcon fontSize="small" color="success" sx={{ mr: 1 }} />
-          Horário disponível: {formatTime(freeTimeAgent?.start_time)} -{' '}
-          {formatTime(freeTimeAgent?.end_time)}
+          {availabilityDetails?.is_blocked ? (
+            <>
+              <Cancel fontSize="small" color="error" sx={{ mr: 1 }} />O agente não possui horários disponíveis para a data selecionada.
+            </>
+          ) : (
+            <>
+              <CheckCircleIcon fontSize="small" color="success" sx={{ mr: 1 }} />
+              Horário disponível: {formatTime(freeTimeAgent?.start_time)} -{' '}
+              {formatTime(freeTimeAgent?.end_time)}
+            </>
+          )}
         </Typography>
 
         <Timeline
@@ -205,7 +216,7 @@ export default function CardAgentRoutes({
           })}
         </Timeline>
 
-        {isDateTodayOrLater(date) && (
+        {isDateTodayOrLater(date) && !availabilityDetails?.is_blocked && (
           <Box display="flex" justifyContent="center" mt={2}>
             <Button onClick={() => setOpenModal(true)} startIcon={<Add />}>
               Agendar Vistoria
