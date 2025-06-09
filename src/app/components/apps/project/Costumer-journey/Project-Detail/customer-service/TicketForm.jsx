@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Button, TextField, MenuItem, Grid, Box, CircularProgress } from "@mui/material";
 import GenericAsyncAutocompleteInput from "@/app/components/filters/GenericAsyncAutocompleteInput";
 import ticketService from "@/services/ticketService";
+import { useSnackbar } from "notistack";
 
 const priorityOptions = [
     { value: 1, label: "Baixa" },
@@ -28,6 +29,7 @@ export default function TicketForm({ projectId, ticketId = null, onSave }) {
         responsible_user: null,
         ticket_type: null,
     });
+    const { enqueueSnackbar } = useSnackbar();
 
     console.log("TicketForm mounted with projectId:", projectId, "and ticketId:", ticketId);
 
@@ -41,9 +43,9 @@ export default function TicketForm({ projectId, ticketId = null, onSave }) {
                 setLoading(true);
                 try {
                     const data = await ticketService.find(ticketId, {
-                        expand: "project",
+                        expand: "project,project.sale.customer",
                         fields:
-                            "id,project.id,project.project_number,project.sale.customer,subject,description,status,conclusion_date,priority,responsible_user,ticket_type",
+                            "id,project.id,project.project_number,project.sale.customer.complete_name,subject,description,status,conclusion_date,priority,responsible_user,ticket_type",
                     });
                     setProjectInfo(data.project || null);
                     setFormData({
@@ -58,6 +60,7 @@ export default function TicketForm({ projectId, ticketId = null, onSave }) {
                     });
                 } catch (err) {
                     console.error("Erro ao carregar o ticket", err);
+                    enqueueSnackbar("Erro ao carregar o ticket", { variant: "error" });
                 } finally {
                     setLoading(false);
                 }
@@ -97,6 +100,7 @@ export default function TicketForm({ projectId, ticketId = null, onSave }) {
                 }
                 console.error("Erro ao salvar o ticket. Verifique os campos e tente novamente.");
             }
+            enqueueSnackbar("Erro ao salvar o ticket", { variant: "error" });
         } finally {
             setLoading(false);
         }
@@ -228,7 +232,6 @@ export default function TicketForm({ projectId, ticketId = null, onSave }) {
                     </Grid>
                 )}
 
-
                 {/* Responsible (usuário) */}
                 <Grid item xs={12} sm={12}>
                     <GenericAsyncAutocompleteInput
@@ -236,11 +239,11 @@ export default function TicketForm({ projectId, ticketId = null, onSave }) {
                         value={formData.responsible_user}
                         onChange={handleSelectChange("responsible_user")}
                         endpoint="/api/users"
-                        extraParams={{ user_types: 3, fields: "id,complete_name,email" }}
+                        extraParams={{ user_types: 3, fields: "id,complete_name" }}
                         mapResponse={(data) =>
                             data.results.map((u) => ({
                                 value: u.id,
-                                label: u.complete_name || u.email,
+                                label: u.complete_name,
                             }))
                         }
                         error={!!errors.responsible_user}
