@@ -15,7 +15,7 @@ const formatDate = (dateString) => {
 
 
 const formatDateTime = (dateString) => {
-  if (!dateString) return null;
+  if (!dateString) return '-';
   const parts = dateString.split('-');
   if (parts.length < 3) {
     console.error("Invalid date format:", dateString);

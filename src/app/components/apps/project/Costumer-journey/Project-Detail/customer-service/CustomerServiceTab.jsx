@@ -96,8 +96,8 @@ export default function CustomerServiceTab({ projectId, viewOnly = false }) {
     },
     {
       field: 'deadline',
-      headerName: 'Prazo',
-      render: (r) => formatDateTime(r.deadline),
+      headerName: 'Prazo (horas)',
+      render: (r) => r.deadline ? `${r.deadline}h` : '-',
     },
     {
       field: 'conclusion_date',
@@ -141,54 +141,38 @@ export default function CustomerServiceTab({ projectId, viewOnly = false }) {
             rowsPerPage={rowsPerPage}
             onPageChange={setPage}
             onRowsPerPageChange={setRowsPerPage}
-            noWrap={true}
+            onRowClick={(r) => {
+              setSelectedTicket(r.id);
+              setOpenTicketFormModal(true);
+            }}
+            noWrap
           >
             <Table.Head columns={ticketsColumns}>
-              {!viewOnly && <Table.Cell align="center">Editar</Table.Cell>}
               <Table.Cell align="center">Ver</Table.Cell>
+              {!viewOnly && (
+                <>
+                  <Table.Cell align="center">Editar</Table.Cell>
+                  <Table.Cell align="center">Principal</Table.Cell>
+                </>
+              )}
             </Table.Head>
 
-            <Table.Body loading={loadingTickets} columns={ticketsColumns.length}>
-              {ticketData.results.map((row) => (
-                <>
-                  <Table.Cell render={() => row.subject} />
-                  <Table.Cell render={() => row.priority} />
-                  <Table.Cell render={() => row.ticket_type?.name} sx={{ opacity: 0.7 }} />
-                  <Table.Cell render={() => {
-                    const statusMap = {
-                      A: { label: 'Aberto', color: 'info' },
-                      P: { label: 'Pendente', color: 'warning' },
-                      R: { label: 'Resolvido', color: 'primary' },
-                      F: { label: 'Finalizado', color: 'success' },
-                      C: { label: 'Cancelado', color: 'error' },
-                    };
-                    const statusInfo = statusMap[row.status] || { label: row.status, color: 'default' };
-                    return <Chip label={statusInfo.label} color={statusInfo.color} />;
-                  }} sx={{ opacity: 0.7 }} />
-                  <Table.Cell render={() => row.responsible_user?.complete_name} sx={{ opacity: 0.7 }} />
-                  <Table.Cell render={() => row.responsible?.complete_name} sx={{ opacity: 0.7 }} />
-                  <Table.Cell render={() => formatDateTime(row.created_at)} sx={{ opacity: 0.7 }} />
-                  <Table.Cell render={() => formatDateTime(row.deadline)} sx={{ opacity: 0.7 }} />
-                  <Table.Cell render={() => formatDateTime(row.conclusion_date)} sx={{ opacity: 0.7 }} />
-                  {!viewOnly && (
-                    <Table.EditAction
-                      onClick={() => {
-                        setSelectedTicket(row.id);
-                        setOpenTicketFormModal(true);
-                      }}
-                    />
-                  )}
-                  <Table.ViewAction
-                    onClick={() => {
-                      setSelectedTicket(row.id);
-                      setOpenViewTicket(true);
-                    }}
-                  />
-                </>
+            <Table.Body
+              loading={loadingTickets}
+              columns={ticketsColumns.length}
+              sx={{
+                cursor: "pointer",
+                '&:hover': { backgroundColor: 'rgba(236, 242, 255, 0.35)' },
+              }}
+            >
+              {ticketsColumns.map(col => (
+                <Table.Cell
+                  key={col.field}
+                  render={col.render}
+                  sx={col.sx}
+                />
               ))}
             </Table.Body>
-
-            <Table.Pagination />
           </Table.Root>
         </Grid>
       </Grid>
