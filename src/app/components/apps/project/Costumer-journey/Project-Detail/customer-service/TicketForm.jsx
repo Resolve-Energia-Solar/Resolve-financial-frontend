@@ -239,7 +239,7 @@ export default function TicketForm({ projectId, ticketId = null, onSave }) {
                         value={formData.responsible_user}
                         onChange={handleSelectChange("responsible_user")}
                         endpoint="/api/users"
-                        extraParams={{ user_types: 3, fields: "id,complete_name" }}
+                        extraParams={{ fields: "id,complete_name" }}
                         mapResponse={(data) =>
                             data.results.map((u) => ({
                                 value: u.id,
