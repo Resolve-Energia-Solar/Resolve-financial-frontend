@@ -131,7 +131,13 @@ export default function RelationshipScheduleForm({ scheduleId = null, breadcrumb
               <GenericAsyncAutocompleteInput
                 label="Serviço" value={formData.service}
                 onChange={handleChange('service')}
-                endpoint="/api/services/" queryParam="name__icontains"
+                endpoint="/api/services" queryParam="name__icontains"
+                extraParams={{ fields: ['id', 'name'], limit: 25, category__name: 'Relacionamento com Cliente' }}
+                mapResponse={(data) =>
+                  data.results.map((s) => ({
+                    label: s.name,
+                  }))
+                }
                 fullWidth required error={!!errors.service}
                 helperText={errors.service?.[0]}
               />
