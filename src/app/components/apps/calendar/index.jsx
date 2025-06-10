@@ -14,7 +14,7 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 import './Calendar.css';
 
 import BlankCard from '@/app/components/shared/BlankCard';
-import { Box } from '@mui/material';
+import { Box, useTheme } from '@mui/material';
 import { ptBR } from 'date-fns/locale';
 import scheduleService from '@/services/scheduleService';
 import DetailsDrawer from '../schedule/DetailsDrawer';
@@ -45,6 +45,7 @@ const BigCalendar = () => {
   const [calendarDate, setCalendarDate] = useState(new Date());
   const [loading, setLoading] = useState(false);
   const [category, setCategory] = useState();
+  const theme = useTheme();
 
 
   const fetchSchedule = async () => {
@@ -85,7 +86,7 @@ const BigCalendar = () => {
       const address = item.address?.complete_address || 'Endereço não disponível';
 
       const title = `${customerName}`;
-      const color = '#33C3FF';
+      const color = theme.palette.primary;
       const schedule_id = item.id;
 
       return {
@@ -171,6 +172,15 @@ const BigCalendar = () => {
                 setSelectedScheduleId(event.schedule_id);
                 setDetailsDrawerOpen(true);
               }}
+              eventPropGetter={(event) => ({
+                style: {
+                  backgroundColor: event.color?.main || theme.palette.primary.main,
+                  color: theme.palette.getContrastText(event.color?.main || theme.palette.primary.main),
+                  borderRadius: '4px',
+                  padding: '2px',
+                },
+              })}
+            
             />
           )}
         </CardContent>
