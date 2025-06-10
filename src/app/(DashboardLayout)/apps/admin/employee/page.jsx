@@ -6,7 +6,7 @@ import { useSnackbar } from 'notistack';
 import userService from '@/services/userService';
 import { Table } from "@/app/components/Table";
 import { TableHeader } from "@/app/components/TableHeader";
-import { Box, Button, Chip, Dialog, DialogContent, DialogTitle, Typography, useTheme } from '@mui/material';
+import { Chip, Dialog, DialogContent, DialogTitle, Grid, Typography, useTheme } from '@mui/material';
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
 import PersonIcon from '@mui/icons-material/Person';
@@ -177,31 +177,31 @@ const UserList = () => {
         onClose={() => setFilterDrawerOpen(false)}
         onApply={(newFilters) => setFilters(newFilters)}
       />
-
-      <Box sx={{ mb: 2 }} display="flex" justifyContent="flex-end" alignItems="center">
-        <Button
-          icon={<FilterAlt />}
-          onClick={() => { setFilterDrawerOpen(true) }}
-          color='info'
-        >
-          Filtros
-        </Button>
-      </Box>
-
       <TableHeader.Root>
         <TableHeader.Title
           title="Total"
           totalItems={totalRows}
           objNameNumberReference={totalRows === 1 ? "Funcionário" : "Funcionários"}
         />
-        <TableHeader.Button
-          buttonLabel="Adicionar funcionário"
-          icon={<Add />}
-          onButtonClick={() => { setOpenUserForm(true) }}
-          sx={{
-            width: 200,
-          }}
-        />
+        <Grid container alignItems="center" justifyContent="flex-end">
+          <TableHeader.Button
+            buttonLabel="Filtros"
+            icon={<FilterAlt />}
+            onButtonClick={() => { setFilterDrawerOpen(true) }}
+            sx={{
+              width: 200,
+              marginRight: 2,
+            }}
+          />
+          <TableHeader.Button
+            buttonLabel="Adicionar funcionário"
+            icon={<Add />}
+            onButtonClick={() => { setOpenUserForm(true) }}
+            sx={{
+              width: 200,
+            }}
+          />
+        </Grid>
       </TableHeader.Root>
 
       <Table.Root
