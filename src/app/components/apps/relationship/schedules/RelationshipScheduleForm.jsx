@@ -24,14 +24,15 @@ const fieldLabels = {
   end_time: 'Horário Final', service: 'Serviço', customer: 'Cliente',
   project: 'Projeto', schedule_agent: 'Agente', branch: 'Unidade',
   address: 'Endereço', observation: 'Observação', schedule_creator: 'Solicitante',
-  severity: 'Prioridade', parent_schedules: 'Serviços Relacionados'
+  severity: 'Prioridade', parent_schedules: 'Serviços Relacionados', service_opinion: 'Parecer do Agente',
+  final_service_opinion: 'Parecer Final'
 };
 
 const initialState = {
   schedule_date: '', schedule_start_time: '08:00:00', schedule_end_time: '12:00:00',
   service: null, customer: null, project: null, schedule_agent: null,
   branch: null, address: null, observation: '', parent_schedules: [],
-  severity: null, schedule_creator: null
+  severity: null, schedule_creator: null, service_opinion: null, final_service_opinion: null,
 };
 
 function formReducer(state, { field, value }) {
@@ -51,6 +52,7 @@ export default function RelationshipScheduleForm({ scheduleId = null, breadcrumb
     setLoading(true);
     try {
       const data = await scheduleService.find(scheduleId, { fields: Object.keys(initialState) });
+      console.log('Schedule data:', data);
       const payload = {
         ...data,
         schedule_date: data.schedule_date,
@@ -129,13 +131,14 @@ export default function RelationshipScheduleForm({ scheduleId = null, breadcrumb
             {/* Serviço */}
             <Grid item xs={12} sm={6}>
               <GenericAsyncAutocompleteInput
-                label="Serviço" value={formData.service}
+                label="Serviço" value={formData.service || formData.service?.value}
                 onChange={handleChange('service')}
                 endpoint="/api/services" queryParam="name__icontains"
                 extraParams={{ fields: ['id', 'name'], limit: 25, category__name: 'Relacionamento com Cliente' }}
                 mapResponse={(data) =>
                   data.results.map((s) => ({
                     label: s.name,
+                    value: s.id,
                   }))
                 }
                 fullWidth required error={!!errors.service}
@@ -175,6 +178,60 @@ export default function RelationshipScheduleForm({ scheduleId = null, breadcrumb
                 </RadioGroup>
               </FormControl>
             </Grid>
+            {formData.service && <>
+              <Grid item xs={12} sm={6}>
+                <GenericAsyncAutocompleteInput
+                  label="Parecer do Agente"
+                  value={formData.service_opinion}
+                  onChange={(newValue) => setFormData({ ...formData, service_opinion: newValue })}
+                  endpoint="/api/service-opinions"
+                  queryParam="name__icontains"
+                  extraParams={{
+                    fields: ['id', 'name'],
+                    service: formData.service || formData.service?.value,
+                    is_final_opinion: false,
+                  }}
+                  mapResponse={(data) =>
+                    data.results.map((s) => ({
+                      label: s.name,
+                      value: s.id,
+                    }))
+                  }
+                  disabled={!formData.service}
+                  helperText={errors.service_opinion?.[0] || ''}
+                  error={!!errors.service_opinion}
+                  fullWidth
+                  required
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <GenericAsyncAutocompleteInput
+                  label="Parecer Final"
+                  value={formData.final_service_opinion}
+                  onChange={(newValue) =>
+                    setFormData({ ...formData, final_service_opinion: newValue })
+                  }
+                  endpoint="/api/service-opinions"
+                  queryParam="name__icontains"
+                  extraParams={{
+                    fields: ['id', 'name'],
+                    service: formData.service || formData.service?.value,
+                    is_final_opinion: true,
+                  }}
+                  mapResponse={(data) =>
+                    data.results.map((s) => ({
+                      label: s.name,
+                      value: s.id,
+                    }))
+                  }
+                  disabled={!formData.service}
+                  helperText={errors.final_service_opinion?.[0] || ''}
+                  error={!!errors.final_service_opinion}
+                  fullWidth
+                  required
+                />
+              </Grid>
+            </>}
             <Grid item xs={12} sm={6}>
               <GenericAsyncAutocompleteInput
                 label="Projeto"
@@ -213,8 +270,7 @@ export default function RelationshipScheduleForm({ scheduleId = null, breadcrumb
                     'sale.status',
                     'sale.homologator.complete_name',
                     'address.complete_address'
-                  ],
-                  filter: 'status__in=C,P,EA'
+                  ]
                 }}
                 mapResponse={(data) =>
                   data.results.map((p) => ({
