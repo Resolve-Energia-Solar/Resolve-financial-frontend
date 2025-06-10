@@ -9,25 +9,22 @@ import { TableHeader } from '@/app/components/TableHeader';
 import StatusChip from '@/utils/status/DocumentStatusIcon';
 import { FilterAlt } from '@mui/icons-material';
 import ProjectDetailDrawer from '@/app/components/apps/project/Costumer-journey/Project-Detail/ProjectDrawer';
-import { Chip, Box, Typography, useTheme } from '@mui/material';
-import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
+import { useTheme, Grid, Dialog, DialogContent } from '@mui/material';
 import GenericFilterDrawer from '@/app/components/filters/GenericFilterDrawer';
 import filterConfig from './filterConfig';
 import { formatDate } from '@/utils/dateUtils';
 import ScheduleOpinionChip from '@/app/components/apps/inspections/schedule/StatusChip/ScheduleOpinionChip';
 import { FilterContext } from '@/context/FilterContext';
 import UserCard from '@/app/components/apps/users/userCard';
-import { KPICard } from '@/app/components/charts/KPICard';
 import JourneyCounterChip from '@/app/components/apps/project/Costumer-journey/JourneyCounterChip';
+import { IconPlus } from '@tabler/icons-react';
+import TicketForm from '@/app/components/apps/project/Costumer-journey/Project-Detail/customer-service/TicketForm';
 
-const InspectionsDashboard = () => {
+const TicketsDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [projects, setProjects] = useState([]);
-  const [indicators, setIndicators] = useState({});
-  const [loadingIndicators, setLoadingIndicators] = useState(true);
   const { filters, setFilters, clearFilters, refresh } = useContext(FilterContext);
+  const [openTicketForm, setOpenTicketForm] = useState(false);
   const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -38,33 +35,6 @@ const InspectionsDashboard = () => {
   const [selectedSaleId, setSelectedSaleId] = useState(null);
   const { enqueueSnackbar } = useSnackbar();
   const theme = useTheme();
-
-  // const stats = [
-  //   {
-  //     key: 'total_finished',
-  //     label: 'Vistorias Finalizadas',
-  //     value: indicators.total_finished,
-  //     icon: <CheckCircleIcon />,
-  //     color: '#d4edda',
-  //     filter: { inspection_is_finished: true },
-  //   },
-  //   {
-  //     key: 'total_pending',
-  //     label: 'Vistorias Pendentes',
-  //     value: indicators.total_pending,
-  //     icon: <HourglassEmptyIcon />,
-  //     color: '#fff3cd',
-  //     filter: { inspection_is_pending: true },
-  //   },
-  //   {
-  //     key: 'total_not_scheduled',
-  //     label: 'Sem Vistoria Vinculada',
-  //     value: indicators.total_not_scheduled,
-  //     icon: <RemoveCircleOutlineIcon />,
-  //     color: '#f8d7da',
-  //     filter: { inspection_isnull: true },
-  //   },
-  // ];
 
   const fetchProjects = useCallback(async () => {
     setLoading(true);
@@ -89,24 +59,8 @@ const InspectionsDashboard = () => {
     }
   }, [page, rowsPerPage, filters, ordering, enqueueSnackbar]);
 
-  // const fetchIndicators = useCallback(async () => {
-  //   setLoadingIndicators(true);
-  //   try {
-  //     const { indicators } = await projectService.inspectionsIndicators({
-  //       remove_termination_cancelled_and_pre_sale: true,
-  //       ...filters,
-  //     });
-  //     setIndicators(indicators);
-  //   } catch {
-  //     enqueueSnackbar('Erro ao carregar indicadores', { variant: 'error' });
-  //   } finally {
-  //     setLoadingIndicators(false);
-  //   }
-  // }, [enqueueSnackbar, filters]);
-
   useEffect(() => {
     fetchProjects();
-    // fetchIndicators();
   }, [fetchProjects, refresh, filters]);
 
   const handleSort = (field) => {
@@ -183,38 +137,6 @@ const InspectionsDashboard = () => {
     },
   ];
 
-  // const handleKPIClick = (kpiType) => {
-  //   const kpiFilter = stats.find((stat) => stat.key === kpiType)?.filter;
-
-  //   if (!kpiFilter) {
-  //     return;
-  //   }
-
-  //   const filterKey = Object.keys(kpiFilter)[0];
-  //   const inspectionFilterKeys = ['inspection_is_finished', 'inspection_is_pending', 'inspection_isnull'];
-
-  //   if (filters && filters[filterKey] === kpiFilter[filterKey]) {
-  //     // If clicking the same filter again, remove it
-  //     const newFilters = { ...filters };
-  //     delete newFilters[filterKey];
-  //     setFilters(newFilters);
-  //   } else {
-  //     // If clicking a different filter, apply it and remove any other inspection filters
-  //     const newFilters = { ...filters };
-
-  //     // Remove all inspection filter keys
-  //     inspectionFilterKeys.forEach(key => {
-  //       delete newFilters[key];
-  //     });
-
-  //     // Add the selected filter
-  //     setFilters({
-  //       ...newFilters,
-  //       ...kpiFilter,
-  //     });
-  //   }
-  // };
-
   const handleRowClick = (row) => {
     setSelectedRow(row.id);
     setSelectedSaleId(row.sale?.id);
@@ -231,57 +153,8 @@ const InspectionsDashboard = () => {
   }, []);
 
   return (
-    <PageContainer title={'Vistorias'} description={'Dashboard de Vistorias'}>
+    <PageContainer title={'Tickets'} description={'Dashboard de Tickets'}>
       <Breadcrumb items={BCrumb} />
-
-      {/* Indicadores */}
-      {/* <Box sx={{ width: '100%', mb: 2 }}>
-        <Typography variant="h6">Indicadores</Typography>
-        <Box
-          sx={{
-            width: '100%',
-            display: 'flex',
-            justifyContent: 'space-evenly',
-            gap: 2,
-            flexWrap: 'wrap',
-            mt: 1,
-            mb: 4,
-            background: theme.palette.mode === 'dark' ? '#424242' : '#f5f5f5',
-            p: 2,
-          }}
-        >
-          {stats.map(({ key, label, value, icon, color, filter, format }) => {
-            const isActive =
-              filter &&
-              Object.entries(filter).some(
-                ([filterKey, filterValue]) => filters?.[filterKey] === filterValue,
-              );
-
-            return (
-              <KPICard
-                key={key}
-                label={label}
-                value={value}
-                icon={icon}
-                color={color}
-                active={isActive}
-                format={format}
-                onClick={() => handleKPIClick(key)}
-                loading={loadingIndicators}
-              />
-            );
-          })}
-        </Box>
-      </Box> */}
-
-      {/* Filtros */}
-      <GenericFilterDrawer
-        filters={filterConfig}
-        initialValues={filters}
-        open={filterDrawerOpen}
-        onClose={() => setFilterDrawerOpen(false)}
-        onApply={(newFilters) => setFilters(newFilters)}
-      />
 
       {/* Tabela de Projetos */}
       <TableHeader.Root>
@@ -291,14 +164,27 @@ const InspectionsDashboard = () => {
           objNameNumberReference={totalRows === 1 ? 'Projeto' : 'Projetos'}
           loading={loading}
         />
-        <TableHeader.Button
-          buttonLabel="Filtros"
-          icon={<FilterAlt />}
-          onButtonClick={() => {
-            setFilterDrawerOpen(true);
-          }}
-          sx={{ width: 200, marginLeft: 2 }}
-        />
+        <Grid
+          item
+          gridArea="button"
+          container
+          direction="row"
+          spacing={1}
+          justifyContent="flex-end"
+        >
+          <TableHeader.Button
+            buttonLabel="Filtros"
+            icon={<FilterAlt />}
+            onButtonClick={() => setFilterDrawerOpen(true)}
+            sx={{ width: 120 }}
+          />
+          <TableHeader.Button
+            buttonLabel="Adicionar"
+            icon={<IconPlus />}
+            onButtonClick={() => setOpenTicketForm(true)}
+            sx={{ width: 120 }}
+          />
+        </Grid>
       </TableHeader.Root>
 
       <Table.Root
@@ -334,8 +220,22 @@ const InspectionsDashboard = () => {
         open={openDrawer}
         onClose={() => setOpenDrawer(false)}
       />
+      {/* Formulário de Ticket */}
+      <Dialog open={openTicketForm} onClose={() => setOpenTicketForm(false)} fullWidth maxWidth="md" sx={{ padding: 2 }}>
+        <DialogContent dividers>
+          <TicketForm onSave={() => { }} />
+        </DialogContent>
+      </Dialog>
+      {/* Filtros */}
+      <GenericFilterDrawer
+        filters={filterConfig}
+        initialValues={filters}
+        open={filterDrawerOpen}
+        onClose={() => setFilterDrawerOpen(false)}
+        onApply={(newFilters) => setFilters(newFilters)}
+      />
     </PageContainer>
   );
 };
 
-export default InspectionsDashboard;
+export default TicketsDashboard;
