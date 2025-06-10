@@ -14,11 +14,12 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 import './Calendar.css';
 
 import BlankCard from '@/app/components/shared/BlankCard';
-import { Box, useTheme } from '@mui/material';
+import { Box, Dialog, DialogContent, DialogContentText, useTheme } from '@mui/material';
 import { ptBR } from 'date-fns/locale';
 import scheduleService from '@/services/scheduleService';
 import DetailsDrawer from '../schedule/DetailsDrawer';
 import GenericAsyncAutocompleteInput from '../../filters/GenericAsyncAutocompleteInput';
+import AddSchedulePage from '../inspections/schedule/AgentRoutes/Add-Schedule/Add-Schedule';
 
 moment.locale('pt-br');
 const localizer = momentLocalizer(moment);
@@ -41,12 +42,15 @@ const BigCalendar = () => {
   const [calevents, setCalEvents] = useState();
   const [detailsDrawerOpen, setDetailsDrawerOpen] = useState(false);
   const [selectedScheduleId, setSelectedScheduleId] = useState(null);
+  const [modalCreateScheduleOpen, setModalCreateScheduleOpen] = useState(false);
   const [start, setStart] = useState(new Date());
-  const [calendarDate, setCalendarDate] = useState(new Date());
+  const [refresh, setRefresh] = useState(false);
   const [loading, setLoading] = useState(false);
   const [category, setCategory] = useState();
+  const [formData, setFormData] = useState({});
   const theme = useTheme();
 
+  const handleRefresh = () => setRefresh((prev) => !prev);
 
   const fetchSchedule = async () => {
     try {
@@ -102,11 +106,10 @@ const BigCalendar = () => {
 
   useEffect(() => {
     fetchSchedule();
-  }, [start,category]);
+  }, [start, category, refresh]);
 
   const handleStartChange = (newDate) => {
     setStart(newDate);
-    setCalendarDate(newDate);
   };
 
   return (
@@ -125,12 +128,18 @@ const BigCalendar = () => {
               />
             </LocalizationProvider>
 
-            <Box sx={{width: '400px'}}>
+            <Box sx={{ width: '400px' }}>
               <GenericAsyncAutocompleteInput
                 label="Escolha o serviço"
                 name="service"
                 value={category}
-                onChange={(option) => setCategory(option?.value)}
+                onChange={(option) => {
+                  setCategory(option?.value);
+                  setFormData((prev) => ({
+                    ...prev,
+                    service: option?.value,
+                  }));
+                }}
                 endpoint="/api/services/"
                 size="small"
                 queryParam="name__icontains"
@@ -157,9 +166,8 @@ const BigCalendar = () => {
             </Box>
           ) : (
             <Calendar
-              date={calendarDate}
+              date={start}
               onNavigate={(newDate) => {
-                setCalendarDate(newDate);
                 setStart(newDate);
               }}
               selectable
@@ -172,15 +180,30 @@ const BigCalendar = () => {
                 setSelectedScheduleId(event.schedule_id);
                 setDetailsDrawerOpen(true);
               }}
+              onSelectSlot={(event) => {
+                const date = event.start;
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const day = String(date.getDate()).padStart(2, '0');
+                const onlyDate = `${year}-${month}-${day}`;
+              
+                setFormData((prev) => ({
+                  ...prev,
+                  schedule_date: onlyDate,
+                }));
+                setModalCreateScheduleOpen(true);
+              }}
+              
               eventPropGetter={(event) => ({
                 style: {
                   backgroundColor: event.color?.main || theme.palette.primary.main,
-                  color: theme.palette.getContrastText(event.color?.main || theme.palette.primary.main),
+                  color: theme.palette.getContrastText(
+                    event.color?.main || theme.palette.primary.main,
+                  ),
                   borderRadius: '4px',
                   padding: '2px',
                 },
               })}
-            
             />
           )}
         </CardContent>
@@ -194,6 +217,22 @@ const BigCalendar = () => {
         }}
         scheduleId={selectedScheduleId}
       />
+
+      <Dialog
+        open={modalCreateScheduleOpen}
+        onClose={() => setModalCreateScheduleOpen(false)}
+        maxWidth="lg"
+      >
+        <DialogContent>
+          <DialogContentText>
+            <AddSchedulePage
+              form={formData}
+              onClose={() => setModalCreateScheduleOpen(false)}
+              onRefresh={handleRefresh}
+            />
+          </DialogContentText>
+        </DialogContent>
+      </Dialog>
     </>
   );
 };
