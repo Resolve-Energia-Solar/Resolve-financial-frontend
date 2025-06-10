@@ -97,7 +97,7 @@ const InstallationsDashboard = () => {
     try {
       const response = await projectService.index({
         fields:
-          'id,project_number,designer_status,sale.customer.complete_name,sale.signature_date,sale.status,journey_counter,sale.branch.name,installation_status,sale.id,sale.customer.address,sale.customer.neighborhood,inspection.final_service_opinion.name,team,supervisor,purchase_order_number,panels_count,delivery_status,is_released_to_installation,latest_installation',
+          'id,project_number,designer_status,sale.customer.complete_name,sale.signature_date,sale.status,journey_counter,sale.branch.name,installation_status,sale.id,sale.customer.address,sale.customer.neighborhood,inspection.final_service_opinion.name,team,supervisor,purchase_order_number,panels_count,delivery_status,is_released_to_installation,latest_installation,sale.financiers',
         expand:
           'sale,sale.customer,sale.branch,inspection.final_service_opinion',
         metrics: 'journey_counter,installation_status,delivery_status,is_released_to_installation,latest_installation',
@@ -195,6 +195,11 @@ const InstallationsDashboard = () => {
       headerName: 'Contador de Dias',
       render: (r) => <JourneyCounterChip count={r.journey_counter} />,
       sortable: true
+    },
+    {
+      field: 'sale.financiers',
+      headerName: 'Financiadoras',
+      render: (r) => r.sale?.financiers?.length > 0 ? r.sale.financiers.map((f) => (<Chip key={f.id} label={f.name} sx={{ mr: 0.5 }} />)) : '-',
     },
     {
       field: 'latest_installation.schedule_agent',
