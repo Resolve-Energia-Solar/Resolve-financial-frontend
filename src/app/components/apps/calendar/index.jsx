@@ -127,7 +127,7 @@ const BigCalendar = () => {
 
             <Box sx={{width: '400px'}}>
               <GenericAsyncAutocompleteInput
-                label="Escolhe o serviço"
+                label="Escolha o serviço"
                 name="service"
                 value={category}
                 onChange={(option) => setCategory(option?.value)}
