@@ -116,6 +116,13 @@ const Menuitems = [
         href: '/apps/schedules/agents-routes',
         permissions: ['field_services.can_see_admin_schedules'],
       },
+      {
+        id: uniqueId(),
+        title: 'Calendário',
+        icon: IconMapRoute,
+        href: '/apps/calendar',
+        permissions: ['field_services.can_see_admin_schedules'],
+      },
     ],
   },
   {
