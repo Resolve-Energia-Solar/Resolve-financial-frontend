@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
-import { Button, TextField, MenuItem, Grid, Box, CircularProgress } from "@mui/material";
+import { Button, TextField, MenuItem, Grid, Box, CircularProgress, Typography, Card, CardHeader, CardContent } from "@mui/material";
 import GenericAsyncAutocompleteInput from "@/app/components/filters/GenericAsyncAutocompleteInput";
 import ticketService from "@/services/ticketService";
 import { useSnackbar } from "notistack";
+import { formatDate } from "@/utils/dateUtils";
+import StatusChip from "@/utils/status/DocumentStatusIcon";
+import { isOptionalChain } from "typescript";
 
 const priorityOptions = [
     { value: 1, label: "Baixa" },
@@ -24,15 +27,11 @@ export default function TicketForm({ projectId, ticketId = null, onSave }) {
         subject: "",
         description: "",
         status: "",
-        // conclusion_date: null,
         priority: "",
         responsible_user: null,
         ticket_type: null,
     });
     const { enqueueSnackbar } = useSnackbar();
-
-    console.log("TicketForm mounted with projectId:", projectId, "and ticketId:", ticketId);
-
     const [errors, setErrors] = useState({});
     const [projectInfo, setProjectInfo] = useState(null);
     const [loading, setLoading] = useState(false);
@@ -106,6 +105,9 @@ export default function TicketForm({ projectId, ticketId = null, onSave }) {
         }
     };
 
+    const formatCurrency = (value) =>
+        new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
+
     return (
         <Box component="form">
             <Grid container spacing={4} sx={{ marginBottom: "2rem" }}>
@@ -134,8 +136,105 @@ export default function TicketForm({ projectId, ticketId = null, onSave }) {
             </Grid>
 
             <Grid container spacing={4}>
-                {/* Subject */}
                 <Grid item xs={12}>
+                    {!projectId &&
+                        <GenericAsyncAutocompleteInput
+                            label="Projeto"
+                            value={formData.project}
+                            onChange={handleSelectChange("project")}
+                            endpoint="/api/projects"
+                            queryParam="q"
+                            extraParams={{
+                                expand: [
+                                    'sale.customer',
+                                    'sale',
+                                    'sale.branch',
+                                    'product',
+                                    'sale.homologator',
+                                ],
+                                fields: [
+                                    'id',
+                                    'project_number',
+                                    'address',
+                                    'sale.total_value',
+                                    'sale.contract_number',
+                                    'sale.customer.complete_name',
+                                    'sale.customer.id',
+                                    'sale.branch.id',
+                                    'sale.branch.name',
+                                    'product.id',
+                                    'product.name',
+                                    'product.description',
+                                    'sale.signature_date',
+                                    'sale.status',
+                                    'sale.homologator.complete_name',
+                                    'address.complete_address',
+                                ],
+                                filter: 'status__in=C,P,EA',
+                            }}
+                            mapResponse={(data) =>
+                                data.results.map((p) => ({
+                                    label: `${p.project_number} - ${p.sale?.customer?.complete_name}`,
+                                    value: p.id,
+                                    project: p,
+                                }))
+                            }
+                            fullWidth
+                            helperText={errors.project?.[0] || ''}
+                            error={!!errors.project}
+                            renderOption={(props, option) => (
+                                <li {...props}>
+                                    <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                                        <Card sx={{ padding: 0, maxWidth: 450 }}>
+                                            <CardHeader
+                                                title={`Projeto: ${option.project?.project_number}`}
+                                                subheader={option.project.sale?.customer?.complete_name || 'Cliente não Disponível'}
+                                            />
+                                            <CardContent>
+                                                <Typography variant="body2">
+                                                    <strong>Valor total:</strong>{' '}
+                                                    {option.project.sale?.total_value
+                                                        ? formatCurrency(option.project.sale.total_value)
+                                                        : 'Sem valor Total'}
+                                                </Typography>
+                                                <Typography variant="body2">
+                                                    <strong>Contrato:</strong>{' '}
+                                                    {option.project.sale?.contract_number || 'Contrato não Disponível'}
+                                                </Typography>
+                                                <Typography variant="body2">
+                                                    <strong>Homologador:</strong>{' '}
+                                                    {option.project.sale?.homologator?.complete_name || 'Homologador não Disponível'}
+                                                </Typography>
+                                                <Typography variant="body2">
+                                                    <strong>Data de Contrato:</strong>{' '}
+                                                    {formatDate(option.project.sale?.signature_date) || 'Data de Contrato não Disponível'}
+                                                </Typography>
+                                                <Typography variant="body2" sx={{ textWrap: 'wrap' }}>
+                                                    <strong>Endereço:</strong>{' '}
+                                                    {option.project.address?.complete_address || 'Endereço não Disponível'}
+                                                </Typography>
+                                                <Typography variant="body2">
+                                                    <strong>Status da Venda:</strong>{' '}
+                                                    {option.project.sale?.status ? (
+                                                        <StatusChip status={option.project.sale.status} />
+                                                    ) : (
+                                                        'Status não Disponível'
+                                                    )}
+                                                </Typography>
+                                                <Typography variant="body2">
+                                                    <strong>Produto:</strong>{' '}
+                                                    {option.project.product?.description || 'Produto não Disponível'}
+                                                </Typography>
+                                            </CardContent>
+                                        </Card>
+                                    </Box>
+                                </li>
+                            )}
+                        />
+                    }
+                </Grid>
+                <Grid item xs={12}>
+                    {/* Subject */}
                     <TextField
                         fullWidth
                         label="Assunto"
