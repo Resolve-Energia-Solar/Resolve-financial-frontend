@@ -89,7 +89,7 @@ const ScheduleTable = () => {
       .index({
         page,
         limit: rowsPerPage,
-        expand: ['customer', 'service_opinion', 'final_service_opinion', 'branch', 'address', 'service'],
+        expand: ['customer', 'service_opinion', 'final_service_opinion', 'branch', 'address', 'service', 'project.sale'],
         service__in: selectedServices.join(','),
         fields: [
           'id',
@@ -107,7 +107,8 @@ const ScheduleTable = () => {
           'branch.name',
           'schedule_agent',
           'observation',
-          'service.name'
+          'service.name',
+          'project.sale.financiers',
         ],
         ordering: orderDirection === 'desc' ? order : `-${order}`,
         ...filters,
@@ -389,6 +390,7 @@ const ScheduleTable = () => {
                           ))}
                       </Box>
                     </TableCell>
+                    <TableCell>Financiadoras</TableCell>
                     <TableCell>Observação</TableCell>
                   </TableRow>
                 </TableHead>
@@ -429,6 +431,13 @@ const ScheduleTable = () => {
                         <ScheduleOpinionChip status={schedule.final_service_opinion?.name} />
                       </TableCell>
                       <TableCell>{new Date(schedule.created_at).toLocaleString('pt-BR')}</TableCell>
+                      <TableCell>
+                        {schedule.project?.sale?.financiers && schedule.project?.sale?.financiers.length > 0
+                          ? schedule.project?.sale?.financiers.map((f) => (
+                            <Chip key={f.id} label={f.name} sx={{ mr: 0.5 }} />
+                          ))
+                          : 'Nenhuma financiadora'}
+                      </TableCell>
                       <TableCell sx={{ textWrap: 'wrap' }}>{schedule.observation}</TableCell>
                     </TableRow>
                   ))}
