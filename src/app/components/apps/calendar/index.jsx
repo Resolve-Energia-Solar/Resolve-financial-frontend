@@ -9,10 +9,8 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import moment from 'moment';
 import 'moment/locale/pt-br';
-
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import './Calendar.css';
-
 import BlankCard from '@/app/components/shared/BlankCard';
 import { Box, Dialog, DialogContent, DialogContentText, useTheme } from '@mui/material';
 import { ptBR } from 'date-fns/locale';
@@ -20,6 +18,9 @@ import scheduleService from '@/services/scheduleService';
 import DetailsDrawer from '../schedule/DetailsDrawer';
 import GenericAsyncAutocompleteInput from '../../filters/GenericAsyncAutocompleteInput';
 import AddSchedulePage from '../inspections/schedule/AgentRoutes/Add-Schedule/Add-Schedule';
+
+import { Tooltip } from 'react-tooltip';
+import 'react-tooltip/dist/react-tooltip.css';
 
 moment.locale('pt-br');
 const localizer = momentLocalizer(moment);
@@ -38,8 +39,34 @@ const messages = {
   noEventsInRange: 'Nenhum evento neste período.',
 };
 
+const sanitize = (str) => {
+  return String(str || '')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+    .replace(/\n/g, '<br/>');
+};
+
+const CustomEventWrapper = ({ event, children }) => (
+  <>
+    <div
+      style={{ zIndex: 999 }}
+      data-tooltip-id={`tooltip-${event.schedule_id}`}
+      data-tooltip-html={`
+        ${sanitize(event.service)}<br/>
+        <strong>Agente: ${sanitize(event.agentName)}</strong><br/>
+        <strong>Cliente: ${sanitize(event.title)}</strong><br/>
+        ${sanitize(event.address)}<br/>
+        <strong>Parecer Final: ${sanitize(event.final_service_opinion)}</strong>
+      `}
+    >
+      {children}
+    </div>
+    <Tooltip id={`tooltip-${event.schedule_id}`} place="top" style={{ zIndex: 9999 }} />
+  </>
+);
+
 const BigCalendar = () => {
-  const [calevents, setCalEvents] = useState();
+  const [calevents, setCalEvents] = useState([]);
   const [detailsDrawerOpen, setDetailsDrawerOpen] = useState(false);
   const [selectedScheduleId, setSelectedScheduleId] = useState(null);
   const [modalCreateScheduleOpen, setModalCreateScheduleOpen] = useState(false);
@@ -59,9 +86,10 @@ const BigCalendar = () => {
         service: category,
         schedule_date_year: start.getFullYear(),
         schedule_date_month: start.getMonth() + 1,
-        expand: 'customer,address',
+        expand:
+          'customer,address,service,schedule_agent,final_service_opinion,final_service_opinion_user',
         fields:
-          'id,schedule_date,schedule_start_time,schedule_end_date,schedule_end_time,customer,address',
+          'id,schedule_date,schedule_start_time,schedule_end_date,schedule_end_time,customer,address,service,schedule_agent,final_service_opinion,final_service_opinion_user',
         view_all: true,
       });
 
@@ -83,23 +111,27 @@ const BigCalendar = () => {
 
       const start = new Date(`${startDateStr}T${startTimeStr}`);
       const end = new Date(`${endDateStr}T${endTimeStr}`);
-
       const allDay = startTimeStr === '00:00:00' && endTimeStr === '23:59:59';
 
-      const customerName = item.customer.complete_name || 'Cliente sem nome';
+      const customerName = item.customer?.complete_name || '-';
+      const agentName = item.schedule_agent?.complete_name || '-';
       const address = item.address?.complete_address || 'Endereço não disponível';
-
-      const title = `${customerName}`;
-      const color = theme.palette.primary;
-      const schedule_id = item.id;
+      const service = item.service.name;
+      const final_service_opinion = item.final_service_opinion?.name || '-';
+      const final_service_opinion_user = item.final_service_opinion_user?.name || '-';
 
       return {
-        title,
+        title: customerName,
+        address,
         allDay,
-        schedule_id,
+        schedule_id: item.id,
         start,
         end,
-        color,
+        color: theme.palette.primary,
+        service,
+        agentName,
+        final_service_opinion,
+        final_service_opinion_user,
       };
     });
   };
@@ -121,7 +153,6 @@ const BigCalendar = () => {
               <DatePicker
                 label="Escolha a data"
                 views={['year', 'month']}
-                inputFormat="MM/yyyy"
                 value={start}
                 onChange={handleStartChange}
                 renderInput={(params) => <TextField {...params} fullWidth sx={{ mb: 3 }} />}
@@ -167,15 +198,14 @@ const BigCalendar = () => {
           ) : (
             <Calendar
               date={start}
-              onNavigate={(newDate) => {
-                setStart(newDate);
-              }}
+              onNavigate={(newDate) => setStart(newDate)}
               selectable
               events={calevents}
               defaultView="month"
               localizer={localizer}
               messages={messages}
               style={{ height: 'calc(100vh - 350px)' }}
+              components={{ eventWrapper: CustomEventWrapper }}
               onSelectEvent={(event) => {
                 setSelectedScheduleId(event.schedule_id);
                 setDetailsDrawerOpen(true);
@@ -186,14 +216,12 @@ const BigCalendar = () => {
                 const month = String(date.getMonth() + 1).padStart(2, '0');
                 const day = String(date.getDate()).padStart(2, '0');
                 const onlyDate = `${year}-${month}-${day}`;
-              
                 setFormData((prev) => ({
                   ...prev,
                   schedule_date: onlyDate,
                 }));
                 setModalCreateScheduleOpen(true);
               }}
-              
               eventPropGetter={(event) => ({
                 style: {
                   backgroundColor: event.color?.main || theme.palette.primary.main,
