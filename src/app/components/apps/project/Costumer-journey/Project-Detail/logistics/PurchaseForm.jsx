@@ -102,6 +102,7 @@ export default function PurchaseForm({ projectId, purchaseId = null, onSave }) {
                             label="Projeto"
                             value={formData.project?.id}
                             onChange={handleSelectChange("project")}
+                            queryParam="q"
                             endpoint="/api/projects"
                             mapResponse={(data) =>
                                 data.results.map((p) => ({
@@ -147,6 +148,7 @@ export default function PurchaseForm({ projectId, purchaseId = null, onSave }) {
                         value={formData.supplier}
                         onChange={handleSelectChange("supplier")}
                         endpoint="/api/users"
+                        queryParam="complete_name__icontains"
                         extraParams={{ user_types: 1 }}
                         mapResponse={(data) =>
                             data.results.map((u) => ({ value: u.id, label: u.complete_name || u.name }))
