@@ -119,7 +119,7 @@ const Menuitems = [
       {
         id: uniqueId(),
         title: 'Calendário',
-        icon: IconMapRoute,
+        icon: IconCalendarStar,
         href: '/apps/calendar',
         permissions: ['field_services.can_see_admin_schedules'],
       },

@@ -18,6 +18,7 @@ import { Box } from '@mui/material';
 import { ptBR } from 'date-fns/locale';
 import scheduleService from '@/services/scheduleService';
 import DetailsDrawer from '../schedule/DetailsDrawer';
+import GenericAsyncAutocompleteInput from '../../filters/GenericAsyncAutocompleteInput';
 
 moment.locale('pt-br');
 const localizer = momentLocalizer(moment);
@@ -43,11 +44,14 @@ const BigCalendar = () => {
   const [start, setStart] = useState(new Date());
   const [calendarDate, setCalendarDate] = useState(new Date());
   const [loading, setLoading] = useState(false);
+  const [category, setCategory] = useState();
+
 
   const fetchSchedule = async () => {
     try {
       setLoading(true);
       const response = await scheduleService.index({
+        service: category,
         schedule_date_year: start.getFullYear(),
         schedule_date_month: start.getMonth() + 1,
         expand: 'customer,address',
@@ -97,7 +101,7 @@ const BigCalendar = () => {
 
   useEffect(() => {
     fetchSchedule();
-  }, [start]);
+  }, [start,category]);
 
   const handleStartChange = (newDate) => {
     setStart(newDate);
@@ -108,7 +112,7 @@ const BigCalendar = () => {
     <>
       <BlankCard>
         <CardContent>
-          <Box mb={2}>
+          <Box mb={2} sx={{ display: 'flex', justifyContent: 'space-between' }}>
             <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={ptBR}>
               <DatePicker
                 label="Escolha a data"
@@ -119,10 +123,35 @@ const BigCalendar = () => {
                 renderInput={(params) => <TextField {...params} fullWidth sx={{ mb: 3 }} />}
               />
             </LocalizationProvider>
+
+            <Box sx={{width: '400px'}}>
+              <GenericAsyncAutocompleteInput
+                label="Escolhe o serviço"
+                name="service"
+                value={category}
+                onChange={(option) => setCategory(option?.value)}
+                endpoint="/api/services/"
+                size="small"
+                queryParam="name__icontains"
+                extraParams={{ fields: ['id', 'name'] }}
+                mapResponse={(data) =>
+                  data.results.map((p) => ({
+                    label: p.name,
+                    value: p.id,
+                  }))
+                }
+                fullWidth
+              />
+            </Box>
           </Box>
 
           {loading ? (
-            <Box display="flex" justifyContent="center" alignItems="center" sx={{ height: 'calc(100vh - 350px)' }}>
+            <Box
+              display="flex"
+              justifyContent="center"
+              alignItems="center"
+              sx={{ height: 'calc(100vh - 350px)' }}
+            >
               <CircularProgress />
             </Box>
           ) : (
