@@ -28,8 +28,8 @@ export default function CustomerServiceTab({ projectId, viewOnly = false }) {
   const params = useMemo(
     () => ({
       fields:
-        'id,subject,priority,status,created_at,responsible.complete_name,responsible_user.complete_name,project.id,responsible_department.name,ticket_type.name,conclusion_date,deadline',
-      expand: 'responsible,responsible_user,project,ticket_type',
+        'id,subject.subject,priority,status,created_at,responsible.complete_name,responsible_user.complete_name,project.id,responsible_department.name,ticket_type.name,conclusion_date,deadline',
+      expand: 'responsible,responsible_user,project,ticket_type,subject',
       project__in: projectId,
       page: page + 1,
       page_size: rowsPerPage,
@@ -57,7 +57,7 @@ export default function CustomerServiceTab({ projectId, viewOnly = false }) {
   }
 
   const ticketsColumns = [
-    { field: 'subject', headerName: 'Título', render: (r) => r.subject },
+    { field: 'subject.subject', headerName: 'Título', render: (r) => r.subject?.subject },
     { field: 'priority', headerName: 'Prioridade', render: (r) => r.priority },
     {
       field: 'ticket_type',

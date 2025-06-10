@@ -24,7 +24,7 @@ const statusOptions = [
 export default function TicketForm({ projectId, ticketId = null, onSave }) {
     const [formData, setFormData] = useState({
         project: projectId || null,
-        subject: "",
+        subject: null,
         description: "",
         status: "",
         priority: "",
@@ -42,18 +42,16 @@ export default function TicketForm({ projectId, ticketId = null, onSave }) {
                 setLoading(true);
                 try {
                     const data = await ticketService.find(ticketId, {
-                        expand: "project,project.sale.customer",
-                        fields:
-                            "id,project.id,project.project_number,project.sale.customer.complete_name,subject,description,status,conclusion_date,priority,responsible_user,ticket_type",
+                        fields: "id,project,subject,description,status,conclusion_date,priority,responsible_user,ticket_type",
                     });
                     setProjectInfo(data.project || null);
                     setFormData({
-                        project: data.project?.id || null,
-                        subject: data.subject || "",
-                        description: data.description || "",
-                        status: data.status || "",
-                        conclusion_date: data.conclusion_date || "",
-                        priority: data.priority || "",
+                        project: data.project || null,
+                        subject: data.subject || null,
+                        description: data.description || null,
+                        status: data.status || null,
+                        conclusion_date: data.conclusion_date || null,
+                        priority: data.priority || null,
                         responsible_user: data.responsible_user || null,
                         ticket_type: data.ticket_type || null,
                     });
@@ -235,12 +233,18 @@ export default function TicketForm({ projectId, ticketId = null, onSave }) {
                 </Grid>
                 <Grid item xs={12}>
                     {/* Subject */}
-                    <TextField
-                        fullWidth
+                    <GenericAsyncAutocompleteInput
                         label="Assunto"
-                        name="subject"
                         value={formData.subject}
-                        onChange={handleChange}
+                        onChange={handleSelectChange("subject")}
+                        endpoint="/api/tickets-subjects"
+                        extraParams={{ fields: "id,subject" }}
+                        mapResponse={(data) =>
+                            data.results.map((s) => ({
+                                value: s.id,
+                                label: s.subject,
+                            }))
+                        }
                         error={!!errors.subject}
                         helperText={errors.subject?.[0]}
                         sx={{
