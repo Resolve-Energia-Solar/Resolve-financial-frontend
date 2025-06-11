@@ -5,17 +5,13 @@ import Breadcrumb from '@/app/(DashboardLayout)/layout/shared/breadcrumb/Breadcr
 import { useSnackbar } from 'notistack';
 import { Table } from '@/app/components/Table';
 import { TableHeader } from '@/app/components/TableHeader';
-import StatusChip from '@/utils/status/DocumentStatusIcon';
 import { FilterAlt } from '@mui/icons-material';
 import ProjectDetailDrawer from '@/app/components/apps/project/Costumer-journey/Project-Detail/ProjectDrawer';
-import { useTheme, Grid, Dialog, DialogContent, Chip } from '@mui/material';
+import { useTheme, Grid, Dialog, DialogContent } from '@mui/material';
 import GenericFilterDrawer from '@/app/components/filters/GenericFilterDrawer';
 import filterConfig from './filterConfig';
-import { formatDate } from '@/utils/dateUtils';
-import ScheduleOpinionChip from '@/app/components/apps/inspections/schedule/StatusChip/ScheduleOpinionChip';
 import { FilterContext } from '@/context/FilterContext';
 import UserCard from '@/app/components/apps/users/userCard';
-import JourneyCounterChip from '@/app/components/apps/project/Costumer-journey/JourneyCounterChip';
 import { IconPlus } from '@tabler/icons-react';
 import TicketForm from '@/app/components/apps/project/Costumer-journey/Project-Detail/customer-service/TicketForm';
 import ticketService from '@/services/ticketService';
@@ -43,7 +39,7 @@ const TicketsDashboard = () => {
     try {
       const response = await ticketService.index({
         fields:
-          'id,project.project_number,project.sale.customer.complete_name,responsible,subject.subject,description,ticket_type,priority,responsible_department,responsible_user,status,conclusion_date,deadline,observer,answered_at,answered_by,closed_at,closed_by,resolved_at,resolved_by,created_at,updated_at',
+          'id,protocol,project.project_number,project.sale.customer.complete_name,responsible,subject.subject,description,ticket_type,priority,responsible_department,responsible_user,status,conclusion_date,deadline,observer,answered_at,answered_by,closed_at,closed_by,resolved_at,resolved_by,created_by,created_at,updated_at,duration',
         expand: 'project,project.sale.customer,subject',
         is_deleted: false,
         page: page + 1,
@@ -83,6 +79,17 @@ const TicketsDashboard = () => {
       sx: { opacity: 0.7 },
     },
     {
+      field: 'protocol',
+      headerName: 'Protocolo',
+      render: (r) => r.protocol || '-',
+      sx: { fontWeight: 'bold', color: theme.palette.primary.main },
+    },
+    {
+      field: 'created_by',
+      headerName: 'Criado por',
+      render: (r) => r.created_by ? <UserCard userId={r.created_by} /> : '-'
+    },
+    {
       field: 'created_at',
       headerName: 'Data de Abertura',
       render: (r) => r.created_at ? new Date(r.created_at).toLocaleString('pt-BR') : '-',
@@ -107,6 +114,11 @@ const TicketsDashboard = () => {
       headerName: 'Status',
       render: (r) => <TicketStatusChip status={r.status} />,
     },
+    {
+      field: 'duration',
+      headerName: 'Duração',
+      render: (r) => r.duration || '-'
+    }
   ];
 
   const handleRowClick = (row) => {
