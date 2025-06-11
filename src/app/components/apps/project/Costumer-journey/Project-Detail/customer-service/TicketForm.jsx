@@ -28,7 +28,7 @@ export default function TicketForm({ projectId, ticketId = null, onSave }) {
         description: "",
         status: "",
         priority: "",
-        responsible_user: null,
+        responsible: null,
         ticket_type: null,
         created_by: null,
     });
@@ -44,7 +44,7 @@ export default function TicketForm({ projectId, ticketId = null, onSave }) {
                 setLoading(true);
                 try {
                     const data = await ticketService.find(ticketId, {
-                        fields: "id,project.id,project.project_number,project.sale.customer.complete_name,subject,description,status,conclusion_date,priority,responsible_user,ticket_type,created_by",
+                        fields: "id,project.id,project.project_number,project.sale.customer.complete_name,subject,description,status,conclusion_date,priority,responsible,ticket_type,created_by",
                         expand: "project,project.sale.customer"
                     });
                     setProjectInfo(data.project || null);
@@ -55,7 +55,7 @@ export default function TicketForm({ projectId, ticketId = null, onSave }) {
                         status: data.status || null,
                         conclusion_date: data.conclusion_date || null,
                         priority: data.priority || null,
-                        responsible_user: data.responsible_user || null,
+                        responsible: data.responsible || null,
                         ticket_type: data.ticket_type || null,
                         created_by: data.created_by || null,
                     });
@@ -374,8 +374,8 @@ export default function TicketForm({ projectId, ticketId = null, onSave }) {
                 <Grid item xs={12} md={6}>
                     <GenericAsyncAutocompleteInput
                         label="Responsável"
-                        value={formData.responsible_user}
-                        onChange={handleSelectChange("responsible_user")}
+                        value={formData.responsible}
+                        onChange={handleSelectChange("responsible")}
                         endpoint="/api/users"
                         queryParam="complete_name__icontains"
                         extraParams={{ fields: "id,complete_name" }}
@@ -385,8 +385,8 @@ export default function TicketForm({ projectId, ticketId = null, onSave }) {
                                 label: u.complete_name,
                             }))
                         }
-                        error={!!errors.responsible_user}
-                        helperText={errors.responsible_user?.[0]}
+                        error={!!errors.responsible}
+                        helperText={errors.responsible?.[0]}
                         sx={{
                             width: "100%",
                             fontSize: "1rem",

@@ -21,7 +21,6 @@ export default function CustomerServiceTab({ projectId, viewOnly = false }) {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [openTicketFormModal, setOpenTicketFormModal] = useState(false);
-  const [openViewTicket, setOpenViewTicket] = useState(false);
   const [selectedTicket, setSelectedTicket] = useState(null);
   const [refreshKey, setRefreshKey] = useState(0);
 
@@ -184,6 +183,7 @@ export default function CustomerServiceTab({ projectId, viewOnly = false }) {
             setOpenTicketFormModal(false);
             setSelectedTicket(null);
           }}
+          maxWidth="md"
         >
           <DialogContent>
             <TicketForm
