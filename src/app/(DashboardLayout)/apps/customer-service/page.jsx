@@ -20,7 +20,7 @@ import TicketPriority from '@/app/components/apps/customer_service/TicketPriorit
 
 const TicketsDashboard = () => {
   const [loading, setLoading] = useState(true);
-  const [projects, setProjects] = useState([]);
+  const [tickets, setTickets] = useState([]);
   const { filters, setFilters, clearFilters, refresh } = useContext(FilterContext);
   const [openTicketForm, setOpenTicketForm] = useState(false);
   const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
@@ -30,7 +30,6 @@ const TicketsDashboard = () => {
   const [ordering, setOrdering] = useState('-created_at');
   const [openDrawer, setOpenDrawer] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
-  const [selectedSaleId, setSelectedSaleId] = useState(null);
   const { enqueueSnackbar } = useSnackbar();
   const theme = useTheme();
 
@@ -39,7 +38,7 @@ const TicketsDashboard = () => {
     try {
       const response = await ticketService.index({
         fields:
-          'id,protocol,project.project_number,project.sale.customer.complete_name,responsible,subject.subject,description,ticket_type,priority,responsible_department,responsible_user,status,conclusion_date,deadline,observer,answered_at,answered_by,closed_at,closed_by,resolved_at,resolved_by,created_by,created_at,updated_at,duration',
+          'id,protocol,project.id,project.project_number,project.sale.customer.complete_name,responsible,subject.subject,description,ticket_type,priority,responsible_department,responsible_user,status,conclusion_date,deadline,observer,answered_at,answered_by,closed_at,closed_by,resolved_at,resolved_by,created_by,created_at,updated_at,duration',
         expand: 'project,project.sale.customer,subject',
         is_deleted: false,
         page: page + 1,
@@ -47,7 +46,7 @@ const TicketsDashboard = () => {
         ordering,
         ...filters,
       });
-      setProjects(response.results);
+      setTickets(response.results);
       setTotalRows(response.meta.pagination.total_count);
     } catch (error) {
       enqueueSnackbar('Erro ao carregar tickets', { variant: 'error' });
@@ -69,7 +68,7 @@ const TicketsDashboard = () => {
     }
   };
 
-  const BCrumb = [{ to: '/', title: 'Home' }, { title: 'Relacionamento' }];
+  const BCrumb = [{ to: '/', title: 'Home' }, { title: 'Tickets' }];
 
   const columns = [
     {
@@ -93,6 +92,7 @@ const TicketsDashboard = () => {
       field: 'created_at',
       headerName: 'Data de Abertura',
       render: (r) => r.created_at ? new Date(r.created_at).toLocaleString('pt-BR') : '-',
+      sortable: true,
     },
     {
       field: 'priority',
@@ -122,8 +122,7 @@ const TicketsDashboard = () => {
   ];
 
   const handleRowClick = (row) => {
-    setSelectedRow(row.id);
-    setSelectedSaleId(row.sale?.id);
+    setSelectedRow(row.project?.id);
     setOpenDrawer(true);
   };
 
@@ -172,7 +171,7 @@ const TicketsDashboard = () => {
       </TableHeader.Root>
 
       <Table.Root
-        data={projects}
+        data={tickets}
         totalRows={totalRows}
         page={page}
         rowsPerPage={rowsPerPage}
@@ -199,7 +198,6 @@ const TicketsDashboard = () => {
         <Table.Pagination />
       </Table.Root>
       <ProjectDetailDrawer
-        saleId={selectedSaleId}
         projectId={selectedRow}
         open={openDrawer}
         onClose={() => setOpenDrawer(false)}
@@ -207,7 +205,7 @@ const TicketsDashboard = () => {
       {/* Formulário de Ticket */}
       <Dialog open={openTicketForm} onClose={() => setOpenTicketForm(false)} fullWidth maxWidth="md" sx={{ padding: 2 }}>
         <DialogContent dividers>
-          <TicketForm onSave={() => { }} />
+          <TicketForm onSave={() => { setOpenTicketForm(false); fetchTickets(); }} />
         </DialogContent>
       </Dialog>
       {/* Filtros */}
