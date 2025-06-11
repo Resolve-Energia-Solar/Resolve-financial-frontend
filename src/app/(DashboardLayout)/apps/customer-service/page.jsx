@@ -29,6 +29,7 @@ const TicketsDashboard = () => {
   const [totalRows, setTotalRows] = useState(0);
   const [ordering, setOrdering] = useState('-created_at');
   const [openDrawer, setOpenDrawer] = useState(false);
+  const [selectedProject, setSelectedProject] = useState(null);
   const [selectedRow, setSelectedRow] = useState(null);
   const { enqueueSnackbar } = useSnackbar();
   const theme = useTheme();
@@ -122,7 +123,8 @@ const TicketsDashboard = () => {
   ];
 
   const handleRowClick = (row) => {
-    setSelectedRow(row.project?.id);
+    setSelectedProject(row.project?.id);
+    setSelectedRow(row.id);
     setOpenDrawer(true);
   };
 
@@ -180,7 +182,7 @@ const TicketsDashboard = () => {
         onRowClick={handleRowClick}
         onClose={() => {
           setOpenDrawer(false);
-          setSelectedRow(null);
+          setSelectedProject(null);
         }}
         noWrap={true}
       >
@@ -198,9 +200,11 @@ const TicketsDashboard = () => {
         <Table.Pagination />
       </Table.Root>
       <ProjectDetailDrawer
-        projectId={selectedRow}
+        projectId={selectedProject}
         open={openDrawer}
         onClose={() => setOpenDrawer(false)}
+        tab={'Pós-Venda'}
+        extraId={selectedRow}
       />
       {/* Formulário de Ticket */}
       <Dialog open={openTicketForm} onClose={() => setOpenTicketForm(false)} fullWidth maxWidth="md" sx={{ padding: 2 }}>
