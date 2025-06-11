@@ -45,12 +45,12 @@ function TabPanel({ children, value, index }) {
   );
 }
 
-export default function ProjectDetailDrawer({ projectId, saleId, open, onClose, refresh }) {
+export default function ProjectDetailDrawer({ projectId, saleId, open, onClose, tab, extraId }) {
   const { enqueueSnackbar } = useSnackbar();
   const [project, setProject] = useState(null);
   const [processId, setProcessId] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [tab, setTab] = useState(0);
+  const [tabIndex, setTabIndex] = useState(0);
   const [paneLimits, setPaneLimits] = useState({ min: 0, max: 0, default: 0 });
   const [hasConstructionTab, setHasConstructionTab] = useState(false);
   const user = useSelector((state) => state.user?.user);
@@ -102,7 +102,7 @@ export default function ProjectDetailDrawer({ projectId, saleId, open, onClose, 
   }, [fetchData]);
 
   const handleClose = useCallback(() => onClose(), [onClose]);
-  const handleTabChange = (e, newVal) => setTab(newVal);
+  const handleTabChange = (e, newVal) => setTabIndex(newVal);
   const drawerWidth = useMemo(() => (processId ? '100vw' : '65vw'), [processId]);
 
   const tabsConfig = useMemo(
@@ -197,7 +197,7 @@ export default function ProjectDetailDrawer({ projectId, saleId, open, onClose, 
         {
           label: 'Pós-Venda',
           content: (
-            <CustomerServiceTab projectId={projectId} viewOnly={!canEdit} />
+            <CustomerServiceTab projectId={projectId} viewOnly={!canEdit} ticketId={extraId} />
           ),
         },
         { label: 'Sol. de Pagamento', content: <FinancialRecordsTab projectId={projectId} viewOnly={!canEdit} /> },
@@ -212,6 +212,15 @@ export default function ProjectDetailDrawer({ projectId, saleId, open, onClose, 
       ].filter(Boolean),
     [project, projectId, hasConstructionTab],
   );
+
+  useEffect(() => {
+    if (tab) {
+      const index = tabsConfig.findIndex(t => t.label === tab);
+      if (index !== -1) {
+        setTabIndex(index);
+      }
+    }
+  }, [tab, tabsConfig]);
 
   return (
     <Drawer
@@ -306,13 +315,13 @@ export default function ProjectDetailDrawer({ projectId, saleId, open, onClose, 
         </IconButton>
       </Box>
       <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-        <Tabs value={tab} onChange={handleTabChange} variant="scrollable" scrollButtons="auto">
+        <Tabs value={tabIndex} onChange={handleTabChange} variant="scrollable" scrollButtons="auto">
           {tabsConfig.map((t, i) => (
             <Tab key={i} label={t.label} />
           ))}
         </Tabs>
         {tabsConfig.map((t, i) => (
-          <TabPanel key={i} value={tab} index={i}>
+          <TabPanel key={i} value={tabIndex} index={i}>
             {t.content}
           </TabPanel>
         ))}
