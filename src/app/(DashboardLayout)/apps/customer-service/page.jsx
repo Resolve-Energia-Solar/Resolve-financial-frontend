@@ -3,13 +3,12 @@ import { useState, useEffect, useCallback, useContext } from 'react';
 import PageContainer from '@/app/components/container/PageContainer';
 import Breadcrumb from '@/app/(DashboardLayout)/layout/shared/breadcrumb/Breadcrumb';
 import { useSnackbar } from 'notistack';
-import projectService from '@/services/projectService';
 import { Table } from '@/app/components/Table';
 import { TableHeader } from '@/app/components/TableHeader';
 import StatusChip from '@/utils/status/DocumentStatusIcon';
 import { FilterAlt } from '@mui/icons-material';
 import ProjectDetailDrawer from '@/app/components/apps/project/Costumer-journey/Project-Detail/ProjectDrawer';
-import { useTheme, Grid, Dialog, DialogContent } from '@mui/material';
+import { useTheme, Grid, Dialog, DialogContent, Chip } from '@mui/material';
 import GenericFilterDrawer from '@/app/components/filters/GenericFilterDrawer';
 import filterConfig from './filterConfig';
 import { formatDate } from '@/utils/dateUtils';
@@ -19,6 +18,9 @@ import UserCard from '@/app/components/apps/users/userCard';
 import JourneyCounterChip from '@/app/components/apps/project/Costumer-journey/JourneyCounterChip';
 import { IconPlus } from '@tabler/icons-react';
 import TicketForm from '@/app/components/apps/project/Costumer-journey/Project-Detail/customer-service/TicketForm';
+import ticketService from '@/services/ticketService';
+import TicketStatusChip from '@/app/components/apps/customer_service/TicketStatusChip';
+import TicketPriority from '@/app/components/apps/customer_service/TicketPriority';
 
 const TicketsDashboard = () => {
   const [loading, setLoading] = useState(true);
@@ -36,32 +38,31 @@ const TicketsDashboard = () => {
   const { enqueueSnackbar } = useSnackbar();
   const theme = useTheme();
 
-  const fetchProjects = useCallback(async () => {
+  const fetchTickets = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await projectService.index({
+      const response = await ticketService.index({
         fields:
-          'id,project_number,sale.customer.complete_name,sale.signature_date,sale.status,journey_counter,sale.branch.name,inspection.schedule_date,inspection.final_service_opinion.name,inspection.final_service_opinion_date,inspection.final_service_opinion_user,sale.id',
-        expand: 'sale,sale.customer,sale.branch,inspection,inspection.final_service_opinion',
-        metrics: 'journey_counter',
+          'id,project.project_number,project.sale.customer.complete_name,responsible,subject.subject,description,ticket_type,priority,responsible_department,responsible_user,status,conclusion_date,deadline,observer,answered_at,answered_by,closed_at,closed_by,resolved_at,resolved_by,created_at,updated_at',
+        expand: 'project,project.sale.customer,subject',
+        is_deleted: false,
         page: page + 1,
         limit: rowsPerPage,
         ordering,
-        remove_termination_cancelled_and_pre_sale: true,
         ...filters,
       });
       setProjects(response.results);
       setTotalRows(response.meta.pagination.total_count);
     } catch (error) {
-      enqueueSnackbar('Erro ao carregar Projetos', { variant: 'error' });
+      enqueueSnackbar('Erro ao carregar tickets', { variant: 'error' });
     } finally {
       setLoading(false);
     }
   }, [page, rowsPerPage, filters, ordering, enqueueSnackbar]);
 
   useEffect(() => {
-    fetchProjects();
-  }, [fetchProjects, refresh, filters]);
+    fetchTickets();
+  }, [fetchTickets, refresh, filters]);
 
   const handleSort = (field) => {
     setPage(0);
@@ -76,64 +77,35 @@ const TicketsDashboard = () => {
 
   const columns = [
     {
-      field: 'project',
+      field: 'project.project_number,project.sale.customer.complete_name',
       headerName: 'Projeto',
-      render: (r) => `${r.project_number} - ${r.sale?.customer?.complete_name}` || 'SEM NÚMERO',
+      render: (r) => `${r.project?.project_number} - ${r.project?.sale?.customer?.complete_name}`,
       sx: { opacity: 0.7 },
     },
     {
-      field: 'sale.signature_date',
-      headerName: 'Data de Assinatura',
-      render: (r) => formatDate(r.sale?.signature_date),
+      field: 'created_at',
+      headerName: 'Data de Abertura',
+      render: (r) => r.created_at ? new Date(r.created_at).toLocaleString('pt-BR') : '-',
     },
     {
-      field: 'sale.status',
-      headerName: 'Status',
-      render: (r) => <StatusChip status={r.sale?.status} />,
+      field: 'priority',
+      headerName: 'Prioridade',
+      render: (r) => <TicketPriority priority={r.priority} />,
     },
     {
-      field: 'journey_counter',
-      headerName: 'Contador',
-      render: (r) => <JourneyCounterChip count={r.journey_counter} />,
-      sortable: true,
+      field: 'subject.subject',
+      headerName: 'Assunto',
+      render: (r) => r.subject?.subject || 'N/A',
     },
     {
-      field: 'sale.branch',
-      headerName: 'Unidade',
-      render: (r) => r.sale?.branch?.name || '-',
-    },
-    {
-      field: 'inspection.final_service_opinion.name',
-      headerName: 'Tickets Abertos',
-      render: (r) => <ScheduleOpinionChip status={r.inspection?.final_service_opinion?.name} />,
-    },
-    {
-      field: 'inspection.schedule_date',
-      headerName: 'Ticket aberto em',
-      render: (r) => formatDate(r.inspection?.schedule_date),
-      sortable: true,
-    },
-    {
-      field: 'inspection.final_service_opinion_user',
-      headerName: 'Setores Responsáveis',
-      render: (r) => {
-        return r.inspection?.final_service_opinion_user ? (
-          <UserCard userId={r.inspection?.final_service_opinion_user} />
-        ) : (
-          '-'
-        );
-      },
-    },
-    {
-      field: 'inspection.final_service_opinion_user',
+      field: 'responsible',
       headerName: 'Responsável',
-      render: (r) => {
-        return r.inspection?.final_service_opinion_user ? (
-          <UserCard userId={r.inspection?.final_service_opinion_user} />
-        ) : (
-          '-'
-        );
-      },
+      render: (r) => r.responsible ? <UserCard userId={r.responsible} /> : '-',
+    },
+    {
+      field: 'status',
+      headerName: 'Status',
+      render: (r) => <TicketStatusChip status={r.status} />,
     },
   ];
 
@@ -161,7 +133,7 @@ const TicketsDashboard = () => {
         <TableHeader.Title
           title="Total"
           totalItems={totalRows}
-          objNameNumberReference={totalRows === 1 ? 'Projeto' : 'Projetos'}
+          objNameNumberReference={totalRows === 1 ? 'Ticket' : 'Tickets'}
           loading={loading}
         />
         <Grid
