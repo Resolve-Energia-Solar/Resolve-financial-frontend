@@ -33,15 +33,22 @@ const ProjectList = ({ onClick, defaultfilters }) => {
   const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
   const { filters, setFilters } = useContext(FilterContext);
   const [ordering, setOrdering] = useState('-created_at');
-
+  
   useEffect(() => {
     if (defaultfilters) {
-      setFilters((prev) => ({
-        ...prev,
-        ...defaultfilters,
-      }));
+      const isDifferent = Object.entries(defaultfilters).some(
+        ([key, value]) => filters[key] !== value
+      );
+  
+      if (isDifferent) {
+        setFilters((prevFilters) => ({
+          ...prevFilters,
+          ...defaultfilters,
+        }));
+      }
     }
-  }, [defaultfilters]);
+  }, [defaultfilters,filters]);
+  
   
   
 

@@ -12,7 +12,7 @@ import 'moment/locale/pt-br';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import './Calendar.css';
 import BlankCard from '@/app/components/shared/BlankCard';
-import { Box, Dialog, DialogContent, DialogContentText, useTheme } from '@mui/material';
+import { Box, Dialog, DialogContent, DialogContentText, TablePagination, useTheme } from '@mui/material';
 import { ptBR } from 'date-fns/locale';
 import scheduleService from '@/services/scheduleService';
 import DetailsDrawer from '../schedule/DetailsDrawer';
@@ -75,7 +75,15 @@ const BigCalendar = () => {
   const [loading, setLoading] = useState(false);
   const [category, setCategory] = useState();
   const [formData, setFormData] = useState({});
-  const theme = useTheme();
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(25);
+  const [totalRows, setTotalRows] = useState(0);
+
+  const handlePageChange = (event, newPage) => setPage(newPage);
+  const handleRowsPerPageChange = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
 
   const handleRefresh = () => setRefresh((prev) => !prev);
 
@@ -91,8 +99,11 @@ const BigCalendar = () => {
         fields:
           'id,schedule_date,schedule_start_time,schedule_end_date,schedule_end_time,customer,address,service,schedule_agent,final_service_opinion,final_service_opinion_user',
         view_all: true,
+        page: page + 1,
+        limit: rowsPerPage,
       });
-
+  
+      setTotalRows(response.meta?.pagination?.total_count || 0);
       const events = transformEvents(response?.results || []);
       setCalEvents(events);
     } catch (error) {
@@ -101,31 +112,32 @@ const BigCalendar = () => {
       setLoading(false);
     }
   };
+  
 
   const transformEvents = (results) => {
     const serviceColors = {
-      1: '#FF5733',  // Vermelho alaranjado
-      2: '#33FF57',  // Verde
-      3: '#3357FF',  // Azul
-      4: '#F033FF',  // Magenta
-      5: '#33FFF5',  // Ciano
-      6: '#FF33A8',  // Rosa
-      7: '#A833FF',  // Roxo
-      8: '#33FF8E',  // Verde água
-      9: '#FFC733',  // Laranja
-      10: '#8E33FF'  // Violeta
+      1: '#FF5733', // Vermelho alaranjado
+      2: '#33FF57', // Verde
+      3: '#3357FF', // Azul
+      4: '#F033FF', // Magenta
+      5: '#33FFF5', // Ciano
+      6: '#FF33A8', // Rosa
+      7: '#A833FF', // Roxo
+      8: '#33FF8E', // Verde água
+      9: '#FFC733', // Laranja
+      10: '#8E33FF', // Violeta
     };
-  
+
     return results.map((item) => {
       const startDateStr = item.schedule_date;
       const startTimeStr = item.schedule_start_time;
       const endDateStr = item.schedule_end_date;
       const endTimeStr = item.schedule_end_time;
-  
+
       const start = new Date(`${startDateStr}T${startTimeStr}`);
       const end = new Date(`${endDateStr}T${endTimeStr}`);
       const allDay = startTimeStr === '00:00:00' && endTimeStr === '23:59:59';
-  
+
       const customerName = item.customer?.complete_name || '-';
       const agentName = item.schedule_agent?.complete_name || '-';
       const address = item.address?.complete_address || 'Endereço não disponível';
@@ -133,9 +145,9 @@ const BigCalendar = () => {
       const serviceId = item.service.id;
       const final_service_opinion = item.final_service_opinion?.name || '-';
       const final_service_opinion_user = item.final_service_opinion_user?.name || '-';
-  
+
       const color = serviceColors[serviceId] || '#CCCCCC';
-  
+
       return {
         title: customerName,
         address,
@@ -155,7 +167,7 @@ const BigCalendar = () => {
 
   useEffect(() => {
     fetchSchedule();
-  }, [start, category, refresh]);
+  }, [start, category, refresh, page, rowsPerPage]);
 
   const handleStartChange = (newDate) => {
     setStart(newDate);
@@ -242,6 +254,17 @@ const BigCalendar = () => {
             />
           )}
         </CardContent>
+
+        <TablePagination
+          rowsPerPageOptions={[25, 50, 75, 100, 200]}
+          component="div"
+          count={totalRows}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handlePageChange}
+          onRowsPerPageChange={handleRowsPerPageChange}
+          labelRowsPerPage="Linhas por página"
+        />
       </BlankCard>
 
       <DetailsDrawer
