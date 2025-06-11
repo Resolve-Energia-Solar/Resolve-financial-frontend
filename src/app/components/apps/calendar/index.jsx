@@ -103,23 +103,39 @@ const BigCalendar = () => {
   };
 
   const transformEvents = (results) => {
+    const serviceColors = {
+      1: '#FF5733',  // Vermelho alaranjado
+      2: '#33FF57',  // Verde
+      3: '#3357FF',  // Azul
+      4: '#F033FF',  // Magenta
+      5: '#33FFF5',  // Ciano
+      6: '#FF33A8',  // Rosa
+      7: '#A833FF',  // Roxo
+      8: '#33FF8E',  // Verde água
+      9: '#FFC733',  // Laranja
+      10: '#8E33FF'  // Violeta
+    };
+  
     return results.map((item) => {
       const startDateStr = item.schedule_date;
       const startTimeStr = item.schedule_start_time;
       const endDateStr = item.schedule_end_date;
       const endTimeStr = item.schedule_end_time;
-
+  
       const start = new Date(`${startDateStr}T${startTimeStr}`);
       const end = new Date(`${endDateStr}T${endTimeStr}`);
       const allDay = startTimeStr === '00:00:00' && endTimeStr === '23:59:59';
-
+  
       const customerName = item.customer?.complete_name || '-';
       const agentName = item.schedule_agent?.complete_name || '-';
       const address = item.address?.complete_address || 'Endereço não disponível';
       const service = item.service.name;
+      const serviceId = item.service.id;
       const final_service_opinion = item.final_service_opinion?.name || '-';
       const final_service_opinion_user = item.final_service_opinion_user?.name || '-';
-
+  
+      const color = serviceColors[serviceId] || '#CCCCCC';
+  
       return {
         title: customerName,
         address,
@@ -127,8 +143,9 @@ const BigCalendar = () => {
         schedule_id: item.id,
         start,
         end,
-        color: theme.palette.primary,
+        color,
         service,
+        serviceId,
         agentName,
         final_service_opinion,
         final_service_opinion_user,
@@ -222,16 +239,6 @@ const BigCalendar = () => {
                 }));
                 setModalCreateScheduleOpen(true);
               }}
-              eventPropGetter={(event) => ({
-                style: {
-                  backgroundColor: event.color?.main || theme.palette.primary.main,
-                  color: theme.palette.getContrastText(
-                    event.color?.main || theme.palette.primary.main,
-                  ),
-                  borderRadius: '4px',
-                  padding: '2px',
-                },
-              })}
             />
           )}
         </CardContent>

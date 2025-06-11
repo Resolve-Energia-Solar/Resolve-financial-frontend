@@ -24,6 +24,7 @@ import {
   IconPaperclip,
   IconFileArrowRight,
   IconHeadset,
+  IconFlagCancel,
 } from '@tabler/icons-react';
 import { uniqueId } from 'lodash';
 
@@ -160,6 +161,13 @@ const Menuitems = [
     icon: IconUserBolt,
     permissions: ['resolve_crm.can_manage_journey'],
     children: [
+      {
+        id: uniqueId(),
+        title: 'Distratos',
+        icon: IconFlagCancel,
+        href: '/apps/project/cancellations',
+        permissions: ['resolve_crm.can_manage_journey'],
+      },
       {
         id: uniqueId(),
         title: 'Vistoria',
