@@ -16,12 +16,12 @@ import TicketForm from './TicketForm';
 import useTicket from '@/hooks/tickets/useTicket';
 import { formatDateTime } from '@/utils/inspectionFormatDate';
 
-export default function CustomerServiceTab({ projectId, viewOnly = false }) {
+export default function CustomerServiceTab({ projectId, viewOnly = false, ticketId = null }) {
   const { enqueueSnackbar } = useSnackbar();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const [openTicketFormModal, setOpenTicketFormModal] = useState(false);
-  const [selectedTicket, setSelectedTicket] = useState(null);
+  const [openTicketFormModal, setOpenTicketFormModal] = useState(!!ticketId);
+  const [selectedTicket, setSelectedTicket] = useState(ticketId);
   const [refreshKey, setRefreshKey] = useState(0);
 
   const params = useMemo(
