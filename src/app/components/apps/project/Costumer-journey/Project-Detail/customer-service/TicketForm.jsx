@@ -113,7 +113,7 @@ export default function TicketForm({ projectId, ticketId = null, onSave }) {
     return (
         <Box component="form">
             <Grid container spacing={4} sx={{ marginBottom: "2rem" }}>
-                <Grid item xs={12}>
+                <Grid item xs={12} md={6}>
                     <h2>{ticketId ? "Editar Ticket" : "Novo Ticket"}</h2>
                 </Grid>
                 {/* Mostrar informação do projeto, se aplicável */}
@@ -235,7 +235,7 @@ export default function TicketForm({ projectId, ticketId = null, onSave }) {
                         />
                     }
                 </Grid>
-                <Grid item xs={12}>
+                <Grid item xs={12} md={6}>
                     {/* Subject */}
                     <GenericAsyncAutocompleteInput
                         label="Assunto"
@@ -243,15 +243,44 @@ export default function TicketForm({ projectId, ticketId = null, onSave }) {
                         onChange={handleSelectChange("subject")}
                         endpoint="/api/tickets-subjects"
                         queryParam="subject__icontains"
-                        extraParams={{ fields: "id,subject" }}
+                        extraParams={{ fields: "id,subject,category", ordering: "category" }}
                         mapResponse={(data) =>
                             data.results.map((s) => ({
                                 value: s.id,
-                                label: s.subject,
+                                label: `${s.category} - ${s.subject}`,
                             }))
                         }
                         error={!!errors.subject}
                         helperText={errors.subject?.[0]}
+                        sx={{
+                            width: "100%",
+                            fontSize: "1rem",
+                            marginBottom: "1rem",
+                            "& .MuiInputBase-root": {
+                                height: "56px",
+                            },
+                        }}
+                    />
+                </Grid>
+
+
+                {/* Tipo de Ticket */}
+                <Grid item xs={12} md={6}>
+                    <GenericAsyncAutocompleteInput
+                        label="Tipo de Ticket"
+                        value={formData.ticket_type}
+                        onChange={handleSelectChange("ticket_type")}
+                        endpoint="/api/ticket-types"
+                        queryParam="name__icontains"
+                        extraParams={{ fields: "id,name" }}
+                        mapResponse={(data) =>
+                            data.results.map((t) => ({
+                                value: t.id,
+                                label: t.name,
+                            }))
+                        }
+                        error={!!errors.ticket_type}
+                        helperText={errors.ticket_type?.[0]}
                         sx={{
                             width: "100%",
                             fontSize: "1rem",
@@ -283,37 +312,9 @@ export default function TicketForm({ projectId, ticketId = null, onSave }) {
                     />
                 </Grid>
 
-                {/* Tipo de Ticket */}
-                <Grid item xs={12}>
-                    <GenericAsyncAutocompleteInput
-                        label="Tipo de Ticket"
-                        value={formData.ticket_type}
-                        onChange={handleSelectChange("ticket_type")}
-                        endpoint="/api/ticket-types"
-                        queryParam="name__icontains"
-                        extraParams={{ fields: "id,name" }}
-                        mapResponse={(data) =>
-                            data.results.map((t) => ({
-                                value: t.id,
-                                label: t.name,
-                            }))
-                        }
-                        error={!!errors.ticket_type}
-                        helperText={errors.ticket_type?.[0]}
-                        sx={{
-                            width: "100%",
-                            fontSize: "1rem",
-                            marginBottom: "1rem",
-                            "& .MuiInputBase-root": {
-                                height: "56px",
-                            },
-                        }}
-                    />
-                </Grid>
-
                 {/* Status: só aparece quando ticketId for truthy */}
                 {ticketId && (
-                    <Grid item xs={12} sm={6}>
+                    <Grid item xs={12} md={6} sm={6}>
                         <TextField
                             select
                             fullWidth
@@ -341,36 +342,8 @@ export default function TicketForm({ projectId, ticketId = null, onSave }) {
                     </Grid>
                 )}
 
-                {/* Responsible (usuário) */}
-                <Grid item xs={12} sm={12}>
-                    <GenericAsyncAutocompleteInput
-                        label="Responsável"
-                        value={formData.responsible_user}
-                        onChange={handleSelectChange("responsible_user")}
-                        endpoint="/api/users"
-                        queryParam="complete_name__icontains"
-                        extraParams={{ fields: "id,complete_name" }}
-                        mapResponse={(data) =>
-                            data.results.map((u) => ({
-                                value: u.id,
-                                label: u.complete_name,
-                            }))
-                        }
-                        error={!!errors.responsible_user}
-                        helperText={errors.responsible_user?.[0]}
-                        sx={{
-                            width: "100%",
-                            fontSize: "1rem",
-                            marginBottom: "1rem",
-                            "& .MuiInputBase-root": {
-                                height: "56px",
-                            },
-                        }}
-                    />
-                </Grid>
-
                 {/* Priority */}
-                <Grid item xs={12} sm={12}>
+                <Grid item xs={12} md={6}>
                     <TextField
                         select
                         fullWidth
@@ -397,8 +370,36 @@ export default function TicketForm({ projectId, ticketId = null, onSave }) {
                     </TextField>
                 </Grid>
 
+                {/* Responsible */}
+                <Grid item xs={12} md={6}>
+                    <GenericAsyncAutocompleteInput
+                        label="Responsável"
+                        value={formData.responsible_user}
+                        onChange={handleSelectChange("responsible_user")}
+                        endpoint="/api/users"
+                        queryParam="complete_name__icontains"
+                        extraParams={{ fields: "id,complete_name" }}
+                        mapResponse={(data) =>
+                            data.results.map((u) => ({
+                                value: u.id,
+                                label: u.complete_name,
+                            }))
+                        }
+                        error={!!errors.responsible_user}
+                        helperText={errors.responsible_user?.[0]}
+                        sx={{
+                            width: "100%",
+                            fontSize: "1rem",
+                            marginTop: "-1rem",
+                            "& .MuiInputBase-root": {
+                                height: "56px",
+                            },
+                        }}
+                    />
+                </Grid>
+
                 {formData.conclusion_date && (
-                    <Grid item xs={12} sm={12}>
+                    <Grid item xs={12} md={6} sm={12}>
                         <TextField
                             fullWidth
                             label="Data de Conclusão"
