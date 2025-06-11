@@ -5,7 +5,7 @@ import ticketService from "@/services/ticketService";
 import { useSnackbar } from "notistack";
 import { formatDate } from "@/utils/dateUtils";
 import StatusChip from "@/utils/status/DocumentStatusIcon";
-import { isOptionalChain } from "typescript";
+import { useSelector } from "react-redux";
 
 const priorityOptions = [
     { value: 1, label: "Baixa" },
@@ -30,11 +30,13 @@ export default function TicketForm({ projectId, ticketId = null, onSave }) {
         priority: "",
         responsible_user: null,
         ticket_type: null,
+        created_by: null,
     });
     const { enqueueSnackbar } = useSnackbar();
     const [errors, setErrors] = useState({});
     const [projectInfo, setProjectInfo] = useState(null);
     const [loading, setLoading] = useState(false);
+    const user = useSelector((state) => state.user?.user);
 
     useEffect(() => {
         const loadTicket = async () => {
@@ -42,11 +44,12 @@ export default function TicketForm({ projectId, ticketId = null, onSave }) {
                 setLoading(true);
                 try {
                     const data = await ticketService.find(ticketId, {
-                        fields: "id,project,subject,description,status,conclusion_date,priority,responsible_user,ticket_type",
+                        fields: "id,project.id,project.project_number,project.sale.customer.complete_name,subject,description,status,conclusion_date,priority,responsible_user,ticket_type,created_by",
+                        expand: "project,project.sale.customer"
                     });
                     setProjectInfo(data.project || null);
                     setFormData({
-                        project: data.project || null,
+                        project: data.project?.id || projectId || null,
                         subject: data.subject || null,
                         description: data.description || null,
                         status: data.status || null,
@@ -54,6 +57,7 @@ export default function TicketForm({ projectId, ticketId = null, onSave }) {
                         priority: data.priority || null,
                         responsible_user: data.responsible_user || null,
                         ticket_type: data.ticket_type || null,
+                        created_by: data.created_by || null,
                     });
                 } catch (err) {
                     console.error("Erro ao carregar o ticket", err);
@@ -77,7 +81,7 @@ export default function TicketForm({ projectId, ticketId = null, onSave }) {
     const handleSubmit = async () => {
         try {
             setLoading(true);
-            const payload = { ...formData };
+            const payload = { ...formData, created_by: user.id };
             if (!ticketId) {
                 delete payload.status;
             }
@@ -238,6 +242,7 @@ export default function TicketForm({ projectId, ticketId = null, onSave }) {
                         value={formData.subject}
                         onChange={handleSelectChange("subject")}
                         endpoint="/api/tickets-subjects"
+                        queryParam="subject__icontains"
                         extraParams={{ fields: "id,subject" }}
                         mapResponse={(data) =>
                             data.results.map((s) => ({
@@ -285,6 +290,7 @@ export default function TicketForm({ projectId, ticketId = null, onSave }) {
                         value={formData.ticket_type}
                         onChange={handleSelectChange("ticket_type")}
                         endpoint="/api/ticket-types"
+                        queryParam="name__icontains"
                         extraParams={{ fields: "id,name" }}
                         mapResponse={(data) =>
                             data.results.map((t) => ({
@@ -342,6 +348,7 @@ export default function TicketForm({ projectId, ticketId = null, onSave }) {
                         value={formData.responsible_user}
                         onChange={handleSelectChange("responsible_user")}
                         endpoint="/api/users"
+                        queryParam="complete_name__icontains"
                         extraParams={{ fields: "id,complete_name" }}
                         mapResponse={(data) =>
                             data.results.map((u) => ({
