@@ -24,7 +24,7 @@ import StatusFinancialChip from '@/utils/status/FinancialChip';
 import ScheduleOpinionChip from '../../inspections/schedule/StatusChip';
 import ChipRequestStatus from '../../request/components/auto-complete/ChipRequestStatus';
 
-const ProjectList = ({ onClick }) => {
+const ProjectList = ({ onClick, defaultfilters }) => {
   const [projectsList, setProjectsList] = useState([]);
   const [loadingProjects, setLoadingProjects] = useState(true);
   const [page, setPage] = useState(0);
@@ -33,6 +33,17 @@ const ProjectList = ({ onClick }) => {
   const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
   const { filters, setFilters } = useContext(FilterContext);
   const [ordering, setOrdering] = useState('-created_at');
+
+  useEffect(() => {
+    if (defaultfilters) {
+      setFilters((prev) => ({
+        ...prev,
+        ...defaultfilters,
+      }));
+    }
+  }, [defaultfilters]);
+  
+  
 
   const states = [
     { value: 'AC', label: 'AC' },
