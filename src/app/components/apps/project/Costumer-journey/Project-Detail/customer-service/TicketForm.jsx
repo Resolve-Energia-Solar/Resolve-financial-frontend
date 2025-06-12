@@ -8,7 +8,10 @@ import {
     CircularProgress,
     Tabs,
     Tab,
-    Typography
+    Typography,
+    Card,
+    CardHeader,
+    CardContent
 } from "@mui/material";
 import GenericAsyncAutocompleteInput from "@/app/components/filters/GenericAsyncAutocompleteInput";
 import ticketService from "@/services/ticketService";
@@ -135,6 +138,9 @@ export default function TicketForm({ projectId, ticketId = null, onSave }) {
         setTab(newValue);
     };
 
+    const formatCurrency = (value) =>
+        new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
+
     return (
         <Box sx={{ width: '100%' }}>
             <Grid item xs={12} md={6}>
@@ -235,7 +241,7 @@ export default function TicketForm({ projectId, ticketId = null, onSave }) {
                                                             </Typography>
                                                             <Typography variant="body2">
                                                                 <strong>Data de Contrato:</strong>{' '}
-                                                                {formatDate(option.project.sale?.signature_date) || 'Data de Contrato não Disponível'}
+                                                                {new Date(option.project.sale?.signature_date).toLocaleString('pt-BR') || 'Data de Contrato não Disponível'}
                                                             </Typography>
                                                             <Typography variant="body2" sx={{ textWrap: 'wrap' }}>
                                                                 <strong>Endereço:</strong>{' '}
