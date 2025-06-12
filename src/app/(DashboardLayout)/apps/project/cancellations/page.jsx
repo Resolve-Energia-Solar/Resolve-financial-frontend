@@ -1,17 +1,18 @@
 'use client';
-import React, { useCallback, useState } from 'react';
-import { CardContent } from '@mui/material';
+import React, { useCallback } from 'react';
+import { CardContent, useTheme } from '@mui/material';
 import BlankCard from '@/app/components/shared/BlankCard';
 import PageContainer from '@/app/components/container/PageContainer';
 import Breadcrumb from '@/app/(DashboardLayout)/layout/shared/breadcrumb/Breadcrumb';
 import ProjectList from '@/app/components/apps/project/Project-list';
-import EditProject from '@/app/components/apps/project/Edit-project';
-import SideDrawer from '@/app/components/shared/SideDrawer';
 import useProject from '@/hooks/projects/useProject';
 import ProjectDetailDrawer from '@/app/components/apps/project/Costumer-journey/Project-Detail/ProjectDrawer';
+import { useSnackbar } from 'notistack';
 
 const ProjectListing = () => {
   const { openDrawer, toggleDrawerClosed, handleRowClick, rowSelected } = useProject();
+  const theme = useTheme();
+  const { enqueueSnackbar } = useSnackbar();
 
   const projectId = rowSelected?.id || null;
   const saleId = rowSelected?.sale?.id || null;
@@ -25,7 +26,7 @@ const ProjectListing = () => {
       <Breadcrumb items={BCrumb} />
       <BlankCard>
         <CardContent>
-          <ProjectList onClick={onRowClick} defaultfilters={{sale_status: 'D'}} />
+          <ProjectList onClick={onRowClick} defaultfilters={{ sale_status: 'D' }} />
           <ProjectDetailDrawer
             projectId={projectId}
             saleId={saleId}
