@@ -184,6 +184,13 @@ export default function CustomerServiceTab({ projectId, viewOnly = false, ticket
             setSelectedTicket(null);
           }}
           maxWidth="md"
+          sx={{ 
+            padding: 2,
+            '& .MuiDialog-paper': {
+              minWidth: '50vw',
+              minHeight: '90vh',
+            }
+          }}
         >
           <DialogContent>
             <TicketForm
