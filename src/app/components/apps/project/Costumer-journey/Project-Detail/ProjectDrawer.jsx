@@ -292,11 +292,23 @@ export default function ProjectDetailDrawer({ projectId, saleId, open, onClose, 
             )}
           </Stack>
 
-          {/* Tags (opcional), minimalistas, com margem superior leve */}
           <Box mt={1}>
             <TagList
               appLabel="resolve_crm"
               model="project"
+              objectId={project?.id}
+              sx={{
+                '& .MuiChip-root': {
+                  height: 24,
+                  fontSize: '0.75rem',
+                  marginRight: 0.5,
+                  marginBottom: 0.5,
+                },
+              }}
+            />
+            <TagList
+              appLabel="resolve_crm"
+              model="sale"
               objectId={project?.sale?.id}
               sx={{
                 '& .MuiChip-root': {
