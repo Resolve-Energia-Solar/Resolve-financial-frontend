@@ -12,7 +12,14 @@ import 'moment/locale/pt-br';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import './Calendar.css';
 import BlankCard from '@/app/components/shared/BlankCard';
-import { Box, Dialog, DialogContent, DialogContentText, TablePagination, useTheme } from '@mui/material';
+import {
+  Box,
+  Dialog,
+  DialogContent,
+  DialogContentText,
+  TablePagination,
+  useTheme,
+} from '@mui/material';
 import { ptBR } from 'date-fns/locale';
 import scheduleService from '@/services/scheduleService';
 import DetailsDrawer from '../schedule/DetailsDrawer';
@@ -74,10 +81,12 @@ const BigCalendar = () => {
   const [refresh, setRefresh] = useState(false);
   const [loading, setLoading] = useState(false);
   const [category, setCategory] = useState();
+  const [agent, setAgent] = useState();
   const [formData, setFormData] = useState({});
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(25);
   const [totalRows, setTotalRows] = useState(0);
+  const theme = useTheme();
 
   const handlePageChange = (event, newPage) => setPage(newPage);
   const handleRowsPerPageChange = (event) => {
@@ -92,6 +101,7 @@ const BigCalendar = () => {
       setLoading(true);
       const response = await scheduleService.index({
         service: category,
+        schedule_agent: agent,
         schedule_date_year: start.getFullYear(),
         schedule_date_month: start.getMonth() + 1,
         expand:
@@ -102,7 +112,7 @@ const BigCalendar = () => {
         page: page + 1,
         limit: rowsPerPage,
       });
-  
+
       setTotalRows(response.meta?.pagination?.total_count || 0);
       const events = transformEvents(response?.results || []);
       setCalEvents(events);
@@ -112,7 +122,6 @@ const BigCalendar = () => {
       setLoading(false);
     }
   };
-  
 
   const transformEvents = (results) => {
     const serviceColors = {
@@ -126,6 +135,16 @@ const BigCalendar = () => {
       8: '#33FF8E', // Verde água
       9: '#FFC733', // Laranja
       10: '#8E33FF', // Violeta
+      11: '#FF8C33', // Laranja queimado
+      12: '#33A1FF', // Azul claro
+      13: '#FF3333', // Vermelho
+      14: '#33FFBD', // Verde menta
+      15: '#B6FF33', // Amarelo limão
+      16: '#FF33EC', // Rosa neon
+      17: '#33D1FF', // Azul piscina
+      18: '#FFB733', // Dourado suave
+      19: '#9D33FF', // Roxo escuro
+      20: '#33FF44', // Verde vibrante
     };
 
     return results.map((item) => {
@@ -167,7 +186,7 @@ const BigCalendar = () => {
 
   useEffect(() => {
     fetchSchedule();
-  }, [start, category, refresh, page, rowsPerPage]);
+  }, [start, category, refresh, page, rowsPerPage, agent]);
 
   const handleStartChange = (newDate) => {
     setStart(newDate);
@@ -177,18 +196,28 @@ const BigCalendar = () => {
     <>
       <BlankCard>
         <CardContent>
-          <Box mb={2} sx={{ display: 'flex', justifyContent: 'space-between' }}>
-            <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={ptBR}>
-              <DatePicker
-                label="Escolha a data"
-                views={['year', 'month']}
-                value={start}
-                onChange={handleStartChange}
-                renderInput={(params) => <TextField {...params} fullWidth sx={{ mb: 3 }} />}
-              />
-            </LocalizationProvider>
+          <Box
+            mb={2}
+            sx={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              flexWrap: 'wrap',
+              gap: 2, // Espaçamento entre os componentes
+            }}
+          >
+            <Box sx={{ minWidth: '200px', flex: 1 }}>
+              <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={ptBR}>
+                <DatePicker
+                  label="Escolha a data"
+                  views={['year', 'month']}
+                  value={start}
+                  onChange={handleStartChange}
+                  renderInput={(params) => <TextField {...params} fullWidth sx={{ mb: 0 }} />}
+                />
+              </LocalizationProvider>
+            </Box>
 
-            <Box sx={{ width: '400px' }}>
+            <Box sx={{ minWidth: '200px', flex: 1 }}>
               <GenericAsyncAutocompleteInput
                 label="Escolha o serviço"
                 name="service"
@@ -209,6 +238,28 @@ const BigCalendar = () => {
                     label: p.name,
                     value: p.id,
                   }))
+                }
+                fullWidth
+              />
+            </Box>
+
+            <Box sx={{ minWidth: '200px', flex: 1 }}>
+              <GenericAsyncAutocompleteInput
+                label="Agente"
+                value={agent}
+                onChange={(option) => {
+                  setAgent(option?.value);
+                  setFormData((prev) => ({
+                    ...prev,
+                    schedule_agent: option?.value,
+                  }));
+                }}
+                endpoint="/api/users/"
+                size="small"
+                queryParam="complete_name__icontains"
+                extraParams={{ fields: ['id', 'complete_name'], limit: 10 }}
+                mapResponse={(data) =>
+                  data.results.map((u) => ({ label: u.complete_name, value: u.id }))
                 }
                 fullWidth
               />
@@ -250,6 +301,18 @@ const BigCalendar = () => {
                   schedule_date: onlyDate,
                 }));
                 setModalCreateScheduleOpen(true);
+              }}
+              eventPropGetter={(event) => {
+                const bgColor = event.color || theme.palette.primary.main;
+                const textColor = theme.palette.getContrastText(bgColor);
+                return {
+                  style: {
+                    backgroundColor: bgColor,
+                    color: textColor,
+                    borderRadius: '4px',
+                    padding: '2px',
+                  },
+                };
               }}
             />
           )}

@@ -12,6 +12,7 @@ import {
   Divider,
   Chip,
   Stack,
+  Skeleton,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { useSnackbar } from 'notistack';
@@ -45,12 +46,12 @@ function TabPanel({ children, value, index }) {
   );
 }
 
-export default function ProjectDetailDrawer({ projectId, saleId, open, onClose, refresh }) {
+export default function ProjectDetailDrawer({ projectId, saleId, open, onClose, tab, extraId }) {
   const { enqueueSnackbar } = useSnackbar();
   const [project, setProject] = useState(null);
   const [processId, setProcessId] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [tab, setTab] = useState(0);
+  const [tabIndex, setTabIndex] = useState(0);
   const [paneLimits, setPaneLimits] = useState({ min: 0, max: 0, default: 0 });
   const [hasConstructionTab, setHasConstructionTab] = useState(false);
   const user = useSelector((state) => state.user?.user);
@@ -102,7 +103,7 @@ export default function ProjectDetailDrawer({ projectId, saleId, open, onClose, 
   }, [fetchData]);
 
   const handleClose = useCallback(() => onClose(), [onClose]);
-  const handleTabChange = (e, newVal) => setTab(newVal);
+  const handleTabChange = (e, newVal) => setTabIndex(newVal);
   const drawerWidth = useMemo(() => (processId ? '100vw' : '65vw'), [processId]);
 
   const tabsConfig = useMemo(
@@ -197,7 +198,7 @@ export default function ProjectDetailDrawer({ projectId, saleId, open, onClose, 
         {
           label: 'Pós-Venda',
           content: (
-            <CustomerServiceTab projectId={projectId} viewOnly={!canEdit} />
+            <CustomerServiceTab projectId={projectId} viewOnly={!canEdit} ticketId={extraId} />
           ),
         },
         { label: 'Sol. de Pagamento', content: <FinancialRecordsTab projectId={projectId} viewOnly={!canEdit} /> },
@@ -213,6 +214,15 @@ export default function ProjectDetailDrawer({ projectId, saleId, open, onClose, 
     [project, projectId, hasConstructionTab],
   );
 
+  useEffect(() => {
+    if (tab) {
+      const index = tabsConfig.findIndex(t => t.label === tab);
+      if (index !== -1) {
+        setTabIndex(index);
+      }
+    }
+  }, [tab, tabsConfig]);
+
   return (
     <Drawer
       anchor="right"
@@ -222,6 +232,7 @@ export default function ProjectDetailDrawer({ projectId, saleId, open, onClose, 
         sx: { width: drawerWidth, zIndex: 1300, display: 'flex', flexDirection: 'column' },
       }}
     >
+      {/* Header */}
       <Box
         sx={{
           display: 'flex',
@@ -229,93 +240,89 @@ export default function ProjectDetailDrawer({ projectId, saleId, open, onClose, 
           alignItems: 'center',
           p: 2,
           bgcolor: 'grey.100',
+          borderBottom: '1px solid',
+          borderColor: 'divider',
         }}
       >
-        <Box
-          sx={{
-            pb: 2,
-            mb: 3,
-            borderBottom: '1px solid',
-            borderColor: 'divider',
-          }}
-        >
-          {/* Título simples */}
+        <Box>
           <Typography variant="h6" fontWeight="medium" color="text.primary">
-            Projeto nº {project?.project_number} – {project?.sale?.customer?.complete_name}
+            {loading || !project
+              ? <Skeleton variant="text" width={200} height={32} />
+              : `Projeto nº ${project.project_number} – ${project.sale.customer.complete_name}`}
           </Typography>
-
-          {/* Detalhes sutis em linha única */}
-          <Stack
-            direction="row"
-            spacing={4}
-            alignItems="center"
-            mt={1}
-          >
-            {/* Data de assinatura em texto pequeno */}
-            {project?.sale?.signature_date && (
-              <Typography variant="caption" color="text.secondary">
-                Data de Assinatura: {formatDateTime(project.sale.signature_date)}
-              </Typography>
-            )}
-
-            {/* Distância até a matriz */}
-            <Typography variant="caption" color="text.secondary">
-              Distância: {project?.distance_to_matriz_km != null
-                ? `${project.distance_to_matriz_km} km`
-                : 'N/A'}
-            </Typography>
-
-            {/* Chip de tipo de entrega, discreto e tamanho reduzido */}
-            {project?.delivery_type && (
-              <Chip
-                icon={<LocalShippingIcon sx={{ fontSize: '1rem' }} />}
-                label={
-                  project.delivery_type === 'C'
-                    ? 'Entrega CD'
-                    : project.delivery_type === 'D'
-                      ? 'Entrega Direta'
-                      : project.delivery_type
-                }
-                size="small"
-                variant="outlined"
-                color="primary"
-              />
-            )}
-          </Stack>
-
-          {/* Tags (opcional), minimalistas, com margem superior leve */}
-          <Box mt={1}>
-            <TagList
-              appLabel="resolve_crm"
-              model="project"
-              objectId={project?.sale?.id}
-              sx={{
-                '& .MuiChip-root': {
-                  height: 24,
-                  fontSize: '0.75rem',
-                  marginRight: 0.5,
-                  marginBottom: 0.5,
-                },
-              }}
-            />
-          </Box>
+          {loading || !project ? (
+            <Stack direction="row" spacing={2} alignItems="center" mt={1} >
+              <Skeleton variant="text" width={100} />
+              <Skeleton variant="text" width={80} />
+              <Skeleton variant="text" width={60} />
+            </Stack>
+          ) : (
+            <>
+              <Stack direction="row" spacing={2} alignItems="center" mt={1} >
+                <Typography variant="caption" color="text.secondary">
+                  Cliente: {project.sale.customer.complete_name}
+                </Typography>
+                <Typography variant="caption" color="text.secondary">
+                  Data: {formatDateTime(project.created_at)}
+                </Typography>
+                {project.distance_to_matriz_km != null && (
+                  <Typography variant="caption" color="text.secondary">
+                    Distância: {project.distance_to_matriz_km} km
+                  </Typography>
+                )}
+                {project.delivery_type && (
+                  <Chip
+                    icon={<LocalShippingIcon sx={{ fontSize: '1rem' }} />}
+                    label={project.delivery_type === 'D' ? 'Entrega Direta' : 'Entrega CD'}
+                    size="small"
+                  />
+                )}
+              </Stack>
+              <Box mt={1} >
+                <TagList appLabel="resolve_crm" model="project" objectId={project?.id} />
+              </Box>
+              <Box mt={1} >
+                <TagList appLabel="resolve_crm" model="sale" objectId={project?.sale?.id} />
+              </Box>
+            </>
+          )}
         </Box>
-
         <IconButton onClick={handleClose}>
           <CloseIcon />
         </IconButton>
       </Box>
+
+      {/* Body */}
       <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-        <Tabs value={tab} onChange={handleTabChange} variant="scrollable" scrollButtons="auto">
-          {tabsConfig.map((t, i) => (
-            <Tab key={i} label={t.label} />
-          ))}
-        </Tabs>
-        {tabsConfig.map((t, i) => (
-          <TabPanel key={i} value={tab} index={i}>
-            {t.content}
-          </TabPanel>
-        ))}
+        {loading || !project ? (
+          <Box sx={{ p: 2 }}>
+            <Skeleton variant="text" width="40%" height={28} />
+            <Stack direction="row" spacing={1} sx={{ mt: 2 }}>
+              {Array.from({ length: tabsConfig.length }).map((_, idx) => (
+                <Skeleton key={idx} variant="text" width={100} />
+              ))}
+            </Stack>
+            <Skeleton variant="rectangular" height={300} sx={{ mt: 2 }} />
+          </Box>
+        ) : (
+          <>
+            <Tabs
+              value={tabIndex}
+              onChange={handleTabChange}
+              variant="scrollable"
+              scrollButtons="auto"
+            >
+              {tabsConfig.map((t, i) => (
+                <Tab key={i} label={t.label} />
+              ))}
+            </Tabs>
+            {tabsConfig.map((t, i) => (
+              <TabPanel key={i} value={tabIndex} index={i}>
+                {t.content}
+              </TabPanel>
+            ))}
+          </>
+        )}
       </Box>
     </Drawer>
   );
