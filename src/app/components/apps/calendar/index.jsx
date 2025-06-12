@@ -86,6 +86,7 @@ const BigCalendar = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(25);
   const [totalRows, setTotalRows] = useState(0);
+  const theme = useTheme();
 
   const handlePageChange = (event, newPage) => setPage(newPage);
   const handleRowsPerPageChange = (event) => {
@@ -134,6 +135,16 @@ const BigCalendar = () => {
       8: '#33FF8E', // Verde água
       9: '#FFC733', // Laranja
       10: '#8E33FF', // Violeta
+      11: '#FF8C33', // Laranja queimado
+      12: '#33A1FF', // Azul claro
+      13: '#FF3333', // Vermelho
+      14: '#33FFBD', // Verde menta
+      15: '#B6FF33', // Amarelo limão
+      16: '#FF33EC', // Rosa neon
+      17: '#33D1FF', // Azul piscina
+      18: '#FFB733', // Dourado suave
+      19: '#9D33FF', // Roxo escuro
+      20: '#33FF44', // Verde vibrante
     };
 
     return results.map((item) => {
@@ -290,6 +301,18 @@ const BigCalendar = () => {
                   schedule_date: onlyDate,
                 }));
                 setModalCreateScheduleOpen(true);
+              }}
+              eventPropGetter={(event) => {
+                const bgColor = event.color || theme.palette.primary.main;
+                const textColor = theme.palette.getContrastText(bgColor);
+                return {
+                  style: {
+                    backgroundColor: bgColor,
+                    color: textColor,
+                    borderRadius: '4px',
+                    padding: '2px',
+                  },
+                };
               }}
             />
           )}
