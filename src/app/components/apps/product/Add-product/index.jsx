@@ -162,28 +162,28 @@ const CreateProduct = ({
           </Grid>
         </HasPermission>
         <Grid item xs={12} sm={12} lg={6}>
-          <CustomFormLabel htmlFor="branches_ids">Filial</CustomFormLabel>
+          <CustomFormLabel htmlFor="branch">Filial</CustomFormLabel>
           <AutoCompleteBranch
-            name="branches_ids"
-            value={formData.branches_ids}
-            onChange={(value) => handleChange('branches_ids', value)}
+            name="branch"
+            value={formData.branch}
+            onChange={(value) => handleChange('branch', value)}
             placeholder="Selecione a Filial"
             variant="outlined"
             fullWidth
-            {...(formErrors.branches_ids && { error: true, helperText: formErrors.branches_ids })}
+            {...(formErrors.branch && { error: true, helperText: formErrors.branch })}
           />
         </Grid>
         <Grid item xs={12} sm={12} lg={12}>
-          <CustomFormLabel htmlFor="roof_type_id">Tipo de Telhado</CustomFormLabel>
+          <CustomFormLabel htmlFor="roof_type">Tipo de Telhado</CustomFormLabel>
           <AutoCompleteRoofType
-            name="roof_type_id"
-            value={formData.roof_type_id}
+            name="roof_type"
+            value={formData.roof_type}
             size="small"
-            onChange={(value) => handleChange('roof_type_id', value)}
+            onChange={(value) => handleChange('roof_type', value)}
             placeholder="Selecione o Tipo de Telhado"
             variant="outlined"
             fullWidth
-            {...(formErrors.roof_type_id && { error: true, helperText: formErrors.roof_type_id })}
+            {...(formErrors.roof_type && { error: true, helperText: formErrors.roof_type })}
           />
         </Grid>
       </Grid>
@@ -231,9 +231,9 @@ const CreateProduct = ({
                         value={material.material_id}
                         {...(formErrors.materials_ids &&
                           formErrors.materials_ids[index]?.material_id && {
-                            error: true,
-                            helperText: formErrors.materials_ids[index].material_id,
-                          })}
+                          error: true,
+                          helperText: formErrors.materials_ids[index].material_id,
+                        })}
                       />
                     </TableCell>
                     <TableCell>
@@ -243,9 +243,9 @@ const CreateProduct = ({
                         onChange={(e) => handleMaterialChange(index, 'amount', e.target.value)}
                         {...(formErrors.materials_ids &&
                           formErrors.materials_ids[index]?.amount && {
-                            error: true,
-                            helperText: formErrors.materials_ids[index].amount,
-                          })}
+                          error: true,
+                          helperText: formErrors.materials_ids[index].amount,
+                        })}
                         fullWidth
                       />
                     </TableCell>
