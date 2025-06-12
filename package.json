@@ -58,7 +58,7 @@
     "mammoth": "^1.8.0",
     "modernize-main": "file:",
     "moment": "^2.29.4",
-    "next": "^14.2.7",
+    "next": "^15.3.3",
     "notistack": "^3.0.2",
     "numeral": "^2.0.6",
     "pizzip": "^3.1.7",
