@@ -24,7 +24,7 @@ const NavListing = () => {
 
   return (
     <Box>
-      <List sx={{ p: 0, display: 'flex', gap: '3px', zIndex: '100' }}>
+      <List sx={{ p: 0, display: 'flex', gap: '3px', zIndex: '100', flexWrap: 'wrap', justifyContent: 'center' }} className="nav-listing">
         {Menuitems.map((item) => {
           if (!hasPermission(item.permissions)) {
             return null; 

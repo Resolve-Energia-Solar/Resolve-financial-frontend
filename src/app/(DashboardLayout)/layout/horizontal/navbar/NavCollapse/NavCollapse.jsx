@@ -81,6 +81,7 @@ const NavCollapse = ({
     color: theme.palette.text.primary,
     boxShadow: theme.shadows[8],
     backgroundColor: theme.palette.background.paper,
+    zIndex: 1000,
   }));
 
   const listItemProps = {
