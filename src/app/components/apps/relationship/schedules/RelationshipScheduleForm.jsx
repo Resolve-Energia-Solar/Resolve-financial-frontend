@@ -13,7 +13,6 @@ import PageContainer from '@/app/components/container/PageContainer';
 import Breadcrumb from '@/app/(DashboardLayout)/layout/shared/breadcrumb/Breadcrumb';
 import BlankCard from '@/app/components/shared/BlankCard';
 import GenericAsyncAutocompleteInput from '@/app/components/filters/GenericAsyncAutocompleteInput';
-import AutoCompleteUserSchedule from '@/app/components/apps/inspections/auto-complete/Auto-input-UserSchedule';
 import scheduleService from '@/services/scheduleService';
 import { formatDate } from '@/utils/dateUtils';
 import AddUser from '@/app/components/apps/users/Add-user/addUser';
@@ -147,17 +146,20 @@ export default function RelationshipScheduleForm({ scheduleId = null, breadcrumb
             </Grid>
             {/* Agente */}
             <Grid item xs={12} sm={6}>
-              <Box display="flex" alignItems="center">
-                <Typography>Agente</Typography>
-                <Tooltip title="Selecione o agente disponível" placement="right">
-                  <HelpIcon fontSize="small" />
-                </Tooltip>
-              </Box>
-              <AutoCompleteUserSchedule
-                value={formData.schedule_agent}
-                onChange={id => dispatch({ field: 'schedule_agent', value: id ? { value: id } : null })}
-                query={{ service: formData.service?.value, scheduleDate: formData.schedule_date }}
-                disabled={!formData.service || !formData.schedule_date}
+
+              <GenericAsyncAutocompleteInput
+                label="Agente" value={formData.schedule_agent || formData.schedule_agent?.value}
+                onChange={handleChange('schedule_agent')}
+                endpoint="/api/users" queryParam="name__icontains"
+                extraParams={{ fields: ['id', 'complete_name'], limit: 25 }}
+                mapResponse={(data) =>
+                  data.results.map((s) => ({
+                    label: s.complete_name,
+                    value: s.id,
+                  }))
+                }
+                fullWidth required error={!!errors.schedule_agent}
+                helperText={errors.schedule_agent?.[0]}
               />
             </Grid>
             {/* Data e Horário */}
