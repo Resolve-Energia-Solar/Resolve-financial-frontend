@@ -87,13 +87,6 @@ const Menuitems = [
         href: '/apps/financial-record/attachments',
         permissions: ['financial.view_financialrecord_attachment'],
       },
-      {
-        id: uniqueId(),
-        title: 'Solicitações Sicoob',
-        icon: IconPigMoney,
-        permissions: ['contracts.view_sicoobrequest'],
-        href: '/apps/funding-request/sicoob',
-      },
     ],
   },
   {
@@ -261,5 +254,12 @@ const Menuitems = [
       },
     ],
   },
+  {
+    id: uniqueId(),
+    title: 'Sicoob',
+    icon: IconPigMoney,
+    permissions: ['contracts.view_sicoobrequest'],
+    href: '/apps/funding-request/sicoob',
+  }
 ];
 export default Menuitems;
