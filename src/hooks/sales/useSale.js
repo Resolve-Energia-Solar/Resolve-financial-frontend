@@ -68,6 +68,7 @@ const useSale = (id) => {
             "cancellation_reasons",
             "is_pre_sale",
             "reference_table",
+            "reward",
             "sale_products.id",
             "sale_products.value",
             "sale_products.cost_value",
@@ -76,8 +77,7 @@ const useSale = (id) => {
             "projects.id",
             "projects.product",
             "projects.delivery_type",
-          ],
-          format: "json"
+          ]
         }
       );
       setSaleData(data);

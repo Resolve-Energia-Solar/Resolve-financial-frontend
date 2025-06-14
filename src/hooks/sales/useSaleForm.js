@@ -1,12 +1,8 @@
 import { useState, useEffect } from 'react';
-import formatDate from '@/utils/formatDate';
 import saleService from '@/services/saleService';
-import saleProductsService from '@/services/saleProductsService';
-import { useDispatch, useSelector } from 'react-redux';
 import { enqueueSnackbar } from 'notistack';
 
 const useSaleForm = (initialData, id) => {
-  const user = useSelector((state) => state.user);
   const [formData, setFormData] = useState({
     customerId: null,
     sellerId: null,
@@ -23,6 +19,7 @@ const useSaleForm = (initialData, id) => {
     billing_date: null,
     cancellationReasonsIds: [],
     reference_table: null,
+    reward: null,
   });
 
   const [formErrors, setFormErrors] = useState({});
@@ -50,6 +47,7 @@ const useSaleForm = (initialData, id) => {
           ? initialData.cancellation_reasons
           : [],
         reference_table: initialData.reference_table || '',
+        reward: initialData.reward || null,
       });
     }
   }, [initialData]);
@@ -94,6 +92,7 @@ const useSaleForm = (initialData, id) => {
       billing_date: formData.billing_date || null,
       cancellation_reasons: formData.cancellationReasonsIds,
       reference_table: formData.reference_table,
+      reward: formData.reward,
     };
 
     try {
