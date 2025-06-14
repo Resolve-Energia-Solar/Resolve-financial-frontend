@@ -443,10 +443,10 @@ export default function TicketForm({ projectId, ticketId = null, onSave }) {
                                     <TextField
                                         fullWidth
                                         label="Data de Conclusão"
-                                        type="date"
-                                        name="conclusion_date"
-                                        value={formData.conclusion_date || ""}
-                                        onChange={handleChange}
+                                        type="datetime-local"
+                                        // name="conclusion_date"
+                                        value={formData.conclusion_date ? formData.conclusion_date.slice(0, 16) : ""}
+                                        // onChange={handleChange}
                                         disabled={true}
                                         InputLabelProps={{ shrink: true }}
                                         error={!!errors.conclusion_date}
