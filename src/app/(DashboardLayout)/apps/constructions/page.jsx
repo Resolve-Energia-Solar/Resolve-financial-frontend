@@ -57,9 +57,7 @@ const ConstructionsDashboard = () => {
   const theme = useTheme();
   const { enqueueSnackbar } = useSnackbar();
 
-  console.log('indicators', indicators);
-
-  const stats = [
+  const statusStats = [
     {
       key: 'total_pending',
       label: 'Pendente',
@@ -259,7 +257,7 @@ const ConstructionsDashboard = () => {
   ];
 
   const handleKPIClick = (kpiType) => {
-    const kpiFilter = stats.find((stat) => stat.key === kpiType)?.filter;
+    const kpiFilter = statusStats.find((stat) => stat.key === kpiType)?.filter;
 
     if (!kpiFilter) {
       return;
@@ -314,7 +312,10 @@ const ConstructionsDashboard = () => {
             background: theme.palette.mode === 'dark' ? '#424242' : '#f5f5f5'
           }}
         >
-          {stats.map(({ key, label, value, icon, color, filter, format }) => {
+          <Typography variant="h6" sx={{ width: '100%' }}>
+            Status da Obra
+          </Typography>
+          {statusStats.map(({ key, label, value, icon, color, filter, format }) => {
             const isActive =
               filter &&
               Object.entries(filter).some(
@@ -349,9 +350,12 @@ const ConstructionsDashboard = () => {
             background: theme.palette.mode === 'dark' ? '#424242' : '#f5f5f5'
           }}
         >
+          <Typography variant="h6" sx={{ width: '100%' }}>
+            Clientes Cientes da Obra
+          </Typography>
           <KPICard
             key="total_customer_aware"
-            label="Clientes cientes"
+            label="Cientes"
             value={indicators.total_customer_aware}
             icon={<CheckCircleIcon />}
             color={theme.palette.success.main}
@@ -364,7 +368,7 @@ const ConstructionsDashboard = () => {
           />
           <KPICard
             key="total_not_customer_aware"
-            label="Clientes não cientes"
+            label="Não-cientes"
             value={indicators.total_not_customer_aware}
             icon={<RemoveCircleOutline />}
             color={theme.palette.error.main}
@@ -377,6 +381,112 @@ const ConstructionsDashboard = () => {
           />
         </Box>
       </Box>
+      <Box
+        sx={{
+          width: '100%',
+          display: 'flex',
+          justifyContent: 'space-evenly',
+          gap: 2,
+          flexWrap: 'wrap',
+          mt: 1,
+          mb: 4,
+          p: 2,
+          background: theme.palette.mode === 'dark' ? '#424242' : '#f5f5f5'
+        }}
+      >
+        <Typography variant="h6" sx={{ width: '100%' }}>
+          Responsabilidade da Obra
+        </Typography>
+        <KPICard
+          key="total_customer_responsible"
+          label="Cliente"
+          value={indicators.total_customer_responsible}
+          icon={<CheckCircleIcon />}
+          color={theme.palette.success.main}
+          active={
+            Object.entries({ total_customer_responsible: 'true' }).some(
+              ([filterKey, filterValue]) => filters?.[filterKey] === filterValue,
+            )
+          }
+          loading={loadingIndicators}
+        />
+        <KPICard
+          key="total_branch_responsible"
+          label="Franquia"
+          value={indicators.total_branch_responsible}
+          icon={<RemoveCircleOutline />}
+          color={theme.palette.error.main}
+          active={
+            Object.entries({ total_branch_responsible: false }).some(
+              ([filterKey, filterValue]) => filters?.[filterKey] === filterValue,
+            )
+          }
+          loading={loadingIndicators}
+        />
+        <KPICard
+          key="total_operational_center_responsible"
+          label="Centro de Operações"
+          value={indicators.total_operational_center_responsible}
+          icon={<RemoveCircleOutline />}
+          color={theme.palette.error.main}
+          active={
+            Object.entries({ total_operational_center_responsible: false }).some(
+              ([filterKey, filterValue]) => filters?.[filterKey] === filterValue,
+            )
+          }
+          loading={loadingIndicators}
+        />
+      </Box>
+      <Box
+        sx={{
+          width: '100%',
+          display: 'flex',
+          justifyContent: 'space-evenly',
+          gap: 2,
+          flexWrap: 'wrap',
+          mt: 1,
+          mb: 4,
+          p: 2,
+          background: theme.palette.mode === 'dark' ? '#424242' : '#f5f5f5'
+        }}
+      >
+        <Typography variant="h6" sx={{ width: '100%' }}>
+          Valores
+        </Typography>
+        <KPICard
+          key="total_repass_value"
+          label="Total de Valor de Repasse"
+          value={indicators.total_repass_value.toLocaleString('pt-BR', {
+            style: 'currency',
+            currency: 'BRL',
+          })}
+          icon={<CheckCircleIcon />}
+          color={theme.palette.success.main}
+          active={
+            Object.entries({ total_repass_value: true }).some(
+              ([filterKey, filterValue]) => filters?.[filterKey] === filterValue,
+            )
+          }
+          loading={loadingIndicators}
+        />
+        <KPICard
+          key="total_budget_value"
+          label="Total de Orçamento"
+          value={indicators.total_budget_value.toLocaleString('pt-BR', {
+            style: 'currency',
+            currency: 'BRL',
+          })}
+          icon={<RemoveCircleOutline />}
+          color={theme.palette.error.main}
+          active={
+            Object.entries({ total_budget_value: false }).some(
+              ([filterKey, filterValue]) => filters?.[filterKey] === filterValue,
+            )
+          }
+          loading={loadingIndicators}
+        />
+      </Box>
+
 
       {/* Filtros */}
       <GenericFilterDrawer
