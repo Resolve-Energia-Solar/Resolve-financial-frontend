@@ -151,7 +151,7 @@ const Menuitems = [
         title: 'Tickets',
         icon: IconHeadset,
         href: '/apps/customer-service',
-        permissions: ['field_services.view_schedule'],
+        permissions: ['customer_service.view_ticket'],
       },
     ],
   },
