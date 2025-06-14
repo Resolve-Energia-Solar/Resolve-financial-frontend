@@ -118,7 +118,7 @@ export default function TicketForm({ projectId, ticketId = null, onSave }) {
     const handleSubmit = async () => {
         try {
             setLoading(true);
-            const payload = { ...formData, created_by: user.id };
+            const payload = { ...formData, created_by: ticketId ? formData.created_by : user.id };
             if (!ticketId) delete payload.status;
             if (ticketId) await ticketService.update(ticketId, payload);
             else await ticketService.create(payload);
