@@ -91,6 +91,13 @@ const Menuitems = [
   },
   {
     id: uniqueId(),
+    title: 'Sicoob',
+    icon: IconPigMoney,
+    permissions: ['contracts.view_sicoobrequest'],
+    href: '/apps/funding-request/sicoob',
+  },
+  {
+    id: uniqueId(),
     title: 'Serviços de Campo',
     icon: IconUserPin,
     href: '/apps/schedules',
@@ -253,13 +260,6 @@ const Menuitems = [
         permissions: ['core.view_documenttype'],
       },
     ],
-  },
-  {
-    id: uniqueId(),
-    title: 'Sicoob',
-    icon: IconPigMoney,
-    permissions: ['contracts.view_sicoobrequest'],
-    href: '/apps/funding-request/sicoob',
   }
 ];
 export default Menuitems;
