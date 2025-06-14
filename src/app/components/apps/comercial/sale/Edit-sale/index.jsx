@@ -441,10 +441,10 @@ const EditSaleTabs = ({
                 </Grid>
 
                 <Grid item xs={12} sm={12} lg={4}>
-                  <CustomFormLabel htmlFor="name">Recompensa</CustomFormLabel>
+                  <CustomFormLabel htmlFor="name">Premiação</CustomFormLabel>
                   <GenericAsyncAutocompleteInput
                     name="reward"
-                    label="Recompensa"
+                    label="Premiação"
                     endpoint='api/rewards'
                     queryParam='name__icontains'
                     extraParams={{ fields: ['id', 'name', 'is_active'], limit: 30 }}
