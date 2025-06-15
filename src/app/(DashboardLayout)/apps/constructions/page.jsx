@@ -456,7 +456,7 @@ const ConstructionsDashboard = () => {
         <KPICard
           key="total_repass_value"
           label="Total de Valor de Repasse"
-          value={indicators.total_repass_value.toLocaleString('pt-BR', {
+          value={indicators.total_repass_value?.toLocaleString('pt-BR', {
             style: 'currency',
             currency: 'BRL',
           })}
@@ -472,7 +472,7 @@ const ConstructionsDashboard = () => {
         <KPICard
           key="total_budget_value"
           label="Total de Orçamento"
-          value={indicators.total_budget_value.toLocaleString('pt-BR', {
+          value={indicators.total_budget_value?.toLocaleString('pt-BR', {
             style: 'currency',
             currency: 'BRL',
           })}
