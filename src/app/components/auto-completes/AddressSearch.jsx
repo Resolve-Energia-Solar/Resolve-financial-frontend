@@ -4,11 +4,14 @@ import { Box, TextField, Paper, List, ListItem, ListItemText, Grid, Tooltip, Ico
 import { useJsApiLoader } from '@react-google-maps/api';
 import CustomFormLabel from '../forms/theme-elements/CustomFormLabel';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
+import { useTheme } from '@mui/material/styles';
 
 const libraries = ['places'];
 
 const AddressAutocomplete = ({ apiKey, onAddressSelect, inputValue, onInputChange }) => {
   const [shouldSearch, setShouldSearch] = useState(true);
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
 
   const [localInputValue, setLocalInputValue] = useState('');
   const value = inputValue !== undefined ? inputValue : localInputValue;
@@ -154,7 +157,12 @@ const AddressAutocomplete = ({ apiKey, onAddressSelect, inputValue, onInputChang
     <Box sx={{ position: 'relative' }}>
       <Grid container xs={12}>
         <Grid item xs={12} >
-          <CustomFormLabel sx={{ color: "#303030", fontWeight: "700", fontSize: "14px", mt: 0 }}>Endereço / CEP</CustomFormLabel>
+          <CustomFormLabel sx={{
+             color: isDark ? theme.palette.primary.dark : theme.palette.secondary.main, 
+             fontWeight: "700", 
+             fontSize: "14px", 
+             mt: 0 
+             }}>Endereço / CEP</CustomFormLabel>
         </Grid>
 
       </Grid>
