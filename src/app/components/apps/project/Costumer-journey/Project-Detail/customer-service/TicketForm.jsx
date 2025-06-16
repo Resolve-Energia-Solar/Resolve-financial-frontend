@@ -118,7 +118,7 @@ export default function TicketForm({ projectId, ticketId = null, onSave }) {
     const handleSubmit = async () => {
         try {
             setLoading(true);
-            const payload = { ...formData, created_by: user.id };
+            const payload = { ...formData, created_by: ticketId ? formData.created_by : user.id };
             if (!ticketId) delete payload.status;
             if (ticketId) await ticketService.update(ticketId, payload);
             else await ticketService.create(payload);
@@ -443,10 +443,10 @@ export default function TicketForm({ projectId, ticketId = null, onSave }) {
                                     <TextField
                                         fullWidth
                                         label="Data de Conclusão"
-                                        type="date"
-                                        name="conclusion_date"
-                                        value={formData.conclusion_date || ""}
-                                        onChange={handleChange}
+                                        type="datetime-local"
+                                        // name="conclusion_date"
+                                        value={formData.conclusion_date ? formData.conclusion_date.slice(0, 16) : ""}
+                                        // onChange={handleChange}
                                         disabled={true}
                                         InputLabelProps={{ shrink: true }}
                                         error={!!errors.conclusion_date}

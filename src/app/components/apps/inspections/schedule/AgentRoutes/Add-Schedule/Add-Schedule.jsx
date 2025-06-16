@@ -1,5 +1,17 @@
 'use client';
-import { Grid, Typography, Stack, CircularProgress, Button, InputAdornment, Box, TextField, Select, FormControlLabel, useTheme } from '@mui/material';
+import {
+  Grid,
+  Typography,
+  Stack,
+  CircularProgress,
+  Button,
+  InputAdornment,
+  Box,
+  TextField,
+  Select,
+  FormControlLabel,
+  useTheme,
+} from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useSnackbar } from 'notistack';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
@@ -19,7 +31,6 @@ import projectService from '@/services/projectService';
 import { IconAlarm } from '@tabler/icons-react';
 import GenericAsyncAutocompleteInput from '@/app/components/filters/GenericAsyncAutocompleteInput';
 
-
 function AddSchedulePage({ form = null, onRefresh = null, onClose = null }) {
   const userPermissions = useSelector((state) => state.user.permissions);
   const theme = useTheme();
@@ -32,7 +43,16 @@ function AddSchedulePage({ form = null, onRefresh = null, onClose = null }) {
 
   const { enqueueSnackbar } = useSnackbar();
 
-  const { formData, setFormData, setFormErrors, formErrors, handleChange, handleSave, setLoading: setFormLoading, loading: formLoading } = useScheduleForm()
+  const {
+    formData,
+    setFormData,
+    setFormErrors,
+    formErrors,
+    handleChange,
+    handleSave,
+    setLoading: setFormLoading,
+    loading: formLoading,
+  } = useScheduleForm();
 
   form.service ? (formData.service = form.service) : null;
   form.schedule_agent ? (formData.schedule_agent = form.schedule_agent) : null;
@@ -51,7 +71,7 @@ function AddSchedulePage({ form = null, onRefresh = null, onClose = null }) {
           if (!project.address) {
             enqueueSnackbar(
               'Por favor, cadastre o endereço da Unidade Geradora na aba "CheckList".',
-              { variant: 'error' }
+              { variant: 'error' },
             );
           }
 
@@ -87,7 +107,6 @@ function AddSchedulePage({ form = null, onRefresh = null, onClose = null }) {
 
     loadProjectData();
   }, [form?.project]);
-
 
   const timeOptions = [
     { value: '08:00:00', label: '08:00', value_end: '10:00:00' },
@@ -139,21 +158,21 @@ function AddSchedulePage({ form = null, onRefresh = null, onClose = null }) {
           <Typography variant="body2">Horários disponíveis:</Typography>
           <ul>{timeSlots}</ul>
         </div>,
-        { variant: 'warning' }
+        { variant: 'warning' },
       );
     }
-  
+
     if ('non_field_errors' in formErrors && Array.isArray(formErrors.non_field_errors)) {
       formErrors.non_field_errors.forEach((error, index) => {
         enqueueSnackbar(
           <div style={{ maxWidth: '400px' }}>
             <Typography variant="body1">{error}</Typography>
           </div>,
-          { variant: 'warning' }
+          { variant: 'warning' },
         );
       });
     }
-  
+
     if (
       formErrors &&
       Object.keys(formErrors).length > 0 &&
@@ -172,14 +191,12 @@ function AddSchedulePage({ form = null, onRefresh = null, onClose = null }) {
             <div style={{ maxWidth: '400px' }}>
               <Typography variant="body1">{`${label}: ${formErrors[key][0]}`}</Typography>
             </div>,
-            { variant: 'error' }
+            { variant: 'error' },
           );
         }
       });
     }
   }, [formErrors]);
-
-
 
   const formatCurrency = (value) =>
     new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
@@ -198,7 +215,7 @@ function AddSchedulePage({ form = null, onRefresh = null, onClose = null }) {
 
         enqueueSnackbar(
           'O projeto selecionado não possui endereço. Cadastre o endereço na aba "checklist".',
-          { variant: 'error' }
+          { variant: 'error' },
         );
 
         setFormLoading(false);
@@ -243,21 +260,33 @@ function AddSchedulePage({ form = null, onRefresh = null, onClose = null }) {
 
   return (
     <Grid container spacing={0}>
-      <Grid item xs={12} sx={{ display: 'flex', justifyContent: "flex-start", flexDirection: 'column' }}>
-        <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3, alignItems: "center", justifyContent: "center" }}>
+      <Grid
+        item
+        xs={12}
+        sx={{ display: 'flex', justifyContent: 'flex-start', flexDirection: 'column' }}
+      >
+        <Grid
+          container
+          rowSpacing={1}
+          columnSpacing={{ xs: 1, sm: 2, md: 3, alignItems: 'center', justifyContent: 'center' }}
+        >
           <Grid item xs={12}>
-            <Typography sx={{ fontSize: "24px", fontWeight: 700, color: "#303030" }}>
+            <Typography sx={{ fontSize: '24px', fontWeight: 700, color: '#303030' }}>
               Agende uma visita
             </Typography>
           </Grid>
           <Grid item xs={12} mb={1}>
-            <Typography sx={{ fontSize: "14px", fontWeight: 400, color: "#98959D" }}>
+            <Typography sx={{ fontSize: '14px', fontWeight: 400, color: '#98959D' }}>
               Selecione data, horário e selecione o endereço do cliente para criar o agendamento.
             </Typography>
           </Grid>
         </Grid>
 
-        <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3, alignItems: "center", justifyContent: "center" }}>
+        <Grid
+          container
+          rowSpacing={1}
+          columnSpacing={{ xs: 1, sm: 2, md: 3, alignItems: 'center', justifyContent: 'center' }}
+        >
           {form.service ? null : (
             <Grid item xs={12}>
               <CustomFormLabel htmlFor="service">Serviço</CustomFormLabel>
@@ -289,8 +318,11 @@ function AddSchedulePage({ form = null, onRefresh = null, onClose = null }) {
           </Grid>
         )}
 
-
-        <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3, alignItems: "center", justifyContent: "center" }}>
+        <Grid
+          container
+          rowSpacing={1}
+          columnSpacing={{ xs: 1, sm: 2, md: 3, alignItems: 'center', justifyContent: 'center' }}
+        >
           {isProject && (
             <Grid item xs={12} sm={6}>
               <GenericAsyncAutocompleteInput
@@ -321,13 +353,7 @@ function AddSchedulePage({ form = null, onRefresh = null, onClose = null }) {
                 endpoint="/api/projects/"
                 queryParam="q"
                 extraParams={{
-                  expand: [
-                    'sale.customer',
-                    'sale',
-                    'sale.branch',
-                    'product',
-                    'sale.homologator',
-                  ],
+                  expand: ['sale.customer', 'sale', 'sale.branch', 'product', 'sale.homologator'],
                   fields: [
                     'id',
                     'project_number',
@@ -350,7 +376,9 @@ function AddSchedulePage({ form = null, onRefresh = null, onClose = null }) {
                 }}
                 mapResponse={(data) =>
                   data.results.map((p) => ({
-                    label: `${p.project_number} - ${p.sale?.customer?.complete_name || 'Cliente Desconhecido'}`,
+                    label: `${p.project_number} - ${
+                      p.sale?.customer?.complete_name || 'Cliente Desconhecido'
+                    }`,
                     value: p.id,
                     project_number: p.project_number,
                     total_value: p.sale?.total_value || 0,
@@ -363,12 +391,13 @@ function AddSchedulePage({ form = null, onRefresh = null, onClose = null }) {
                     address: p.address
                       ? { label: p.address.complete_address || '', value: p.address.id }
                       : null,
-                    product: p.product
-                      ? { label: p.product?.name, value: p.product.id }
-                      : null,
+                    product: p.product ? { label: p.product?.name, value: p.product.id } : null,
                     contract_number: p.sale?.contract_number || '',
                     homologator: p.sale?.homologator
-                      ? { label: p.sale?.homologator?.complete_name, value: p.sale?.homologator?.id }
+                      ? {
+                          label: p.sale?.homologator?.complete_name,
+                          value: p.sale?.homologator?.id,
+                        }
                       : { label: 'Homologador não disponível', value: null },
                     signature_date: p.sale?.signature_date || '',
                     status: p.sale?.status || '',
@@ -451,7 +480,7 @@ function AddSchedulePage({ form = null, onRefresh = null, onClose = null }) {
                     <AddUser
                       hideSaveButton={false}
                       onClose={onClose}
-                      onUserSaved={user => {
+                      onUserSaved={(user) => {
                         setFormData({
                           ...formData,
                           customer: { label: user.complete_name, value: user.id },
@@ -470,9 +499,7 @@ function AddSchedulePage({ form = null, onRefresh = null, onClose = null }) {
                   endpoint="/api/branches/"
                   queryParam="name__icontains"
                   extraParams={{ fields: ['id', 'name'] }}
-                  mapResponse={(data) =>
-                    data.results.map((b) => ({ label: b.name, value: b.id }))
-                  }
+                  mapResponse={(data) => data.results.map((b) => ({ label: b.name, value: b.id }))}
                   fullWidth
                   helperText={formErrors.branch?.[0] || ''}
                   error={!!formErrors.branch}
@@ -512,17 +539,47 @@ function AddSchedulePage({ form = null, onRefresh = null, onClose = null }) {
                   helperText={formErrors.address?.[0] || ''}
                   error={!!formErrors.address}
                   required
-                  renderCreateModal={({ open, onClose }) =>
+                  renderCreateModal={({ open, onClose }) => (
                     <CreateAddressPage
                       open={open}
                       onClose={onClose}
                       userId={formData.customer?.value}
-                      onAdd={created => {
+                      onAdd={(created) => {
                         handleChange('address', created);
                         onClose();
                       }}
                     />
+                  )}
+                />
+              </Grid>
+
+              <Grid item xs={12} sm={6}>
+                <GenericAsyncAutocompleteInput
+                  label="Agente"
+                  value={formData.schedule_agent}
+                  onChange={(newValue) => setFormData({ ...formData, schedule_agent: newValue })}
+                  endpoint="/api/users/"
+                  queryParam="complete_name__icontains"
+                  extraParams={{ fields: ['id', 'complete_name'], limit: 10 }}
+                  mapResponse={(data) =>
+                    data.results.map((u) => ({ label: u.complete_name, value: u.id }))
                   }
+                  fullWidth
+                  helperText={formErrors.customer?.[0] || ''}
+                  error={!!formErrors.customer}
+                  renderCreateModal={({ onClose }) => (
+                    <AddUser
+                      hideSaveButton={false}
+                      onClose={onClose}
+                      onUserSaved={(user) => {
+                        setFormData({
+                          ...formData,
+                          customer: { label: user.complete_name, value: user.id },
+                        });
+                        onClose();
+                      }}
+                    />
+                  )}
                 />
               </Grid>
             </>
@@ -547,8 +604,9 @@ function AddSchedulePage({ form = null, onRefresh = null, onClose = null }) {
                 }}
                 mapResponse={(data) => {
                   return data.results.map((s) => ({
-                    label: `${s.service?.name || ''} nº ${s.protocol} - ${s.customer?.complete_name || ''
-                      } - ${s.schedule_date} ${s.schedule_start_time.toLocaleString()}`,
+                    label: `${s.service?.name || ''} nº ${s.protocol} - ${
+                      s.customer?.complete_name || ''
+                    } - ${s.schedule_date} ${s.schedule_start_time.toLocaleString()}`,
                     value: s.id,
                     ...s,
                   }));
@@ -614,10 +672,13 @@ function AddSchedulePage({ form = null, onRefresh = null, onClose = null }) {
               />
             </Grid>
           )}
-
         </Grid>
 
-        <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3, alignItems: "center", justifyContent: "center" }}>
+        <Grid
+          container
+          rowSpacing={1}
+          columnSpacing={{ xs: 1, sm: 2, md: 3, alignItems: 'center', justifyContent: 'center' }}
+        >
           {!form.schedule_date && (
             <Grid item xs={12}>
               <CustomFormLabel
@@ -650,7 +711,11 @@ function AddSchedulePage({ form = null, onRefresh = null, onClose = null }) {
             </Grid>
           )}
         </Grid>
-        <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3, alignItems: "center", justifyContent: "center" }}>
+        <Grid
+          container
+          rowSpacing={1}
+          columnSpacing={{ xs: 1, sm: 2, md: 3, alignItems: 'center', justifyContent: 'center' }}
+        >
           <Grid item xs={12}>
             <CustomFormLabel
               htmlFor="start_datetime"
@@ -661,8 +726,8 @@ function AddSchedulePage({ form = null, onRefresh = null, onClose = null }) {
             <FormSelect
               options={timeOptions}
               onChange={(e) => {
-                handleChange('schedule_start_time', e.target.value)
-                handleChange('schedule_end_time', e.target.value_end)
+                handleChange('schedule_start_time', e.target.value);
+                handleChange('schedule_end_time', e.target.value_end);
               }}
               value={formData.schedule_start_time || ''}
               {...(formErrors.schedule_start_time && {
@@ -686,7 +751,12 @@ function AddSchedulePage({ form = null, onRefresh = null, onClose = null }) {
               }}
               startAdornment={
                 <InputAdornment position="start">
-                  <IconAlarm color={theme.palette.primary.main} position='absolute' left='10px' top='50%' />
+                  <IconAlarm
+                    color={theme.palette.primary.main}
+                    position="absolute"
+                    left="10px"
+                    top="50%"
+                  />
                 </InputAdornment>
               }
             />
@@ -720,7 +790,7 @@ function AddSchedulePage({ form = null, onRefresh = null, onClose = null }) {
               '& .MuiInputBase-root': {
                 overflow: 'auto',
                 wordWrap: 'break-word',
-                height: "100%"
+                height: '100%',
               },
               '& .MuiOutlinedInput-root': {
                 border: '1px solid #3E3C41',
@@ -733,8 +803,8 @@ function AddSchedulePage({ form = null, onRefresh = null, onClose = null }) {
                 opacity: 1,
               },
               '& .MuiInputBase-input::placeholder': {
-                color: "#B2AFB6",
-              }
+                color: '#B2AFB6',
+              },
             }}
           />
         </Grid>
@@ -746,10 +816,10 @@ function AddSchedulePage({ form = null, onRefresh = null, onClose = null }) {
                 backgroundColor: theme.palette.primary.main,
                 color: '#000',
                 p: 1,
-                height: "56px",
+                height: '56px',
                 '&:hover': {
                   color: theme.palette.primary.light,
-                }
+                },
               }}
               fullWidth
               onClick={handleSaveForm}

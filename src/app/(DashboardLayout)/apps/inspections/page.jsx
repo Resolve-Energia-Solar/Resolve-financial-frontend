@@ -9,7 +9,7 @@ import { TableHeader } from '@/app/components/TableHeader';
 import StatusChip from '@/utils/status/DocumentStatusIcon';
 import { FilterAlt } from '@mui/icons-material';
 import ProjectDetailDrawer from '@/app/components/apps/project/Costumer-journey/Project-Detail/ProjectDrawer';
-import { Chip, Box, Typography, useTheme } from '@mui/material';
+import { Box, Typography, useTheme } from '@mui/material';
 import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
@@ -71,8 +71,8 @@ const InspectionsDashboard = () => {
     try {
       const response = await projectService.index({
         fields:
-          'id,project_number,sale.customer.complete_name,sale.signature_date,sale.status,journey_counter,sale.branch.name,inspection.schedule_date,inspection.final_service_opinion.name,inspection.final_service_opinion_date,inspection.final_service_opinion_user,sale.id',
-        expand: 'sale,sale.customer,sale.branch,inspection,inspection.final_service_opinion',
+          'id,project_number,sale.customer.complete_name,sale.signature_date,sale.status,journey_counter,sale.branch.name,inspection.schedule_date,inspection.final_service_opinion.name,inspection.final_service_opinion_date,inspection.final_service_opinion_user.complete_name,inspection.final_service_opinion_user.email,inspection.final_service_opinion_user.profile_picture,sale.id',
+        expand: 'sale,sale.customer,sale.branch,inspection,inspection.final_service_opinion,inspection.final_service_opinion_user',
         metrics: 'journey_counter',
         page: page + 1,
         limit: rowsPerPage,
@@ -178,7 +178,7 @@ const InspectionsDashboard = () => {
       headerName: 'Responsável',
       render: (r) => {
         return r.inspection?.final_service_opinion_user ? (
-          <UserCard userId={r.inspection?.final_service_opinion_user} />
+          <UserCard userData={r.inspection?.final_service_opinion_user} />
         ) : (
           '-'
         );

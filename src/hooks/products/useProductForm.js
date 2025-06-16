@@ -4,8 +4,8 @@ import productService from '@/services/productsService';
 
 const useProductForm = (initialData, id) => {
   const [formData, setFormData] = useState({
-    branches_ids: null,
-    roof_type_id: null,
+    branch: null,
+    roof_type: null,
     materials_ids: [],
     sale_id: null,
     name: '',
@@ -26,8 +26,8 @@ const useProductForm = (initialData, id) => {
     if (initialData) {
       setFormData({
         sale_id: initialData.sale?.id || null,
-        branches_ids: initialData.branch ? [initialData?.branch?.id] : [],
-        roof_type_id: initialData.roof_type.id || null,
+        branch: initialData.branch ? [initialData?.branch?.id] : [],
+        roof_type: initialData.roof_type.id || null,
         name: initialData.name || '',
         description: initialData.description || '',
         product_value: initialData.product_value || '',
@@ -80,9 +80,9 @@ const useProductForm = (initialData, id) => {
   const handleSave = async () => {
     setLoading(true);
     let dataToSend = {
-      sale_id: formData.sale_id,
-      branch: formData.branches_ids ? [formData.branches_ids] : undefined,
-      roof_type_id: formData.roof_type_id,
+      sale_id: formData.sale,
+      branch: formData.branch ? [formData.branch] : undefined,
+      roof_type: formData.roof_type,
       name: formData.name,
       description: formData.description,
       product_value: formData.product_value,

@@ -1,4 +1,5 @@
 import {withSentryConfig} from '@sentry/nextjs';
+/** @type {import('next').NextConfig} */
 const nextConfig = {
   experimental: {
     turbo: {
@@ -7,14 +8,9 @@ const nextConfig = {
       },
     },
   },
-  reactStrictMode: false,
+  reactStrictMode: true,
   images: {
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'res.cloudinary.com',
-      },
-    ],
+    domains: ['storage.googleapis.com'],
   },
   async headers() {
     return [
