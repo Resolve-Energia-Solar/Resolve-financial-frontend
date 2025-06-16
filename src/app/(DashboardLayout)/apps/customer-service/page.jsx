@@ -39,8 +39,8 @@ const TicketsDashboard = () => {
     try {
       const response = await ticketService.index({
         fields:
-          'id,protocol,project.id,project.project_number,project.sale.customer.complete_name,responsible,subject.subject,description,ticket_type,priority,responsible_department,responsible_user,status,conclusion_date,deadline,observer,answered_at,answered_by,closed_at,closed_by,resolved_at,resolved_by,created_by,created_at,updated_at,duration',
-        expand: 'project,project.sale.customer,subject',
+          'id,protocol,project.id,project.project_number,project.sale.customer.complete_name,responsible.username,responsible.complete_name,responsible.email,responsible.profile_picture,subject.subject,description,ticket_type,priority,responsible_department,responsible_user,status,conclusion_date,deadline,observer,answered_at,answered_by,closed_at,closed_by,resolved_at,resolved_by,created_by.username,created_by.complete_name,created_by.email,created_by.profile_picture,created_at,updated_at,duration',
+        expand: 'project,project.sale.customer,subject,responsible,created_by',
         is_deleted: false,
         page: page + 1,
         limit: rowsPerPage,
@@ -87,7 +87,7 @@ const TicketsDashboard = () => {
     {
       field: 'created_by',
       headerName: 'Criado por',
-      render: (r) => r.created_by ? <UserCard userId={r.created_by} /> : '-'
+      render: (r) => r.created_by ? <UserCard userData={r.created_by} /> : '-'
     },
     {
       field: 'created_at',
@@ -108,7 +108,7 @@ const TicketsDashboard = () => {
     {
       field: 'responsible',
       headerName: 'Responsável',
-      render: (r) => r.responsible ? <UserCard userId={r.responsible} /> : '-',
+      render: (r) => r.responsible ? <UserCard userData={r.responsible} /> : '-',
     },
     {
       field: 'status',
