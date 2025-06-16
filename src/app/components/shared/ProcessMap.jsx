@@ -26,6 +26,7 @@ import { useSelector } from 'react-redux';
 
 import GenericAsyncAutocompleteInput from '../filters/GenericAsyncAutocompleteInput';
 import UserBadge from '../apps/users/userBadge';
+import UserCard from '../apps/users/userCard';
 
 function getLevel(step, stepsMap, memo = {}) {
     if (memo[step.id]) return memo[step.id];
@@ -252,7 +253,7 @@ function ProcessMap({ processId }) {
                         </Typography>
                     </Grid>
                     <Grid item xs={4}>
-                        <UserBadge userId={step.user_id} showEmail={false} backgroundColor={"#FFFFFF"} />
+                        <UserCard userId={step.user_id} showEmail={false} backgroundColor={"#FFFFFF"} orientation="vertical" />
                     </Grid>
                 </Grid>
             );
