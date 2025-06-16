@@ -18,13 +18,13 @@ import {
   RemoveCircleOutline,
 } from '@mui/icons-material';
 import ProjectDetailDrawer from '@/app/components/apps/project/Costumer-journey/Project-Detail/ProjectDrawer';
-import { Chip, Tooltip, Button, Box, Typography, Skeleton, useTheme } from '@mui/material';
+import { Chip, Tooltip, Box, Typography, useTheme } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import GenericFilterDrawer from '@/app/components/filters/GenericFilterDrawer';
 import filterConfig from './filterConfig';
 import { formatDate } from '@/utils/dateUtils';
 import { FilterContext } from '@/context/FilterContext';
-import { IconBuilding, IconTools, IconUserBolt } from '@tabler/icons-react';
+import { IconBuilding, IconUserBolt } from '@tabler/icons-react';
 import { KPICard } from '@/app/components/charts/KPICard';
 import JourneyCounterChip from '@/app/components/apps/project/Costumer-journey/JourneyCounterChip';
 
