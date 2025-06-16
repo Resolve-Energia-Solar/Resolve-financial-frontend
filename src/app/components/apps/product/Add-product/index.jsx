@@ -49,6 +49,29 @@ const CreateProduct = ({
     handleDeleteMaterial,
   } = useProductForm();
 
+  const [materials, setMaterials] = useState([]);
+
+  useEffect(() => {
+    if (materials && materials.length > 0) {
+      const allNames = materials.map(item => item.name).join(' + ');
+      const limitedName = allNames.length > 50 
+        ? allNames.substring(0, 47) + '...' 
+        : allNames;
+      
+      formData.name = limitedName;
+      console.log('Nomes concatenados:', limitedName);
+    } else {
+      console.log('materials está vazio ou indefinido');
+      formData.name = '';
+    }
+  }, [materials]);
+  
+  
+  
+
+  console.log('formData: ', formData);
+
+
   const userPermissions = useSelector((state) => state.user.permissions);
 
   useEffect(() => {
@@ -98,6 +121,7 @@ const CreateProduct = ({
             name="name"
             value={formData.name}
             onChange={(e) => handleChange('name', e.target.value)}
+            disabled
             placeholder="Nome do Kit do Cliente"
             variant="outlined"
             fullWidth
@@ -225,15 +249,18 @@ const CreateProduct = ({
                     <TableCell style={{ width: '40%' }}>
                       <AutoCompleteMaterial
                         name="material"
-                        onChange={(value) => handleMaterialChange(index, 'material_id', value)}
+                        onChange={(value) => {
+                          handleMaterialChange(index, 'material_id', value?.id);
+                          setMaterials((prev) => [...prev, value]);
+                        }}
                         variant="outlined"
                         fullWidth
                         value={material.material_id}
                         {...(formErrors.materials_ids &&
                           formErrors.materials_ids[index]?.material_id && {
-                          error: true,
-                          helperText: formErrors.materials_ids[index].material_id,
-                        })}
+                            error: true,
+                            helperText: formErrors.materials_ids[index].material_id,
+                          })}
                       />
                     </TableCell>
                     <TableCell>
@@ -243,9 +270,9 @@ const CreateProduct = ({
                         onChange={(e) => handleMaterialChange(index, 'amount', e.target.value)}
                         {...(formErrors.materials_ids &&
                           formErrors.materials_ids[index]?.amount && {
-                          error: true,
-                          helperText: formErrors.materials_ids[index].amount,
-                        })}
+                            error: true,
+                            helperText: formErrors.materials_ids[index].amount,
+                          })}
                         fullWidth
                       />
                     </TableCell>
@@ -256,7 +283,15 @@ const CreateProduct = ({
                         </IconButton>
                       </Tooltip>
                       <Tooltip title="Delete Item">
-                        <IconButton color="error" onClick={() => handleDeleteMaterial(index)}>
+                        <IconButton
+                          color="error"
+                          onClick={() => {
+                            handleDeleteMaterial(index);
+                            setMaterials((prevMaterials) =>
+                              prevMaterials.filter((_, i) => i !== index),
+                            );
+                          }}
+                        >
                           <IconTrash width={22} />
                         </IconButton>
                       </Tooltip>
