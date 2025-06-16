@@ -250,9 +250,8 @@ const UploadDocument = ({ projectId }) => {
             borderRadius: 2,
             textAlign: 'center',
             cursor: 'pointer',
-            backgroundColor: '#f9f9f9',
             '&:hover': {
-              backgroundColor: '#f1f1f1',
+              backgroundColor: '#494A49',
             },
           }}
         >
