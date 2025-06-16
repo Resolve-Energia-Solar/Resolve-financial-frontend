@@ -49,6 +49,29 @@ const CreateProduct = ({
     handleDeleteMaterial,
   } = useProductForm();
 
+  const [materials, setMaterials] = useState([]);
+
+  useEffect(() => {
+    if (materials && materials.length > 0) {
+      const allNames = materials.map(item => item.name).join(' + ');
+      const limitedName = allNames.length > 50 
+        ? allNames.substring(0, 47) + '...' 
+        : allNames;
+      
+      formData.name = limitedName;
+      console.log('Nomes concatenados:', limitedName);
+    } else {
+      console.log('materials está vazio ou indefinido');
+      formData.name = '';
+    }
+  }, [materials]);
+  
+  
+  
+
+  console.log('formData: ', formData);
+
+
   const userPermissions = useSelector((state) => state.user.permissions);
 
   useEffect(() => {
@@ -98,6 +121,7 @@ const CreateProduct = ({
             name="name"
             value={formData.name}
             onChange={(e) => handleChange('name', e.target.value)}
+            disabled
             placeholder="Nome do Kit do Cliente"
             variant="outlined"
             fullWidth
@@ -162,28 +186,28 @@ const CreateProduct = ({
           </Grid>
         </HasPermission>
         <Grid item xs={12} sm={12} lg={6}>
-          <CustomFormLabel htmlFor="branches_ids">Filial</CustomFormLabel>
+          <CustomFormLabel htmlFor="branch">Filial</CustomFormLabel>
           <AutoCompleteBranch
-            name="branches_ids"
-            value={formData.branches_ids}
-            onChange={(value) => handleChange('branches_ids', value)}
+            name="branch"
+            value={formData.branch}
+            onChange={(value) => handleChange('branch', value)}
             placeholder="Selecione a Filial"
             variant="outlined"
             fullWidth
-            {...(formErrors.branches_ids && { error: true, helperText: formErrors.branches_ids })}
+            {...(formErrors.branch && { error: true, helperText: formErrors.branch })}
           />
         </Grid>
         <Grid item xs={12} sm={12} lg={12}>
-          <CustomFormLabel htmlFor="roof_type_id">Tipo de Telhado</CustomFormLabel>
+          <CustomFormLabel htmlFor="roof_type">Tipo de Telhado</CustomFormLabel>
           <AutoCompleteRoofType
-            name="roof_type_id"
-            value={formData.roof_type_id}
+            name="roof_type"
+            value={formData.roof_type}
             size="small"
-            onChange={(value) => handleChange('roof_type_id', value)}
+            onChange={(value) => handleChange('roof_type', value)}
             placeholder="Selecione o Tipo de Telhado"
             variant="outlined"
             fullWidth
-            {...(formErrors.roof_type_id && { error: true, helperText: formErrors.roof_type_id })}
+            {...(formErrors.roof_type && { error: true, helperText: formErrors.roof_type })}
           />
         </Grid>
       </Grid>
@@ -225,7 +249,10 @@ const CreateProduct = ({
                     <TableCell style={{ width: '40%' }}>
                       <AutoCompleteMaterial
                         name="material"
-                        onChange={(value) => handleMaterialChange(index, 'material_id', value)}
+                        onChange={(value) => {
+                          handleMaterialChange(index, 'material_id', value?.id);
+                          setMaterials((prev) => [...prev, value]);
+                        }}
                         variant="outlined"
                         fullWidth
                         value={material.material_id}
@@ -256,7 +283,15 @@ const CreateProduct = ({
                         </IconButton>
                       </Tooltip>
                       <Tooltip title="Delete Item">
-                        <IconButton color="error" onClick={() => handleDeleteMaterial(index)}>
+                        <IconButton
+                          color="error"
+                          onClick={() => {
+                            handleDeleteMaterial(index);
+                            setMaterials((prevMaterials) =>
+                              prevMaterials.filter((_, i) => i !== index),
+                            );
+                          }}
+                        >
                           <IconTrash width={22} />
                         </IconButton>
                       </Tooltip>

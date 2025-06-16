@@ -15,6 +15,7 @@ import { TableHeader } from '@/app/components/TableHeader';
 import TicketForm from './TicketForm';
 import useTicket from '@/hooks/tickets/useTicket';
 import { formatDateTime } from '@/utils/inspectionFormatDate';
+import TicketStatusChip from '@/app/components/apps/customer_service/TicketStatusChip';
 
 export default function CustomerServiceTab({ projectId, viewOnly = false, ticketId = null }) {
   const { enqueueSnackbar } = useSnackbar();
@@ -66,17 +67,7 @@ export default function CustomerServiceTab({ projectId, viewOnly = false, ticket
     {
       field: 'status',
       headerName: 'Status',
-      render: (r) => {
-        const statusMap = {
-          A: { label: 'Aberto', color: 'info' },
-          P: { label: 'Pendente', color: 'warning' },
-          R: { label: 'Resolvido', color: 'primary' },
-          F: { label: 'Finalizado', color: 'success' },
-          C: { label: 'Cancelado', color: 'error' },
-        };
-        const statusInfo = statusMap[r.status] || { label: r.status, color: 'default' };
-        return <Chip label={statusInfo.label} color={statusInfo.color} />;
-      },
+      render: (r) => { <TicketStatusChip status={r.status} /> },
     },
     {
       field: 'responsible_user',
@@ -184,7 +175,7 @@ export default function CustomerServiceTab({ projectId, viewOnly = false, ticket
             setSelectedTicket(null);
           }}
           maxWidth="md"
-          sx={{ 
+          sx={{
             padding: 2,
             '& .MuiDialog-paper': {
               minWidth: '50vw',

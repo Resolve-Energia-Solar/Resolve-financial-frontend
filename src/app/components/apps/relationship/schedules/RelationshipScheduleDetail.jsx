@@ -77,6 +77,7 @@ const RelationshipScheduleDetail = ({ open, onClose, scheduleId, dialogMode = fa
                         'address.neighborhood',
                         'schedule_agent.id',
                         'schedule_creator.complete_name',
+                        'requester.complete_name',
                         'created_at',
                         'products.name',
                         'branch.name',
@@ -89,6 +90,7 @@ const RelationshipScheduleDetail = ({ open, onClose, scheduleId, dialogMode = fa
                         'project.sale',
                         'schedule_agent',
                         'schedule_creator',
+                        'requester',
                         'service',
                         'products',
                         'branch',
@@ -281,6 +283,10 @@ const RelationshipScheduleDetail = ({ open, onClose, scheduleId, dialogMode = fa
                                             <Typography variant="body1" gutterBottom>
                                                 <strong>Agendado por:</strong>{' '}
                                                 {schedule.schedule_creator?.complete_name || 'Não identificado'}
+                                            </Typography>
+                                            <Typography variant="body1" gutterBottom>
+                                                <strong>Solicitante:</strong>{' '}
+                                                {schedule.requester?.complete_name || 'Não identificado'}
                                             </Typography>
                                             <Typography variant="body1" gutterBottom>
                                                 <strong>Criado em:</strong> {formatDate(schedule.created_at)}

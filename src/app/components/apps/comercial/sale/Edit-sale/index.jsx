@@ -43,10 +43,10 @@ import Customer from '../../../sale/Customer';
 import Phones from '../../../sale/phones';
 import Addresses from '../../../sale/Adresses';
 import useCanEditUser from '@/hooks/users/userCanEdit';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import productService from '@/services/productsService';
 import SaleProductItem from '../../../saleProduct/SaleProductItem';
 import getContentType from '@/utils/getContentType';
+import GenericAsyncAutocompleteInput from '@/app/components/filters/GenericAsyncAutocompleteInput';
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -100,8 +100,6 @@ const EditSaleTabs = ({
   const id_sale = id;
 
   const { loading, error, saleData, fetchSale } = useSale(id);
-
-  console.log('saleData', saleData);
 
   const {
     formData,
@@ -406,20 +404,20 @@ const EditSaleTabs = ({
                 </HasPermission>
 
                 {(formData.status === 'D' || formData.status === 'C') && (
-                    <Grid item xs={12} sm={12} lg={8}>
-                      <CustomFormLabel htmlFor="Motivo">
-                        Motivo do {formData.status === 'C' ? 'Cancelamento' : 'Distrato'}
-                      </CustomFormLabel>
-                      <AutoCompleteReasonMultiple
-                        onChange={(id) => handleChange('cancellationReasonsIds', id)}
-                        value={formData.cancellationReasonsIds}
-                        {...(formErrors.cancellationReasonsIds && {
-                          error: true,
-                          helperText: formErrors.cancellationReasonsIds,
-                        })}
-                      />
-                    </Grid>
-                  )}
+                  <Grid item xs={12} sm={12} lg={8}>
+                    <CustomFormLabel htmlFor="Motivo">
+                      Motivo do {formData.status === 'C' ? 'Cancelamento' : 'Distrato'}
+                    </CustomFormLabel>
+                    <AutoCompleteReasonMultiple
+                      onChange={(id) => handleChange('cancellationReasonsIds', id)}
+                      value={formData.cancellationReasonsIds}
+                      {...(formErrors.cancellationReasonsIds && {
+                        error: true,
+                        helperText: formErrors.cancellationReasonsIds,
+                      })}
+                    />
+                  </Grid>
+                )}
 
                 <Grid item xs={12} sm={12} lg={4}>
                   <CustomFormLabel htmlFor="reference_table">Tabela de Referência</CustomFormLabel>
@@ -442,6 +440,23 @@ const EditSaleTabs = ({
                   />
                 </Grid>
 
+                <Grid item xs={12} sm={12} lg={4}>
+                  <CustomFormLabel htmlFor="name">Premiação</CustomFormLabel>
+                  <GenericAsyncAutocompleteInput
+                    name="reward"
+                    label="Premiação"
+                    endpoint='api/rewards'
+                    queryParam='name__icontains'
+                    extraParams={{ fields: ['id', 'name', 'is_active'], limit: 30 }}
+                    value={formData.reward?.id || formData.reward}
+                    onChange={(value) => handleChange('reward', value?.value || value)}
+                    mapResponse={(response => response.results.map(r => ({
+                      value: r.id,
+                      label: `${r.name}${r.is_active ? '' : ' (Inativo)'}`,
+                    })))}
+                  />
+                </Grid>
+
                 <HasPermission
                   permissions={['accounts.change_pre_sale_field']}
                   userPermissions={userPermissions}
@@ -460,24 +475,24 @@ const EditSaleTabs = ({
                   </Grid>
                 </HasPermission>
 
-            {(() => {
-              const projectByProductId = {};
-              saleData.projects?.forEach((project) => {
-                if (project.product) {
-                  projectByProductId[project.product] = project;
-                }
-              });
+                {(() => {
+                  const projectByProductId = {};
+                  saleData.projects?.forEach((project) => {
+                    if (project.product) {
+                      projectByProductId[project.product] = project;
+                    }
+                  });
 
-              return (saleData.sale_products || []).map((saleProduct, index) => (
-                <SaleProductItem
-                  key={saleProduct.id}
-                  initialData={saleProduct}
-                  productName={productNames[index]}
-                  onUpdated={fetchSale}
-                  project={projectByProductId[saleProduct.product] || null}
-                />
-              ));
-            })()}
+                  return (saleData.sale_products || []).map((saleProduct, index) => (
+                    <SaleProductItem
+                      key={saleProduct.id}
+                      initialData={saleProduct}
+                      productName={productNames[index]}
+                      onUpdated={fetchSale}
+                      project={projectByProductId[saleProduct.product] || null}
+                    />
+                  ));
+                })()}
 
               </Grid>
             </Box>

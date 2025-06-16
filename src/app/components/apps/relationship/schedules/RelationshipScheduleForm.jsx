@@ -7,13 +7,11 @@ import {
   Radio, RadioGroup, FormControlLabel,
   FormControl, FormLabel, TextField
 } from '@mui/material';
-import HelpIcon from '@mui/icons-material/Help';
 import { useSnackbar } from 'notistack';
 import PageContainer from '@/app/components/container/PageContainer';
 import Breadcrumb from '@/app/(DashboardLayout)/layout/shared/breadcrumb/Breadcrumb';
 import BlankCard from '@/app/components/shared/BlankCard';
 import GenericAsyncAutocompleteInput from '@/app/components/filters/GenericAsyncAutocompleteInput';
-import AutoCompleteUserSchedule from '@/app/components/apps/inspections/auto-complete/Auto-input-UserSchedule';
 import scheduleService from '@/services/scheduleService';
 import { formatDate } from '@/utils/dateUtils';
 import AddUser from '@/app/components/apps/users/Add-user/addUser';
@@ -25,7 +23,7 @@ const fieldLabels = {
   project: 'Projeto', schedule_agent: 'Agente', branch: 'Unidade',
   address: 'Endereço', observation: 'Observação', schedule_creator: 'Solicitante',
   severity: 'Prioridade', parent_schedules: 'Serviços Relacionados', service_opinion: 'Parecer do Agente',
-  final_service_opinion: 'Parecer Final'
+  final_service_opinion: 'Parecer Final', requester: 'Solicitante'
 };
 
 const initialState = {
@@ -33,6 +31,7 @@ const initialState = {
   service: null, customer: null, project: null, schedule_agent: null,
   branch: null, address: null, observation: '', parent_schedules: [],
   severity: null, schedule_creator: null, service_opinion: null, final_service_opinion: null,
+  requester: null
 };
 
 function formReducer(state, { field, value }) {
@@ -94,7 +93,8 @@ export default function RelationshipScheduleForm({ scheduleId = null, breadcrumb
       address: formData.address.value,
       products: formData.product ? [formData.product.value] : [],
       schedule_creator: formData.schedule_creator?.value || user.id,
-      parent_schedules: formData.parent_schedules.map(ps => ps.value)
+      parent_schedules: formData.parent_schedules.map(ps => ps.value),
+      requester: formData.requester.value
     };
 
     try {
@@ -147,17 +147,19 @@ export default function RelationshipScheduleForm({ scheduleId = null, breadcrumb
             </Grid>
             {/* Agente */}
             <Grid item xs={12} sm={6}>
-              <Box display="flex" alignItems="center">
-                <Typography>Agente</Typography>
-                <Tooltip title="Selecione o agente disponível" placement="right">
-                  <HelpIcon fontSize="small" />
-                </Tooltip>
-              </Box>
-              <AutoCompleteUserSchedule
-                value={formData.schedule_agent}
-                onChange={id => dispatch({ field: 'schedule_agent', value: id ? { value: id } : null })}
-                query={{ service: formData.service?.value, scheduleDate: formData.schedule_date }}
-                disabled={!formData.service || !formData.schedule_date}
+              <GenericAsyncAutocompleteInput
+                label="Agente" value={formData.schedule_agent || formData.schedule_agent?.value}
+                onChange={handleChange('schedule_agent')}
+                endpoint="/api/users" queryParam="complete_name__icontains"
+                extraParams={{ fields: ['id', 'complete_name'], limit: 10 }}
+                mapResponse={(data) =>
+                  data.results.map((u) => ({
+                    label: u.complete_name,
+                    value: u.id,
+                  }))
+                }
+                fullWidth required error={!!errors.schedule_agent}
+                helperText={errors.schedule_agent?.[0]}
               />
             </Grid>
             {/* Data e Horário */}
@@ -434,8 +436,8 @@ export default function RelationshipScheduleForm({ scheduleId = null, breadcrumb
             <Grid item xs={12} sm={6}>
               <GenericAsyncAutocompleteInput
                 label="Solicitante"
-                value={formData.schedule_creator}
-                onChange={(newValue) => dispatch({ field: 'schedule_creator', value: newValue })}
+                value={formData.requester}
+                onChange={(newValue) => dispatch({ field: 'requester', value: newValue })}
                 endpoint="/api/users"
                 queryParam="complete_name__icontains"
                 extraParams={{ fields: ['id', 'complete_name'], limit: 10 }}
@@ -443,8 +445,8 @@ export default function RelationshipScheduleForm({ scheduleId = null, breadcrumb
                   data.results.map((u) => ({ label: u.complete_name, value: u.id }))
                 }
                 fullWidth
-                helperText={errors.schedule_creator?.[0]}
-                error={!!errors.schedule_creator}
+                helperText={errors.requester?.[0]}
+                error={!!errors.requester}
               />
             </Grid>
 

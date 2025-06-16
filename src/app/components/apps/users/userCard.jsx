@@ -1,124 +1,171 @@
-import React, { useState, useEffect } from 'react';
-import { useTheme, Box, Typography, Avatar, Link, Skeleton } from '@mui/material';
-import userService from '@/services/userService';
+import React, { memo, useMemo } from 'react';
+import PropTypes from 'prop-types';
+import Link from 'next/link';
+import Image from 'next/image';
+import { useTheme, Box, Typography, Avatar, Link as MuiLink, Skeleton } from '@mui/material';
+import useUser from '@/hooks/users/useUser';
 
-const UserCard = ({ userId, title, showEmail = true, showPhone = false }) => {
-    const theme = useTheme();
-    const [user, setUser] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+const UserCard = memo(function UserCard({
+  userId,
+  userData: initialData,
+  showEmail = true,
+  showPhone = false,
+  backgroundColor = 'transparent',
+  orientation = 'horizontal',
+}) {
+  const { loading, error, userData: fetched } = useUser(userId);
+  const user = fetched || initialData;
+  const isLoading = loading && !initialData;
+  const hasError = !!error && !initialData;
+  const theme = useTheme();
 
-    useEffect(() => {
-        const fetchUser = async () => {
-            try {
-                const fieldsList = ['profile_picture', 'complete_name', 'username'];
-                if (showEmail) fieldsList.push('email');
-                if (showPhone) {
-                    fieldsList.push(
-                        'phone_numbers.is_main',
-                        'phone_numbers.country_code',
-                        'phone_numbers.area_code',
-                        'phone_numbers.phone_number'
-                    );
-                }
-                const params = { fields: fieldsList.join(',') };
-                if (showPhone) {
-                    params.expand = 'phone_numbers';
-                }
-                const data = await userService.find(userId, params);
-                setUser(data);
-            } catch (err) {
-                console.error(err);
-                setError(err);
-            } finally {
-                setLoading(false);
-            }
-        };
+  const textColor = useMemo(() => {
+    return backgroundColor === 'transparent'
+      ? theme.palette.getContrastText(theme.palette.background.default)
+      : theme.palette.getContrastText(backgroundColor);
+  }, [backgroundColor, theme]);
 
-        if (userId) fetchUser();
-    }, [userId, showEmail, showPhone]);
+  const mainPhone = useMemo(() => {
+    if (!showPhone || !user?.phone_numbers) return null;
+    return user.phone_numbers.find(p => p.is_main) || user.phone_numbers[0];
+  }, [showPhone, user]);
 
-    if (loading) {
-        return (
-            <Box>
-                <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-                    {title}
-                </Typography>
-                <Box display="flex" alignItems="center" gap={2} sx={{ mt: 2 }}>
-                    <Skeleton variant="circular" width={40} height={40} />
-                    <Box>
-                        <Skeleton width={120} />
-                        <Skeleton width={200} />
-                    </Box>
-                </Box>
-            </Box>
-        );
-    }
+  const nameParts = useMemo(() => {
+    if (!user?.complete_name) return ['', ''];
+    const parts = user.complete_name.trim().split(' ');
+    return parts.length > 1
+      ? [parts[0], parts[parts.length - 1]]
+      : [parts[0], ''];
+  }, [user]);
 
-    if (error) return <Typography>Erro ao carregar usuário.</Typography>;
-    if (!user) return null;
+  const isVertical = orientation === 'vertical';
+  const containerDirection = isVertical ? 'column' : 'row';
+  const contentSpacing = isVertical ? { mt: 2 } : { ml: 2 };
+  const containerSx = isVertical
+    ? { textAlign: 'center', width: 150, aspectRatio: '3/4', overflow: 'hidden' }
+    : { minWidth: 250 };
 
-    const mainPhone =
-        (user.phone_numbers && user.phone_numbers.find((phone) => phone.is_main)) ||
-        (user.phone_numbers && user.phone_numbers[0]);
+  const textSx = {
+    fontSize: '0.8rem',
+    color: textColor,
+    mt: isVertical ? 1 : 0.5,
+    width: isVertical ? '100%' : 'auto',
+    whiteSpace: 'normal',
+    overflowWrap: 'break-word',
+    wordBreak: isVertical ? 'break-all' : 'normal',
+  };
 
+  if (isLoading) {
     return (
-        <Box>
-            <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-                {title}
-            </Typography>
-            <Box display="flex" alignItems="center" gap={2} sx={{ mt: 2 }}>
-                <Link
-                    sx={{ color: theme.palette.getContrastText(theme.palette.background.default), textDecoration: 'none' }}
-                    href={`/apps/user-profile/${user.username}`}
-                >
-                    <Avatar
-                        src={user.profile_picture}
-                        alt={user.complete_name}
-                        sx={{ width: 40, height: 40 }}
-                    />
-                </Link>
-                <Box>
-                    <Typography>
-                        <Link
-                            sx={{ color: theme.palette.getContrastText(theme.palette.background.default), textDecoration: 'none' }}
-                            href={`/apps/user-profile/${user.username}`}
-                        >
-                            {user.complete_name}
-                        </Link>
-                    </Typography>
-                    {showEmail && (
-                        user.email ? (
-                            <Typography>
-                                <Link
-                                    sx={{ color: theme.palette.getContrastText(theme.palette.background.default), textDecoration: 'none' }}
-                                    href={`mailto:${user.email}`}
-                                >
-                                    {user.email}
-                                </Link>
-                            </Typography>
-                        ) : (
-                            <Typography>Sem e-mail</Typography>
-                        )
-                    )}
-                    {showPhone && (
-                        mainPhone ? (
-                            <Typography>
-                                <Link
-                                    sx={{ color: theme.palette.getContrastText(theme.palette.background.default), textDecoration: 'none' }}
-                                    href={`tel:${mainPhone.phone_number}`}
-                                >
-                                    {`+${mainPhone.country_code} (${mainPhone.area_code}) ${mainPhone.phone_number}`}
-                                </Link>
-                            </Typography>
-                        ) : (
-                            <Typography>Sem telefone</Typography>
-                        )
-                    )}
-                </Box>
-            </Box>
+      <Box
+        display="flex"
+        flexDirection={containerDirection}
+        alignItems="center"
+        p={2}
+        bgcolor={backgroundColor}
+        sx={containerSx}
+      >
+        <Skeleton variant="circular" width={64} height={64} />
+        <Box
+          {...contentSpacing}
+          display="flex"
+          flexDirection="column"
+          alignItems={isVertical ? 'center' : 'flex-start'}
+          sx={{ width: isVertical ? '100%' : 'auto' }}
+        >
+          <Skeleton width={isVertical ? 120 : 100} height={20} />
+          <Skeleton width={isVertical ? 100 : 80} height={18} sx={{ mt: 0.5 }} />
         </Box>
+      </Box>
     );
+  }
+
+  if (hasError || !user) {
+    return (
+      <Typography color="error" sx={{ textAlign: 'center', p: 2 }}>
+        Erro ao carregar usuário.
+      </Typography>
+    );
+  }
+
+  return (
+    <Box
+      display="flex"
+      flexDirection={containerDirection}
+      alignItems="center"
+      p={2}
+      borderRadius={2}
+      bgcolor={backgroundColor}
+      sx={containerSx}
+    >
+      <MuiLink
+        component={Link}
+        href={`/apps/user-profile/${user.username}`}
+        underline="none"
+        aria-label={`Perfil de ${user.complete_name}`}
+      >
+        <Avatar sx={{ width: 64, height: 64, bgcolor: textColor + '33' }} alt={user.complete_name}>
+          {user.profile_picture ? (
+            <Image src={user.profile_picture} alt={user.complete_name} width={64} height={64} />
+          ) : (
+            user.complete_name.charAt(0).toUpperCase()
+          )}
+        </Avatar>
+      </MuiLink>
+
+      <Box
+        {...contentSpacing}
+        display="flex"
+        flexDirection="column"
+        alignItems={isVertical ? 'center' : 'flex-start'}
+        sx={{ width: isVertical ? '100%' : 'auto' }}
+      >
+        {isVertical ? (
+          <>
+            <Typography sx={{ fontWeight: 'bold', color: textColor, fontSize: '0.9rem' }}>
+              {nameParts[0]}
+            </Typography>
+            {nameParts[1] && (
+              <Typography sx={{ fontWeight: 'bold', color: textColor, fontSize: '0.9rem', mt: 0.5 }}>
+                {nameParts[1]}
+              </Typography>
+            )}
+          </>
+        ) : (
+          <Typography sx={{ fontWeight: 'bold', color: textColor, fontSize: '0.9rem', width: '100%' }}>
+            {`${nameParts[0]} ${nameParts[1]}`.trim()}
+          </Typography>
+        )}
+
+        {showEmail && (
+          <MuiLink href={user.email ? `mailto:${user.email}` : '#'} underline="none">
+            <Typography sx={textSx}>
+              {user.email || 'Sem e-mail'}
+            </Typography>
+          </MuiLink>
+        )}
+
+        {showPhone && (
+          <MuiLink href={mainPhone ? `tel:${mainPhone.phone_number}` : '#'} underline="none">
+            <Typography sx={textSx}>
+              {mainPhone
+                ? `+${mainPhone.country_code} (${mainPhone.area_code}) ${mainPhone.phone_number}`
+                : 'Sem telefone'}
+            </Typography>
+          </MuiLink>
+        )}
+      </Box>
+    </Box>
+  );
+});
+
+UserCard.propTypes = {
+  userId: PropTypes.string,
+  userData: PropTypes.object,
+  showEmail: PropTypes.bool,
+  showPhone: PropTypes.bool,
+  backgroundColor: PropTypes.string,
+  orientation: PropTypes.oneOf(['horizontal', 'vertical']),
 };
 
 export default UserCard;

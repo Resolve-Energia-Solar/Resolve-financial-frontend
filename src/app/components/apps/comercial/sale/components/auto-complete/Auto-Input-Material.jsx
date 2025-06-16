@@ -18,7 +18,12 @@ export default function AutoCompleteMaterial({ onChange, value, error, helperTex
         try {
           const material = await materialService.find(value);
           if (material) {
-            setSelectedMaterial({ id: material.id, name: material.name, price: material.price });
+            setSelectedMaterial({
+              id: material.id,
+              name: material.name,
+              price: material.price,
+              attributes: material.attributes,
+            });
           }
         } catch (error) {
           console.error('Erro ao buscar material:', error);
@@ -29,13 +34,9 @@ export default function AutoCompleteMaterial({ onChange, value, error, helperTex
     fetchDefaultMaterial();
   }, [value]);
 
-  const handleChange = (event, newValue) => {
+  const handleChange = (_event, newValue) => {
     setSelectedMaterial(newValue);
-    if (newValue) {
-      onChange(newValue.id);
-    } else {
-      onChange(null);
-    }
+    onChange(newValue);
   };
 
   const fetchMaterialsByName = useCallback(
@@ -101,14 +102,14 @@ export default function AutoCompleteMaterial({ onChange, value, error, helperTex
         open={open}
         onOpen={handleOpen}
         onClose={handleClose}
-        isOptionEqualToValue={(option, value) => option.name === value.name}
+        isOptionEqualToValue={(option, value) => option.id === value.id}
         getOptionLabel={(option) => option.name}
         options={options}
         loading={loading}
         value={selectedMaterial}
         loadingText="Carregando..."
         noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa."
-        onInputChange={(event, newInputValue) => {
+        onInputChange={(_event, newInputValue) => {
           fetchMaterialsByName(newInputValue);
         }}
         onChange={handleChange}
@@ -131,7 +132,7 @@ export default function AutoCompleteMaterial({ onChange, value, error, helperTex
           />
         )}
         renderOption={(props, option) => (
-          <li {...props}>
+          <li {...props} key={option.id}>
             <div>
               <strong>{option.name}</strong>
               <div>Preço: R${option.price}</div>

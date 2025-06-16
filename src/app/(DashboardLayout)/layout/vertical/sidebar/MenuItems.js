@@ -87,14 +87,14 @@ const Menuitems = [
         href: '/apps/financial-record/attachments',
         permissions: ['financial.view_financialrecord_attachment'],
       },
-      {
-        id: uniqueId(),
-        title: 'Solicitações Sicoob',
-        icon: IconPigMoney,
-        permissions: ['contracts.view_sicoobrequest'],
-        href: '/apps/funding-request/sicoob',
-      },
     ],
+  },
+  {
+    id: uniqueId(),
+    title: 'Sicoob',
+    icon: IconPigMoney,
+    permissions: ['contracts.view_sicoobrequest'],
+    href: '/apps/funding-request/sicoob',
   },
   {
     id: uniqueId(),
@@ -151,7 +151,7 @@ const Menuitems = [
         title: 'Tickets',
         icon: IconHeadset,
         href: '/apps/customer-service',
-        permissions: ['field_services.view_schedule'],
+        permissions: ['customer_service.view_ticket'],
       },
     ],
   },
@@ -260,6 +260,6 @@ const Menuitems = [
         permissions: ['core.view_documenttype'],
       },
     ],
-  },
+  }
 ];
 export default Menuitems;
