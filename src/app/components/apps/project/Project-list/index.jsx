@@ -4,6 +4,8 @@ import {
   Button,
   Chip,
   Grid,
+  TextField,
+  Tooltip,
   Typography,
 } from '@mui/material';
 import { IconCheck, IconX } from '@tabler/icons-react';
@@ -33,13 +35,13 @@ const ProjectList = ({ onClick, defaultfilters }) => {
   const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
   const { filters, setFilters } = useContext(FilterContext);
   const [ordering, setOrdering] = useState('-created_at');
-  
+
   useEffect(() => {
     if (defaultfilters) {
       const isDifferent = Object.entries(defaultfilters).some(
         ([key, value]) => filters[key] !== value
       );
-  
+
       if (isDifferent) {
         setFilters((prevFilters) => ({
           ...prevFilters,
@@ -47,10 +49,10 @@ const ProjectList = ({ onClick, defaultfilters }) => {
         }));
       }
     }
-  }, [defaultfilters,filters]);
-  
-  
-  
+  }, [defaultfilters, filters]);
+
+
+
 
   const states = [
     { value: 'AC', label: 'AC' },
@@ -460,6 +462,20 @@ const ProjectList = ({ onClick, defaultfilters }) => {
     },
   ];
 
+  const [debouncedSearch] = useState(() => {
+    const debounce = (fn, delay) => {
+      let timeoutId;
+      return function (...args) {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => fn.apply(this, args), delay);
+      };
+    };
+
+    return debounce((value) => {
+      setFilters(prev => ({ ...prev, q: value }));
+    }, 1000);
+  });
+
   return (
     <>
       <Typography fontSize={20} fontWeight={700} sx={{ mt: 0 }} gutterBottom>
@@ -490,9 +506,32 @@ const ProjectList = ({ onClick, defaultfilters }) => {
             xs={6}
             sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}
           >
+            <Tooltip title={
+              <div>
+                Pesquise por:
+                <ul>
+                  <li>Número do Projeto</li>
+                  <li>Projetista (Nome, CPF/CNPJ, Email)</li>
+                  <li>Homologador (Nome, CPF/CNPJ, Email)</li>
+                  <li>Número do Contrato</li>
+                  <li>Cliente (Nome, CPF/CNPJ, Email)</li>
+                  <li>Vendedor (Nome, CPF/CNPJ, Email)</li>
+                  <li>Supervisor de Vendas (Nome, CPF/CNPJ, Email)</li>
+                  <li>Gerente de Vendas (Nome, CPF/CNPJ, Email)</li>
+                  <li>Fornecedor (Nome, CPF/CNPJ, Email)</li>
+                </ul>
+              </div>
+            } arrow>
+              <TextField
+                variant="outlined"
+                size="small"
+                placeholder="Pesquisar..."
+                onChange={(e) => debouncedSearch(e.target.value)}
+                sx={{ marginRight: 2 }}
+              />
+            </Tooltip>
             <Button
               variant="outlined"
-              sx={{ mt: 1, mb: 2 }}
               onClick={() => setFilterDrawerOpen(true)}
             >
               Abrir Filtros
