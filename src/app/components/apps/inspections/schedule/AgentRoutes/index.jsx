@@ -107,7 +107,6 @@ export default function AgentRoutes({ projectId = null }) {
         // 1) Busca lista de agentes
         const agentResponse = await userService.index({
           name: nameFilter,
-          role: 'vistoriador',
           category: 1,
           expand: 'free_time_agent',
           limit: rowsPerPage,
