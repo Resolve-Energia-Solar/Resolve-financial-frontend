@@ -15,6 +15,7 @@ import ScheduleOpinionChip from "@/app/components/apps/inspections/schedule/Stat
 import projectService from "@/services/projectService";
 import { Add } from "@mui/icons-material";
 import { formatTime } from "@/utils/inspectionFormatDate";
+import { useTheme } from "@mui/material/styles";
 
 export default function InspectionsTab({ projectId, viewOnly = false }) {
     if (!projectId) return null;
@@ -27,6 +28,8 @@ export default function InspectionsTab({ projectId, viewOnly = false }) {
     const [categoryId, setCategoryId] = useState(null);
     const [selectedInspection, setSelectedInspection] = useState(null);
     const [selectedSaleId, setSelectedSaleId] = useState(null);
+    const theme = useTheme();
+    const isDark = theme.palette.mode === 'dark';
 
     const [openDrawer, setOpenDrawer] = useState(false);
     const [selectedProjectId, setSelectedProjectId] = useState(null);
@@ -282,7 +285,7 @@ export default function InspectionsTab({ projectId, viewOnly = false }) {
                     onClose={() => { setOpenInspectionFormModal(false); setSelectedInspection(null); }}
                     maxWidth="md"
                     fullWidth
-                    PaperProps={{ sx: { borderRadius: '20px', padding: '24px', gap: '24px', boxShadow: '0px 4px 20px rgba(0,0,0,0.1)', backgroundColor: '#FFF' } }}
+                    PaperProps={{ sx: { borderRadius: '20px', padding: '24px', gap: '24px', boxShadow: '0px 4px 20px rgba(0,0,0,0.1)', backgroundColor: isDark ? theme.palette.background.default : '#FFF', } }}
                 >
                     <DialogContent>
                         <ScheduleFromProjectForm

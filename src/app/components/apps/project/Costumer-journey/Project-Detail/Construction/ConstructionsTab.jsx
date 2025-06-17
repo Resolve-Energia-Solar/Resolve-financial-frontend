@@ -21,6 +21,7 @@ import ConstructionFormModal from './ConstructionFormModal'
 import { IconEdit } from '@tabler/icons-react'
 import GenericAsyncAutocompleteInput from '@/app/components/filters/GenericAsyncAutocompleteInput'
 import { Add } from '@mui/icons-material'
+import { useTheme } from '@mui/material/styles'
 
 export default function ConstructionsTab({ projectId, viewOnly = false }) {
     const { enqueueSnackbar } = useSnackbar()
@@ -39,6 +40,8 @@ export default function ConstructionsTab({ projectId, viewOnly = false }) {
     const [openViewConstruction, setOpenViewConstruction] = useState(false);
     const [openFinancialRecordSelectModal, setOpenFinancialRecordSelectModal] = useState(false);
     const [financialRecords, setFinancialRecords] = useState([]);
+    const theme = useTheme();
+    const isDark = theme.palette.mode === 'dark';
 
     const handleRowClick = (row) => {
         if (row.id) {
@@ -435,7 +438,7 @@ export default function ConstructionsTab({ projectId, viewOnly = false }) {
                             padding: '24px',
                             gap: '24px',
                             boxShadow: '0px 4px 20px rgba(0,0,0,0.1)',
-                            backgroundColor: '#FFF',
+                            backgroundColor: isDark ? theme.palette.background.default : '#FFF',
                         },
                     }}
                 >
@@ -492,7 +495,7 @@ export default function ConstructionsTab({ projectId, viewOnly = false }) {
                     onClose={() => { setOpenConstructionServiceFormModal(false); setSelectedConstructionServiceId(null); }}
                     maxWidth="md"
                     fullWidth
-                    PaperProps={{ sx: { borderRadius: '20px', padding: '24px', gap: '24px', boxShadow: '0px 4px 20px rgba(0,0,0,0.1)', backgroundColor: '#FFF' } }}
+                    PaperProps={{ sx: { borderRadius: '20px', padding: '24px', gap: '24px', boxShadow: '0px 4px 20px rgba(0,0,0,0.1)', backgroundColor: isDark ? theme.palette.background.default : '#FFF',  } }}
                 >
                     <DialogContent>
                         <ScheduleFromProjectForm
