@@ -47,7 +47,8 @@ const AddMaterialList = ({ open, handleClose, onRefresh, projectId }) => {
             <CustomFormLabel htmlFor="material">Material</CustomFormLabel>
             <AutoCompleteMaterial
               name="material"
-              onChange={(value) => setFormData({ ...formData, material: value })}
+              onChange={(value) => setFormData({ ...formData, material: value.id })}
+              value={formData.material}
               variant="outlined"
               fullWidth
               {...(formErrors.material && {
