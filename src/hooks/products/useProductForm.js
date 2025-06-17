@@ -114,6 +114,7 @@ const useProductForm = (initialData, id) => {
 
   return {
     formData,
+    setFormData,
     handleChange,
     handleSave,
     formErrors,

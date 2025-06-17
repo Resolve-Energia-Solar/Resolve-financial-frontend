@@ -21,7 +21,9 @@ import {
   Box,
   TablePagination,
   Chip,
-  Grid
+  Grid,
+  TextField,
+  Tooltip
 } from '@mui/material';
 import { AddBoxRounded, Lock as LockIcon, LockOpen as LockOpenIcon } from '@mui/icons-material';
 import { useRouter } from 'next/navigation';
@@ -203,6 +205,20 @@ const SaleList = () => {
     }
   };
 
+  const [debouncedSearch] = useState(() => {
+    const debounce = (fn, delay) => {
+      let timeoutId;
+      return function (...args) {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => fn.apply(this, args), delay);
+      };
+    };
+
+    return debounce((value) => {
+      setFilters(prev => ({ ...prev, q: value }));
+    }, 1000);
+  });
+
   return (
     <Box>
       <Accordion defaultExpanded sx={{ marginBottom: 4 }}>
@@ -298,30 +314,42 @@ const SaleList = () => {
               sx={{ mr: 1 }}
             />
           )}
-          <Button
-            variant="outlined"
-            startIcon={<IconFilter />}
-            sx={{ marginTop: 1, marginBottom: 2 }}
-            onClick={() => {
-              setOpenFilterDrawer(true);
-            }}
-          >
-            Filtros
-          </Button>
-          <GenericFilterDrawer
-            open={openFilterDrawer}
-            filters={filterConfig}
-            initialValues={filters}
-            onApply={(newFilters) => {
-              setFilters(newFilters);
-              setOpenFilterDrawer(false);
-            }}
-            onClose={() => setOpenFilterDrawer(false)}
-            setFilters={setFilters}
-          />
+          <Box sx={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+            <Tooltip title={
+              <div>
+                Pesquise por:
+                <ul>
+                  <li>Número do contrato</li>
+                  <li>Nome, CPF/CNPJ ou email do cliente</li>
+                  <li>Nome, CPF/CNPJ ou email do homologador</li>
+                  <li>Nome, CPF/CNPJ ou email do vendedor</li>
+                  <li>Nome, CPF/CNPJ ou email do supervisor de vendas</li>
+                  <li>Nome, CPF/CNPJ ou email do gerente de vendas</li>
+                  <li>Nome, CPF/CNPJ ou email do fornecedor</li>
+                </ul>
+              </div>
+            } arrow>
+              <TextField
+                variant="outlined"
+                size="small"
+                placeholder="Pesquisar..."
+                onChange={(e) => debouncedSearch(e.target.value)}
+                sx={{ marginRight: 2 }}
+              />
+            </Tooltip>
+            <Button
+              variant="outlined"
+              startIcon={<IconFilter />}
+              sx={{ marginRight: 1 }}
+              onClick={() => {
+                setOpenFilterDrawer(true);
+              }}
+            >
+              Filtros
+            </Button>
+          </Box>
         </Grid>
       </Box>
-
       <Box>
         <TableContainer sx={{ overflowX: 'auto' }}>
           <Table>
@@ -631,6 +659,17 @@ const SaleList = () => {
       >
         <EditSaleTabs saleId={rowSelected?.id} onRefresh={fetchSales} />
       </SideDrawer>
+      <GenericFilterDrawer
+        open={openFilterDrawer}
+        filters={filterConfig}
+        initialValues={filters}
+        onApply={(newFilters) => {
+          setFilters(newFilters);
+          setOpenFilterDrawer(false);
+        }}
+        onClose={() => setOpenFilterDrawer(false)}
+        setFilters={setFilters}
+      />
     </Box>
   );
 };

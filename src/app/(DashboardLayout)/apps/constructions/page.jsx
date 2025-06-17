@@ -162,7 +162,7 @@ const ConstructionsDashboard = () => {
       field: 'inspection.final_service_opinion.name',
       headerName: 'Parecer da vistoria',
       render: (r) => {
-        const text = r.inspection?.final_service_opinion?.name || '-';
+        const text = r.inspection?.final_service_opinion?.name || <RemoveCircleOutline color='default' />;
         return (
           <Tooltip title={text.length > 25 ? text : ''} arrow>
             <Chip label={text.length > 25 ? `${text.substring(0, 25)}...` : text} />
@@ -189,35 +189,29 @@ const ConstructionsDashboard = () => {
         ),
     },
     {
-      field: 'ciivil_construction.is_customer_aware',
+      field: 'civil_construction.is_customer_aware',
       headerName: 'Cliente ciente?',
-      render: (r) => (
-        <Chip
-          label={r.civil_construction[0]?.is_customer_aware ? 'Sim' : 'Não'}
-          color={r.civil_construction[0]?.is_customer_aware ? 'success' : 'error'}
-          icon={
-            r.civil_construction[0]?.is_customer_aware ? (
-              <CheckCircleIcon />
-            ) : (
-              <Cancel sx={{ color: 'error.main' }} />
-            )
-          }
-        />
-      ),
-    },
-    {
-      field: 'civil_constructions.work_responsibility',
-      headerName: 'Responsabilidade da obra',
-      render: (r) =>
-        r.civil_construction[0]?.work_responsibility ? (
-          <Chip
-            label={WORK_RESPONSIBILITY_MAP[r.civil_construction[0]?.work_responsibility].label}
-            color={WORK_RESPONSIBILITY_MAP[r.civil_construction[0]?.work_responsibility].color}
-            icon={WORK_RESPONSIBILITY_MAP[r.civil_construction[0]?.work_responsibility].icon}
-          />
-        ) : (
-          ' - '
-        ),
+      render: (r) => {
+        if (r.civil_construction[0]?.is_customer_aware === false) {
+          return (
+            <Chip
+              label="Não"
+              color="error"
+              icon={<Cancel sx={{ color: 'error.main' }} />}
+            />
+          );
+        }
+        if (r.civil_construction[0]?.is_customer_aware === true) {
+          return (
+            <Chip
+              label="Sim"
+              color="success"
+              icon={<CheckCircleIcon />}
+            />
+          );
+        }
+        return <RemoveCircleOutline color='default' />;
+      },
     },
     {
       field: 'civil_construction.start_date',
@@ -252,7 +246,7 @@ const ConstructionsDashboard = () => {
             style: 'currency',
             currency: 'BRL',
           }).format(r.civil_construction[0]?.repass_value || 0)
-          : '-',
+          : <RemoveCircleOutline color='default' />,
     },
   ];
 
@@ -415,7 +409,7 @@ const ConstructionsDashboard = () => {
           label="Franquia"
           value={indicators.total_branch_responsible}
           icon={<RemoveCircleOutline />}
-          color={theme.palette.error.main}
+          color={theme.palette.warning.main}
           active={
             Object.entries({ total_branch_responsible: false }).some(
               ([filterKey, filterValue]) => filters?.[filterKey] === filterValue,
@@ -461,7 +455,7 @@ const ConstructionsDashboard = () => {
             currency: 'BRL',
           })}
           icon={<CheckCircleIcon />}
-          color={theme.palette.success.main}
+          color={theme.palette.error.main}
           active={
             Object.entries({ total_repass_value: true }).some(
               ([filterKey, filterValue]) => filters?.[filterKey] === filterValue,
