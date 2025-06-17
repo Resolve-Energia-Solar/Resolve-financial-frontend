@@ -38,6 +38,7 @@ const CreateProduct = ({
 }) => {
   const {
     formData,
+    setFormData,
     handleChange,
     handleSave,
     formErrors,
@@ -53,24 +54,31 @@ const CreateProduct = ({
 
   useEffect(() => {
     if (materials && materials.length > 0) {
-      const allNames = materials.map(item => item.name).join(' + ');
-      const limitedName = allNames.length > 50 
-        ? allNames.substring(0, 47) + '...' 
-        : allNames;
-      
-      formData.name = limitedName;
+      const allNames = materials
+        .map((item, index) => {
+          const amount = formData.materials_ids?.[index]?.amount || '1';
+          return `${amount}x ${item.name}`;
+        })
+        .join(' + ');
+
+      const limitedName = allNames.length > 200 ? allNames.substring(0, 47) + '...' : allNames;
+
+      setFormData((prev) => ({
+        ...prev,
+        name: `${limitedName}${prev.params ? ' - ' + prev.params + ' KWp' : ''}`,
+      }));
+
       console.log('Nomes concatenados:', limitedName);
     } else {
       console.log('materials está vazio ou indefinido');
-      formData.name = '';
+      setFormData((prev) => ({
+        ...prev,
+        name: '',
+      }));
     }
-  }, [materials]);
-  
-  
-  
+  }, [materials, formData.materials_ids, formData.params]);
 
   console.log('formData: ', formData);
-
 
   const userPermissions = useSelector((state) => state.user.permissions);
 
