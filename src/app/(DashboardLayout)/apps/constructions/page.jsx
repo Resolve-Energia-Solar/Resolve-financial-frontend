@@ -359,6 +359,7 @@ const ConstructionsDashboard = () => {
               )
             }
             loading={loadingIndicators}
+            onClick={() => { setFilters({ is_customer_aware_of_construction: true }) }}
           />
           <KPICard
             key="total_not_customer_aware"
@@ -372,6 +373,7 @@ const ConstructionsDashboard = () => {
               )
             }
             loading={loadingIndicators}
+            onClick={() => { setFilters({ is_customer_aware_of_construction: false }) }}
           />
         </Box>
       </Box>
@@ -403,6 +405,7 @@ const ConstructionsDashboard = () => {
             )
           }
           loading={loadingIndicators}
+          onClick={() => { setFilters({ construction_responsible: 'C' }) }}
         />
         <KPICard
           key="total_branch_responsible"
@@ -416,6 +419,7 @@ const ConstructionsDashboard = () => {
             )
           }
           loading={loadingIndicators}
+          onClick={() => { setFilters({ construction_responsible: 'F' }) }}
         />
         <KPICard
           key="total_operational_center_responsible"
@@ -429,6 +433,7 @@ const ConstructionsDashboard = () => {
             )
           }
           loading={loadingIndicators}
+          onClick={() => { setFilters({ construction_responsible: 'O' }) }}
         />
       </Box>
       <Box
