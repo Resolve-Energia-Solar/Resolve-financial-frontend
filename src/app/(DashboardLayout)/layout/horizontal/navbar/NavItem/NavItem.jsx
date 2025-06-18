@@ -10,6 +10,7 @@ import ListItemText from "@mui/material/ListItemText";
 import { styled, useTheme } from "@mui/material/styles";
 import { useSelector } from 'react-redux';
 import useMediaQuery from '@mui/material/useMediaQuery';
+import { color } from "framer-motion";
 
 
 const NavItem = ({ item, level, pathDirect, onClick }) => {
@@ -17,6 +18,7 @@ const NavItem = ({ item, level, pathDirect, onClick }) => {
   const customizer = useSelector((state) => state.customizer);
   const Icon = item.icon;
   const theme = useTheme();
+  const isDark = theme.palette.mode === "dark";
   const itemIcon =
     level > 1 ? (
       <Icon stroke={1.5} size="1rem" />
@@ -32,10 +34,11 @@ const NavItem = ({ item, level, pathDirect, onClick }) => {
     color:
       level > 1 && pathDirect === item.href
         ? `${theme.palette.primary.main}!important`
-        : theme.palette.text.secondary,
+        : theme.palette.text.primary,
 
     "&:hover": {
-      backgroundColor: theme.palette.primary.light,
+      backgroundColor: theme.palette.primary.contrastText,
+      color: level > 1 ? theme.palette.primary.main : "#FFCC00",
     },
     "&.Mui-selected": {
       color: level > 1 ? theme.palette.primary.main : "white!important",

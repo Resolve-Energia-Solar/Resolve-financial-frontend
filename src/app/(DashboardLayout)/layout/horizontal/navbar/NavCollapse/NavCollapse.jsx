@@ -28,6 +28,7 @@ const NavCollapse = ({
 }) => {
   const Icon = menu.icon;
   const theme = useTheme();
+  const isDark = theme.palette.mode === "dark";
   const pathname = usePathname();
   const [open, setOpen] = React.useState(false);
   const customizer = useSelector((state) => state.customizer);
@@ -58,15 +59,16 @@ const NavCollapse = ({
     color:
       open || pathname.includes(menu.href) || level < 1
         ? "white"
-        : theme.palette.text.secondary,
+        : theme.palette.text.primary,
     backgroundColor:
       open || pathname.includes(menu.href) ? theme.palette.primary.main : "",
 
     "&:hover": {
       backgroundColor:
         open || pathname.includes(menu.href)
-          ? theme.palette.primary.main
-          : theme.palette.primary.light,
+          ? theme.palette.primary.contrastText
+          : theme.palette.primary.contrastText,
+      color: level > 1 ? theme.palette.primary.main : "#FFCC00",
     },
     "&:hover > .SubNav": { display: "block" },
   }));

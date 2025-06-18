@@ -33,6 +33,7 @@ export default function NavCollapse({
   const customizer = useSelector((state) => state.customizer);
   const Icon = menu?.icon;
   const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
   const pathname = usePathname();
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
@@ -56,13 +57,13 @@ export default function NavCollapse({
     marginBottom: '2px',
     padding: '8px 10px',
     paddingLeft: hideMenu ? '10px' : level > 2 ? `${level * 15}px` : '10px',
-    backgroundColor: open && level < 2 ? theme.palette.primary.main : '',
+    backgroundColor: open && level < 2 ? isDark ? theme.palette.primary.contrastText : theme.palette.primary.main : '',
     whiteSpace: 'nowrap',
     '&:hover': {
       backgroundColor:
         pathname.includes(menu.href) || open
-          ? theme.palette.primary.light
-          : theme.palette.primary.light,
+          ? theme.palette.primary.contrastText
+          : theme.palette.primary.contrastText,
       color: pathname.includes(menu.href) || open ? theme.palette.primary.main : theme.palette.primary.main,
       '& .MuiListItemIcon-root': {
         color: theme.palette.primary.main,
@@ -70,9 +71,13 @@ export default function NavCollapse({
     },
     color:
       open && level < 2
-        ? theme.palette.primary.light
+        ? isDark
+          ? theme.palette.primary.main
+          : theme.palette.primary.contrastText
         : `inherit` && level > 1 && open
         ? 'white' 
+        : isDark
+        ? '#fff'
         : '#7E8388',
     borderRadius: `${customizer.borderRadius}px`,
   }));
@@ -126,7 +131,7 @@ export default function NavCollapse({
           sx={{
             minWidth: '36px',
             p: '3px 0',
-            color: open ? "white" : pathname === menu.href ? "white" : '#7E8388', 
+            color: open ? "#FFE082" : pathname === menu.href ? isDark ? theme.palette.primary.contrastText : theme.palette.secondary.neutral : isDark ? "#fff" : "#7E8388", // Adjust color based on theme
           }}
         >
           {menuIcon}
