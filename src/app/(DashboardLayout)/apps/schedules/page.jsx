@@ -89,7 +89,7 @@ const ScheduleTable = () => {
       .index({
         page,
         limit: rowsPerPage,
-        expand: ['customer', 'service_opinion', 'final_service_opinion', 'branch', 'address', 'service', 'project.sale'],
+        expand: ['customer', 'service_opinion', 'final_service_opinion', 'branch', 'address', 'service', 'project.sale', 'schedule_agent.phone_numbers'],
         service__in: selectedServices.join(','),
         fields: [
           'id',
@@ -105,7 +105,9 @@ const ScheduleTable = () => {
           'address.complete_address',
           'observation',
           'branch.name',
-          'schedule_agent',
+          'schedule_agent.profile_picture',
+          'schedule_agent.complete_name',
+          'schedule_agent.phone_numbers',
           'observation',
           'service.name',
           'project.sale.financiers',
@@ -413,7 +415,7 @@ const ScheduleTable = () => {
                       <TableCell>{schedule?.branch?.name || "Sem unidade"}</TableCell>
                       <TableCell>
                         {schedule.schedule_agent
-                          ? <UserCard userId={schedule.schedule_agent} showPhone showEmail={false} />
+                          ? <UserCard userData={schedule.schedule_agent} showPhone showEmail={false} />
                           : <span>Sem agente</span>}
                       </TableCell>
                       <TableCell sx={{ textWrap: 'wrap' }}>
