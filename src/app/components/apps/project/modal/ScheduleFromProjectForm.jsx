@@ -32,6 +32,7 @@ import getContentType from '@/utils/getContentType';
 import { useSnackbar } from 'notistack';
 import { useSelector } from 'react-redux';
 import FinalServiceOpinionChip from '../../inspections/schedule/StatusChip/FinalServiceOpinionChip';
+import { useTheme } from '@mui/material/styles';
 
 const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = () => { }, errors = {}, displayAgent = true, useSupplier = false }) => {
   const { enqueueSnackbar } = useSnackbar();
@@ -63,6 +64,8 @@ const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = (
   const [minEndDate, setMinEndDate] = useState(null);
   const [minEndTime, setMinEndTime] = useState(null);
   const [startChanged, setStartChanged] = useState(false);
+  const theme = useTheme();
+
 
   const getFileName = (file) => {
     if (typeof file === 'string') {
@@ -282,8 +285,12 @@ const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = (
   };
 
   return (
-    <Box>
-      <Tabs value={tabValue} onChange={handleTabChange} sx={{ mb: 2 }}>
+    <Box
+      sx={{
+        backgroundColor: theme.palette.background.paper,
+      }}
+    >
+      <Tabs value={tabValue} onChange={handleTabChange} sx={{ mb: 2}}>
         <Tab label="Formulário" value="form" />
         {project && <Tab label="Anexos" value="attachments" />}
       </Tabs>
