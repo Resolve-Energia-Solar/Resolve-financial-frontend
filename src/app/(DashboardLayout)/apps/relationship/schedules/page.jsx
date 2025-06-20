@@ -76,9 +76,10 @@ export default function CustomerServiceSchedules() {
     scheduleService.index({
       page, limit: rowsPerPage, ordering,
       service__in: selectedServices.join(','),
-      expand: ['customer', 'service', 'address', 'service_opinion', 'final_service_opinion', 'project', 'project.sale.branch'],
+      expand: ['customer', 'service', 'address', 'service_opinion', 'final_service_opinion', 'project', 'project.sale.branch', 'schedule_agent.phone_numbers'],
       fields: [
-        'id', 'protocol', 'severity', 'schedule_agent',
+        'id', 'protocol', 'severity', 'schedule_agent.profile_picture',
+        'schedule_agent.complete_name', 'schedule_agent.phone_numbers',
         'project.project_number', 'customer.complete_name',
         'schedule_date', 'schedule_start_time', 'address.complete_address',
         'service.name', 'service_opinion.name', 'final_service_opinion.name',
@@ -151,7 +152,7 @@ export default function CustomerServiceSchedules() {
     },
     {
       field: 'schedule_agent', headerName: 'Agente', sx: { minWidth: 380 },
-      render: ({ schedule_agent }) => schedule_agent ? <UserCard userId={schedule_agent} /> : 'Sem agente'
+      render: ({ schedule_agent }) => schedule_agent ? <UserCard userData={schedule_agent} /> : 'Sem agente'
     },
     {
       field: 'service_opinion', headerName: 'Parecer Inicial', sortable: true,

@@ -65,7 +65,9 @@ const DetailsDrawer = ({ open, onClose, scheduleId, dialogMode = false }) => {
             'project.id',
             'project.sale.seller',
             'project.product.id',
-            'customer.id',
+            'customer.profile_picture',
+            'customer.complete_name',
+            'customer.phone_numbers',
             'address.complete_address',
             'address.street',
             'address.number',
@@ -80,6 +82,7 @@ const DetailsDrawer = ({ open, onClose, scheduleId, dialogMode = false }) => {
           ],
           expand: [
             'customer',
+            'customer.phone_numbers',
             'customer.addresses',
             'project',
             'project.sale',
@@ -335,7 +338,7 @@ const DetailsDrawer = ({ open, onClose, scheduleId, dialogMode = false }) => {
                   <Card variant="outlined">
                     <CardHeader title="Dados do Cliente" />
                     <CardContent>
-                      <UserCard userId={schedule.customer?.id} showPhone showEmail={false} />
+                      <UserCard userData={schedule.customer} showPhone showEmail={false} />
                       <Typography variant="body1" sx={{ mt: 2 }}>
                         <strong>Endereço:</strong> {schedule.address?.complete_address}
                       </Typography>
