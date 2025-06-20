@@ -190,7 +190,7 @@ export default function RelationshipScheduleForm({ scheduleId = null, breadcrumb
                   queryParam="name__icontains"
                   extraParams={{
                     fields: ['id', 'name'],
-                    service: formData.service || formData.service?.value,
+                    service: formData.service?.value || null,
                     is_final_opinion: false,
                   }}
                   mapResponse={(data) =>
@@ -217,7 +217,7 @@ export default function RelationshipScheduleForm({ scheduleId = null, breadcrumb
                   queryParam="name__icontains"
                   extraParams={{
                     fields: ['id', 'name'],
-                    service: formData.service || formData.service?.value,
+                    service: formData.service?.value || null,
                     is_final_opinion: true,
                   }}
                   mapResponse={(data) =>
