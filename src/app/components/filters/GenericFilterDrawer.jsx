@@ -451,7 +451,7 @@ const GenericFilterDrawer = ({ filters, initialValues, onApply, open, onClose })
         >
           <Grid container spacing={2}>
             <Grid item xs={6}>
-              <Button variant="outlined" color="secondary" fullWidth onClick={resetFiltersHandler}>
+              <Button variant="outlined" color="primary" fullWidth onClick={resetFiltersHandler}>
                 Limpar Filtros
               </Button>
             </Grid>

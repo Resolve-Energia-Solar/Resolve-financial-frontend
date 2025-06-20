@@ -184,8 +184,8 @@ const CommercialScheduleDetail = ({ schedule }) => {
       const fetchSeller = async () => {
         try {
           const sellerData = await userService.find(schedule.project.sale.seller, {
-            fields: 'id,employee.user_manager.id',
-            expand: 'employee.user_manager',
+            fields: 'profile_picture,complete_name,phone_numbers,employee.user_manager.profile_picture,employee.user_manager.complete_name,employee.user_manager.phone_numbers',
+            expand: 'phone_numbers,employee.user_manager.phone_numbers',
           });
           setSeller(sellerData);
         } catch (err) {
@@ -396,7 +396,7 @@ const CommercialScheduleDetail = ({ schedule }) => {
                       <CardContent>
                         {schedule.schedule_agent ? (
                           <UserCard
-                            userId={schedule.schedule_agent?.id}
+                            userData={schedule.schedule_agent}
                             showEmail={false}
                             showPhone
                           />
@@ -414,7 +414,7 @@ const CommercialScheduleDetail = ({ schedule }) => {
                       <CardContent>
                         {seller?.employee?.user_manager ? (
                           <UserCard
-                            userId={seller.employee.user_manager.id}
+                            userData={seller.employee.user_manager}
                             showEmail={false}
                             showPhone
                           />
@@ -433,7 +433,7 @@ const CommercialScheduleDetail = ({ schedule }) => {
                       <Divider />
                       <CardContent>
                         {seller ? (
-                          <UserCard userId={seller.id} showEmail={false} showPhone />
+                          <UserCard userData={seller} showEmail={false} showPhone />
                         ) : (
                           <Typography variant="body2">
                             Vendedor não identificado

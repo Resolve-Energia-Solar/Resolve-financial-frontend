@@ -29,7 +29,8 @@ const DarkThemeColors = [
         light: '#DAE9FF',
       },
       action: {
-        hover: '#FFE082',
+        light: '#FFE082',
+        dark: '#FFB300',
       },
     },
   },

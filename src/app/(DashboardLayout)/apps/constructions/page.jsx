@@ -405,7 +405,7 @@ const ConstructionsDashboard = () => {
             )
           }
           loading={loadingIndicators}
-          onClick={() => { setFilters({ construction_responsible: 'C' }) }}
+          onClick={() => { setFilters({ construction__work_responsibility__in: 'C' }) }}
         />
         <KPICard
           key="total_branch_responsible"
@@ -419,7 +419,7 @@ const ConstructionsDashboard = () => {
             )
           }
           loading={loadingIndicators}
-          onClick={() => { setFilters({ construction_responsible: 'F' }) }}
+          onClick={() => { setFilters({ construction__work_responsibility__in: 'F' }) }}
         />
         <KPICard
           key="total_operational_center_responsible"
@@ -433,7 +433,7 @@ const ConstructionsDashboard = () => {
             )
           }
           loading={loadingIndicators}
-          onClick={() => { setFilters({ construction_responsible: 'O' }) }}
+          onClick={() => { setFilters({ construction__work_responsibility__in: 'O' }) }}
         />
       </Box>
       <Box

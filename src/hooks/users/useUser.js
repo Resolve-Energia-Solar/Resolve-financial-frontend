@@ -14,7 +14,7 @@ const useUser = (id) => {
     setError(null);
     try {
       const data = await userService.find(id, {
-        expand: ['addresses', 'user_types'],
+        expand: ['addresses', 'user_types', 'phone_numbers'],
         fields: ['*', 'addresses']
 
       });

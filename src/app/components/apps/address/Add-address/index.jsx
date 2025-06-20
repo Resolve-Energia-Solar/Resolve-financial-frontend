@@ -29,6 +29,7 @@ import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import { GoogleMap, Marker, useJsApiLoader } from '@react-google-maps/api';
 import ZipCodeSearch from '@/app/components/auto-completes/ZipCodeSearch';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
+// import { useTheme } from '@mui/material/styles';
 
 const fieldLabels = {
   zip_code: "CEP",
@@ -273,6 +274,7 @@ const CreateAddressPage = ({
   }, [formData.zip_code]);
 
   const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
 
   return (
     <Box sx={{ maxWidth: '100vw', mx: 'auto' }}>
@@ -296,7 +298,12 @@ const CreateAddressPage = ({
         )}
         <Grid container sx={{ display: "flex", alignItems: "flex-start", justifyContent: "flex-start", spacing: 3 }}>
           <Grid item xs={12} sm={12}>
-            <Typography sx={{ color: "#000000", fontWeight: "700", fontSize: "18px", mb: 2 }}>Adicionar novo endereço</Typography>
+            <Typography sx={{ 
+              color: isDark ? theme.palette.primary.main : theme.palette.secondary.main,
+              fontWeight: "700", 
+              fontSize: "18px", 
+              mb: 2 
+              }}>Adicionar novo endereço</Typography>
           </Grid>
 
           <Grid container columnSpacing={2} sx={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", maxWidth: "100%", width: "100%" }}>
@@ -336,7 +343,12 @@ const CreateAddressPage = ({
 
                     <Grid container xs={12}>
                       <Grid item xs={12} >
-                        <CustomFormLabel sx={{ color: "#303030", fontWeight: "700", fontSize: "14px", mt: 0 }}>Complemento</CustomFormLabel>
+                        <CustomFormLabel sx={{
+                          color: isDark ? theme.palette.primary.dark : theme.palette.secondary.main, 
+                          fontWeight: "700", 
+                          fontSize: "14px", 
+                          mt: 0 
+                          }}>Complemento</CustomFormLabel>
                       </Grid>
                     </Grid>
                     <Grid container xs={12}>
@@ -370,21 +382,28 @@ const CreateAddressPage = ({
                   onClick={() => setOpenAccordion(!openAccordion)}
                   fullWidth
                   sx={{
-                    backgroundColor: openAccordion ? theme.palette.primary.main : theme.palette.primary.light,
-                    color: openAccordion ? 'white' : theme.palette.primary.main,
-                    border: openAccordion ? 'transparent' : '1px solid',
+                    // backgroundColor: isDark ? theme.palette.primary.dark : theme.palette.primary.main,
+                    color: isDark ? theme.palette.primary.main : theme.palette.secondary.light,
+                    border: '1px solid',
+                    borderColor: isDark ? theme.palette.primary.main : theme.palette.secondary.light,
                     transition: 'background-color 0.3s, color 0.3s, border 0.1s',
                     // borderTopLeftRadius: openAccordion ? 3 : 1,
                     '&:hover': {
-                      backgroundColor: theme.palette.primary.main,
-                      color: theme.palette.primary.light,
+                      backgroundColor: isDark ? theme.palette.primary.main : theme.palette.primary.light,
+                      color: isDark ? theme.palette.primary.contrastText : theme.palette.primary.main,
                     },
                   }}
                 >
                   {openAccordion ? 'Ocultar informações do endereço' : 'Ver informações do endereço'}
                 </Button>
                 <Collapse in={openAccordion}>
-                  <Box sx={{ mt: -3, p: 1, border: '1px solid', borderColor: theme.palette.primary.main, borderRadius: 1, backgroundColor: theme.palette.primary.main }}>
+                  <Box sx={{
+                     mt: 1, 
+                     p: 1, 
+                     border: '1px solid', 
+                     borderColor: theme.palette.primary.main, 
+                     borderRadius: 1, 
+                     backgroundColor: isDark ? theme.palette.primary.dark : theme.palette.primary.main }}>
                     <Grid container rowSpacing={0} columnSpacing={1} sx={{ mt: 0.2 }}>
                       <Grid item xs={12} sm={4}>
                         <CustomTextField
@@ -394,7 +413,7 @@ const CreateAddressPage = ({
                           onChange={(e) => handleChange('zip_code', e.target.value)}
                           disabled={Object.keys(initialData).length === 0 || !!initialData.zip_code}
                           sx={{
-                            backgroundColor: theme.palette.primary.light,
+                            backgroundColor: isDark ? theme.palette.primary.dark : theme.palette.primary.light,
                             borderRadius: 1,
                             maxHeight: 40,
                             '& .MuiOutlinedInput-root': {
@@ -412,7 +431,7 @@ const CreateAddressPage = ({
                               borderColor: theme.palette.grey[300],
                             },
                             input: {
-                              color: '#7E92A2',
+                              color: isDark ? '#ffffff' : '#7E92A2',
                               fontWeight: '600',
                               fontSize: '14px',
                               opacity: 1,
@@ -648,7 +667,7 @@ const CreateAddressPage = ({
                       alignSelf: 'flex-end',
                       '&:hover': {
                         backgroundColor: theme.palette.primary.light,
-                        color: theme.palette.primary.main,
+                        color: theme.palette.secondary.main,
                         border: "1px solid",
                         boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.0)",
                       }

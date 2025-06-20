@@ -245,6 +245,10 @@ const AnswerForm = ({ answerData }) => {
               color="secondary"
               variant="outlined"
               label={formatDateTime(answerData?.results[0]?.created_at)}
+              sx={{
+                color: 'text.primary',
+                borderColor: 'text.primary',
+              }}
             />
           </Box>
         </Stack>

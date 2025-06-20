@@ -55,6 +55,7 @@ import GenericFilterDrawer from '@/app/components/filters/GenericFilterDrawer';
 import filterConfig from './filterConfig';
 import { FilterContext } from '@/context/FilterContext';
 import JourneyCounterChip from '../../../project/Costumer-journey/JourneyCounterChip';
+import { useTheme } from '@mui/material/styles';
 
 const SaleList = () => {
   const [salesList, setSalesList] = useState([]);
@@ -106,6 +107,9 @@ const SaleList = () => {
   const [totalRows, setTotalRows] = useState(0);
 
   const router = useRouter();
+
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
 
   useEffect(() => {
     setPage(0);
@@ -238,7 +242,7 @@ const SaleList = () => {
           <InforCards
             cardsData={[
               {
-                backgroundColor: 'primary.light',
+                backgroundColor: isDark ? 'primary.dark' : 'primary.light',
                 iconColor: 'primary.main',
                 IconComponent: IconRoute,
                 title: 'Em andamento',

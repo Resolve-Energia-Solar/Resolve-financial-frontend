@@ -36,6 +36,7 @@ import projectMaterialsService from '@/services/projectMaterialService';
 import projectService from '@/services/projectService';
 import { AddBoxRounded } from '@mui/icons-material';
 import AddMaterialList from './modal/AddMaterialList';
+import { useTheme } from '@mui/material/styles';
 
 const UploadDocument = ({ projectId }) => {
   const [file, setFile] = useState(null);
@@ -52,6 +53,8 @@ const UploadDocument = ({ projectId }) => {
   const [project, setProject] = useState(null);
   const [addMaterialListModal, setAddMaterialListModal] = useState(false);
   const [refresh, setRefresh] = useState(false);
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
 
   const handleRefresh = () => {
     setRefresh(!refresh);
@@ -250,9 +253,8 @@ const UploadDocument = ({ projectId }) => {
             borderRadius: 2,
             textAlign: 'center',
             cursor: 'pointer',
-            backgroundColor: '#f9f9f9',
             '&:hover': {
-              backgroundColor: '#f1f1f1',
+              backgroundColor: isDark ? theme.palette.secondary.main : theme.palette.primary.light,
             },
           }}
         >

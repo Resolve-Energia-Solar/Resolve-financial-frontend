@@ -271,12 +271,12 @@ function AddSchedulePage({ form = null, onRefresh = null, onClose = null }) {
           columnSpacing={{ xs: 1, sm: 2, md: 3, alignItems: 'center', justifyContent: 'center' }}
         >
           <Grid item xs={12}>
-            <Typography sx={{ fontSize: '24px', fontWeight: 700, color: '#303030' }}>
+            <Typography sx={{ fontSize: '24px', fontWeight: 700, color: theme.palette.text.primary }}>
               Agende uma visita
             </Typography>
           </Grid>
           <Grid item xs={12} mb={1}>
-            <Typography sx={{ fontSize: '14px', fontWeight: 400, color: '#98959D' }}>
+            <Typography sx={{ fontSize: '14px', fontWeight: 400, color: theme.palette.text.secondary }}>
               Selecione data, horário e selecione o endereço do cliente para criar o agendamento.
             </Typography>
           </Grid>
@@ -697,7 +697,7 @@ function AddSchedulePage({ form = null, onRefresh = null, onClose = null }) {
                 })}
                 sx={{
                   input: {
-                    color: '#7E92A2',
+                    color: 'theme.palette.text.secondary',
                     fontWeight: '400',
                     fontSize: '14px',
                     opacity: 1,

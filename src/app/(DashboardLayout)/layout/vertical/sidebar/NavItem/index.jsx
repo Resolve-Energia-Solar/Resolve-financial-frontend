@@ -21,6 +21,7 @@ export default function NavItem({ item, level, pathDirect, hideMenu, onClick }) 
   const customizer = useSelector((state) => state.customizer);
   const Icon = item?.icon;
   const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
   const { t } = useTranslation();
   const itemIcon =
     level > 1 ? <Icon stroke={2} size="1rem" /> : <Icon stroke={2} size="1.3rem" />;
@@ -34,10 +35,12 @@ export default function NavItem({ item, level, pathDirect, hideMenu, onClick }) 
     color:
       level > 1 && (pathDirect.includes(item?.href) && item?.href !== '/') 
         ? `${theme.palette.primary.main}!important`
-        : '#7E8388',
+        : isDark
+          ? theme.palette.primary.contrastText
+          : theme.palette.secondary.neutral,
     paddingLeft: hideMenu ? '10px' : level > 2 ? `${level * 15}px` : '10px',
     '&:hover': {
-      backgroundColor: theme.palette.primary.light,
+      backgroundColor: theme.palette.primary.contrastText,
       color: theme.palette.primary.main,
     },
     '&.Mui-selected': {
