@@ -35,6 +35,7 @@ const ProjectList = ({ onClick, defaultfilters }) => {
   const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
   const { filters, setFilters } = useContext(FilterContext);
   const [ordering, setOrdering] = useState('-created_at');
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     if (defaultfilters) {
@@ -475,6 +476,14 @@ const ProjectList = ({ onClick, defaultfilters }) => {
       setFilters(prev => ({ ...prev, q: value }));
     }, 1000);
   });
+
+  if (error) {
+    return (
+      <Typography color="error" variant="body2">
+        Erro ao carregar dados do projeto: {error.message}
+      </Typography>
+    );
+  }
 
   return (
     <>
