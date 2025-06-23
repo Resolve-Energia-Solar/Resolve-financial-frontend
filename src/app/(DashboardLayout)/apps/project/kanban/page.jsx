@@ -1,10 +1,10 @@
 "use client";
-
-import React, { useEffect, useState } from "react";
-import JourneyKanban from "@/app/components/apps/project/Costumer-journey/Kanban";
+import { useEffect, useState } from "react";
+import JourneyKanban from "@/app/components/apps/project/Costumer-journey/kanban/Kanban";
 import projectService from "@/services/projectService";
 import { useSnackbar } from "notistack";
 import PageContainer from "@/app/components/container/PageContainer";
+import { TextField, Tooltip } from "@mui/material";
 
 const STATUS_KEYS = [
     "vistoria",
@@ -24,19 +24,25 @@ export default function KanbanPage() {
         STATUS_KEYS.reduce((acc, key) => ({ ...acc, [`${key}_page`]: 1 }), {})
     );
     const [loadingColumns, setLoadingColumns] = useState({});
-    const enqueueSnackbar = useSnackbar();
+    const { enqueueSnackbar } = useSnackbar();
+    const [filters, setFilters] = useState({ q: '' });
+    const [loading, setLoading] = useState(false);
 
     // Carrega a primeira página de todas as colunas
     useEffect(() => {
-        try {
-            projectService.kanban(pageNumbers).then((data) => {
+        setLoading(true);
+        projectService.kanban({ ...pageNumbers, ...filters })
+            .then((data) => {
                 setKanbanData(data);
+            })
+            .catch((error) => {
+                console.error("Erro ao carregar dados do kanban:", error);
+                enqueueSnackbar("Erro ao carregar dados do kanban", { variant: "error" });
+            })
+            .finally(() => {
+                setLoading(false);
             });
-        } catch (error) {
-            console.error("Erro ao carregar dados do kanban:", error);
-            enqueueSnackbar("Erro ao carregar dados do kanban", { variant: "error" });
-        }
-    }, []);
+    }, [filters, pageNumbers, enqueueSnackbar]);
 
     // Callback para carregar mais itens de uma coluna
     const loadMore = async (columnKey) => {
@@ -61,12 +67,51 @@ export default function KanbanPage() {
         }
     };
 
+    const [debouncedSearch] = useState(() => {
+        const debounce = (fn, delay) => {
+            let timeoutId;
+            return function (...args) {
+                clearTimeout(timeoutId);
+                timeoutId = setTimeout(() => fn.apply(this, args), delay);
+            };
+        };
+
+        return debounce((value) => {
+            setFilters(prev => ({ ...prev, q: value }));
+        }, 1000);
+    });
+
     return (
         <PageContainer title="Kanban da Jornada do Cliente" description="Visualização Kanban dos Projetos">
+            <Tooltip title={
+                <div>
+                    Pesquise por:
+                    <ul>
+                        <li>Número do Projeto</li>
+                        <li>Projetista (Nome, CPF/CNPJ, Email)</li>
+                        <li>Homologador (Nome, CPF/CNPJ, Email)</li>
+                        <li>Número do Contrato</li>
+                        <li>Cliente (Nome, CPF/CNPJ, Email)</li>
+                        <li>Vendedor (Nome, CPF/CNPJ, Email)</li>
+                        <li>Supervisor de Vendas (Nome, CPF/CNPJ, Email)</li>
+                        <li>Gerente de Vendas (Nome, CPF/CNPJ, Email)</li>
+                        <li>Fornecedor (Nome, CPF/CNPJ, Email)</li>
+                    </ul>
+                </div>
+            } arrow>
+                <TextField
+                    variant="outlined"
+                    size="small"
+                    placeholder="Pesquisar..."
+                    onChange={(e) => debouncedSearch(e.target.value)}
+                    sx={{ marginRight: 2 }}
+                />
+            </Tooltip>
             <JourneyKanban
                 kanbanData={kanbanData}
                 loadMore={loadMore}
                 loadingColumns={loadingColumns}
+                loading={loading}
             />
         </PageContainer>
     );
