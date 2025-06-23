@@ -4,7 +4,7 @@ import JourneyKanban from "@/app/components/apps/project/Costumer-journey/kanban
 import projectService from "@/services/projectService";
 import { useSnackbar } from "notistack";
 import PageContainer from "@/app/components/container/PageContainer";
-import { TextField, Tooltip } from "@mui/material";
+import { Box, TextField, Tooltip } from "@mui/material";
 
 const STATUS_KEYS = [
     "vistoria",
@@ -83,30 +83,46 @@ export default function KanbanPage() {
 
     return (
         <PageContainer title="Kanban da Jornada do Cliente" description="Visualização Kanban dos Projetos">
-            <Tooltip title={
-                <div>
-                    Pesquise por:
-                    <ul>
-                        <li>Número do Projeto</li>
-                        <li>Projetista (Nome, CPF/CNPJ, Email)</li>
-                        <li>Homologador (Nome, CPF/CNPJ, Email)</li>
-                        <li>Número do Contrato</li>
-                        <li>Cliente (Nome, CPF/CNPJ, Email)</li>
-                        <li>Vendedor (Nome, CPF/CNPJ, Email)</li>
-                        <li>Supervisor de Vendas (Nome, CPF/CNPJ, Email)</li>
-                        <li>Gerente de Vendas (Nome, CPF/CNPJ, Email)</li>
-                        <li>Fornecedor (Nome, CPF/CNPJ, Email)</li>
-                    </ul>
-                </div>
-            } arrow>
-                <TextField
-                    variant="outlined"
-                    size="small"
-                    placeholder="Pesquisar..."
-                    onChange={(e) => debouncedSearch(e.target.value)}
-                    sx={{ marginRight: 2 }}
-                />
-            </Tooltip>
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'end', marginBottom: 2, marginTop: 2 }}>
+                <Tooltip title={
+                    <div>
+                        Pesquise por:
+                        <ul>
+                            <li>Número do Projeto</li>
+                            <li>Projetista (Nome, CPF/CNPJ, Email)</li>
+                            <li>Homologador (Nome, CPF/CNPJ, Email)</li>
+                            <li>Número do Contrato</li>
+                            <li>Cliente (Nome, CPF/CNPJ, Email)</li>
+                            <li>Vendedor (Nome, CPF/CNPJ, Email)</li>
+                            <li>Supervisor de Vendas (Nome, CPF/CNPJ, Email)</li>
+                            <li>Gerente de Vendas (Nome, CPF/CNPJ, Email)</li>
+                            <li>Fornecedor (Nome, CPF/CNPJ, Email)</li>
+                        </ul>
+                    </div>
+                } arrow>
+                    <TextField
+                        variant="outlined"
+                        size="small"
+                        placeholder="Pesquisar..."
+                        onChange={(e) => debouncedSearch(e.target.value)}
+                        sx={{
+                            marginRight: 2,
+                            width: 300,
+                            '& .MuiOutlinedInput-root': {
+                                borderRadius: 4,
+                                borderColor: 'primary.main',
+                                boxShadow: (theme) => `0 0 0 2px ${theme.palette.primary.main}`,
+                                '&:hover': {
+                                    backgroundColor: 'action.hover',
+                                },
+                                '&.Mui-focused': {
+                                    boxShadow: (theme) => `0 0 0 2px ${theme.palette.secondary.main}`,
+                                },
+                            },
+                        }}
+                    />
+                </Tooltip>
+            </Box>
             <JourneyKanban
                 kanbanData={kanbanData}
                 loadMore={loadMore}
