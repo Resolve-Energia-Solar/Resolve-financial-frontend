@@ -42,7 +42,7 @@ export default function KanbanPage() {
             .finally(() => {
                 setLoading(false);
             });
-    }, [filters, pageNumbers, enqueueSnackbar]);
+    }, [filters, enqueueSnackbar]);
 
     // Callback para carregar mais itens de uma coluna
     const loadMore = async (columnKey) => {
