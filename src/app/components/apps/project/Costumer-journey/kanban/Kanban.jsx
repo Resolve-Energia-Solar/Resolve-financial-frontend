@@ -77,9 +77,20 @@ export default function JourneyKanban({ kanbanData, loadMore, loadingColumns, lo
       sx={{
         display: "flex",
         gap: 3,
-        overflowX: "auto",
         p: 2,
         bgcolor: theme.palette.background.default,
+        overflowX: 'auto',
+        width: '100%',
+        '&::-webkit-scrollbar': {
+          height: 6,
+          width: 6,
+        },
+        '&::-webkit-scrollbar-thumb': {
+          backgroundColor: theme.palette.mode === 'light' ? 'rgba(0,0,0,0.3)' : 'rgba(255,255,255,0.3)',
+          borderRadius: 3,
+        },
+        scrollbarWidth: 'thin',
+        scrollbarColor: theme.palette.mode === 'light' ? 'rgba(0,0,0,0.3) transparent' : 'rgba(255,255,255,0.3) transparent',
       }}
     >
       {Object.entries(kanbanData).map(([key, data]) => {
