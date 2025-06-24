@@ -25,7 +25,7 @@ const ProjectListing = () => {
   return (
     <PageContainer title="Projetos" description="Lista de Projetos">
       <Breadcrumb items={BCrumb} />
-      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '16px' }}>
+      {/* <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '16px' }}>
         <Button 
           variant="contained" 
           color="primary" 
@@ -33,7 +33,7 @@ const ProjectListing = () => {
         >
           Ver Kanban
         </Button>
-      </div>
+      </div> */}
       <BlankCard>
         <CardContent>
           <ProjectList onClick={onRowClick} />
