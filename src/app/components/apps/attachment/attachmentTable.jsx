@@ -59,7 +59,7 @@ const AttachmentTable = ({
   }, [appLabel, model]);
 
   useEffect(() => {
-    if (objectId) {
+    if (objectId && contentTypeId != null) {
       fetchAttachments();
     }
   }, [objectId, contentTypeId]);
