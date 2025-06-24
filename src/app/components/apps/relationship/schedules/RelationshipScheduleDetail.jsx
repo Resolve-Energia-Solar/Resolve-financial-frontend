@@ -34,6 +34,7 @@ import answerService from '@/services/answerService';
 import History from '../../history';
 import { Close, ArrowDropUp, ArrowDropDown, ArrowRightOutlined } from '@mui/icons-material';
 import ScheduleTimeline from '../../schedule/ScheduleTimeline';
+import AttachmentTable from '../../attachment/attachmentTable';
 
 
 const RelationshipScheduleDetail = ({ open, onClose, scheduleId, dialogMode = false }) => {
@@ -237,6 +238,7 @@ const RelationshipScheduleDetail = ({ open, onClose, scheduleId, dialogMode = fa
             <Box sx={{ mt: 3 }}>
                 <Tabs value={tabValue} onChange={(e, newValue) => setTabValue(newValue)} sx={{ mb: 2 }}>
                     <Tab label="Informações" />
+                    <Tab label="Anexos" />
                     <Tab label="Comentários" />
                     <Tab label="Histórico" />
                     {answers && answers.results?.length > 0 && <Tab label="Formulário" />}
@@ -353,15 +355,19 @@ const RelationshipScheduleDetail = ({ open, onClose, scheduleId, dialogMode = fa
                         </Grid>
                     </Box>
                 )}
-
                 {tabValue === 1 && (
                     <Box sx={{ p: 2 }}>
-                        <Comment appLabel="field_services" model="schedule" objectId={schedule.id} />
+                        <AttachmentTable appLabel="field_services" model="schedule" objectId={scheduleId} />
                     </Box>
                 )}
                 {tabValue === 2 && (
                     <Box sx={{ p: 2 }}>
-                        <History appLabel={'field_services'} model={'schedule'} objectId={schedule.id} />
+                        <Comment appLabel="field_services" model="schedule" objectId={scheduleId} />
+                    </Box>
+                )}
+                {tabValue === 3 && (
+                    <Box sx={{ p: 2 }}>
+                        <History appLabel={'field_services'} model={'schedule'} objectId={scheduleId} />
                     </Box>
                 )}
                 {answers && answers.results?.length > 0 && tabValue === 3 && (
@@ -393,7 +399,7 @@ const RelationshipScheduleDetail = ({ open, onClose, scheduleId, dialogMode = fa
             PaperProps={{
                 sx: { width: { xs: '100vw', sm: '70vw' } },
             }}
-            sx={{ zIndex: 1400 }}
+            sx={{ zIndex: 1300 }}
         >
             {content}
         </Drawer>
