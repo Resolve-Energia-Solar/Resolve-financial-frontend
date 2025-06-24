@@ -94,7 +94,9 @@ export default function RelationshipScheduleForm({ scheduleId = null, breadcrumb
       products: formData.product ? [formData.product.value] : [],
       schedule_creator: formData.schedule_creator?.value || user.id,
       parent_schedules: formData.parent_schedules.map(ps => ps.value),
-      requester: formData.requester.value
+      requester: formData.requester?.value || null,
+      service_opinion: formData.service_opinion?.value || null,
+      final_service_opinion: formData.final_service_opinion?.value || null,
     };
 
     try {
@@ -185,7 +187,7 @@ export default function RelationshipScheduleForm({ scheduleId = null, breadcrumb
                 <GenericAsyncAutocompleteInput
                   label="Parecer do Agente"
                   value={formData.service_opinion}
-                  onChange={(newValue) => setFormData({ ...formData, service_opinion: newValue })}
+                  onChange={handleChange('service_opinion')}
                   endpoint="/api/service-opinions"
                   queryParam="name__icontains"
                   extraParams={{
@@ -210,9 +212,7 @@ export default function RelationshipScheduleForm({ scheduleId = null, breadcrumb
                 <GenericAsyncAutocompleteInput
                   label="Parecer Final"
                   value={formData.final_service_opinion}
-                  onChange={(newValue) =>
-                    setFormData({ ...formData, final_service_opinion: newValue })
-                  }
+                  onChange={handleChange('final_service_opinion')}
                   endpoint="/api/service-opinions"
                   queryParam="name__icontains"
                   extraParams={{
