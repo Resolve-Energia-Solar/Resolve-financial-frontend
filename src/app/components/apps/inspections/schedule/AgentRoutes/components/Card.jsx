@@ -17,13 +17,14 @@ import {
   IconButton,
   Menu,
   MenuItem,
+  Chip,
 } from '@mui/material';
 import { timelineItemClasses } from '@mui/lab/TimelineItem';
 
 import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import EditIcon from '@mui/icons-material/Edit';
-import { Add, Cancel, MoreVert } from '@mui/icons-material';
+import { Add, AssignmentTurnedIn, Cancel, MoreVert } from '@mui/icons-material';
 import ModalChooseOption from '@/app/components/apps/inspections/schedule/AgentRoutes/components/ModalChooseOption';
 
 export default function CardAgentRoutes({
@@ -43,8 +44,6 @@ export default function CardAgentRoutes({
   const [openModal, setOpenModal] = React.useState(false);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const openMenu = Boolean(anchorEl);
-
-  console.log('availabilityDetails card: ', availabilityDetails?.is_blocked);
 
   const isDateTodayOrLater = (date) => {
     const today = new Date();
@@ -114,7 +113,8 @@ export default function CardAgentRoutes({
         >
           {availabilityDetails?.is_blocked ? (
             <>
-              <Cancel fontSize="small" color="error" sx={{ mr: 1 }} />O agente não possui horários disponíveis para a data selecionada.
+              <Cancel fontSize="small" color="error" sx={{ mr: 1 }} />O agente não possui horários
+              disponíveis para a data selecionada.
             </>
           ) : (
             <>
@@ -175,6 +175,25 @@ export default function CardAgentRoutes({
                   >
                     {item.customer.complete_name}
                   </Typography>
+                  <Chip
+                    label={`Vistorias Agendadas: ${item?.customer?.schedule_inspection_count || 0}`}
+                    size="small"
+                    color="default"
+                    variant="outlined"
+                    sx={{
+                      fontWeight: 500,
+                      mt:1,
+                      mb:1,
+                      cursor: 'default',
+                      backgroundColor: 'background.paper',
+                      borderColor: 'grey.300',
+                      '& .MuiChip-label': {
+                        px: 0.5,
+                        fontSize: '0.75rem',
+                      },
+                    }}
+                  />
+
                   <Typography variant="body2" fontWeight={500}>
                     {item.schedule_date &&
                       item.schedule_date.split('T')[0].split('-').reverse().join('/')}{' '}

@@ -10,6 +10,7 @@ const UserCard = memo(function UserCard({
   userData: initialData,
   showEmail = true,
   showPhone = false,
+  fullName = false,
   backgroundColor = 'transparent',
   orientation = 'horizontal',
 }) {
@@ -32,6 +33,7 @@ const UserCard = memo(function UserCard({
 
   const nameParts = useMemo(() => {
     if (!user?.complete_name) return ['', ''];
+    if (fullName) return [user.complete_name, ''];
     const parts = user.complete_name.trim().split(' ');
     return parts.length > 1
       ? [parts[0], parts[parts.length - 1]]

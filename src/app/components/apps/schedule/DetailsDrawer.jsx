@@ -338,7 +338,7 @@ const DetailsDrawer = ({ open, onClose, scheduleId, dialogMode = false }) => {
                   <Card variant="outlined">
                     <CardHeader title="Dados do Cliente" />
                     <CardContent>
-                      <UserCard userData={schedule.customer} showPhone showEmail={false} />
+                      <UserCard userData={schedule.customer} showPhone showEmail={false} fullName />
                       <Typography variant="body1" sx={{ mt: 2 }}>
                         <strong>Endereço:</strong> {schedule.address?.complete_address}
                       </Typography>

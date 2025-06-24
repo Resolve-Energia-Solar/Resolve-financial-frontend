@@ -69,7 +69,9 @@ const RelationshipScheduleDetail = ({ open, onClose, scheduleId, dialogMode = fa
                         'project.id',
                         'project.sale.seller',
                         'project.product.id',
-                        'customer.id',
+                        'customer.profile_picture',
+                        'customer.complete_name',
+                        'customer.phone_numbers',
                         'address.complete_address',
                         'address.street',
                         'address.number',
@@ -84,7 +86,7 @@ const RelationshipScheduleDetail = ({ open, onClose, scheduleId, dialogMode = fa
                         'observation',
                     ],
                     expand: [
-                        'customer',
+                        'customer.phone_numbers',
                         'customer.addresses',
                         'project',
                         'project.sale',
@@ -309,7 +311,7 @@ const RelationshipScheduleDetail = ({ open, onClose, scheduleId, dialogMode = fa
                                     <Card variant="outlined">
                                         <CardHeader title="Dados do Cliente" />
                                         <CardContent>
-                                            <UserCard userId={schedule.customer?.id} showPhone showEmail={false} />
+                                            <UserCard userData={schedule.customer} showPhone showEmail={false} fullName />
                                             <Typography variant="body1" sx={{ mt: 2 }}>
                                                 <strong>Endereço:</strong> {schedule.address?.complete_address}
                                             </Typography>

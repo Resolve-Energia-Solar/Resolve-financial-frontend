@@ -54,6 +54,16 @@ const projectService = {
     }
   },
 
+  kanban: async (params) => {
+    try {
+      const response = await apiClient.get('/api/journey-kanban/', { params });
+      return response.data;
+    } catch (error) {
+      console.error('Erro ao buscar kanban de projetos:', error);
+      throw error;
+    }
+  },
+
   getIndicators: async (params) => {
     try {
       const response = await apiClient.get('/api/projects/indicators/', { params });
