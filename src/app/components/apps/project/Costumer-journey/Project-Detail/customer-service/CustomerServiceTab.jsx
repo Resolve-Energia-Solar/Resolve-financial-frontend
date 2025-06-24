@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
   Chip,
   Typography,
@@ -16,6 +16,8 @@ import TicketForm from './TicketForm';
 import useTicket from '@/hooks/tickets/useTicket';
 import { formatDateTime } from '@/utils/inspectionFormatDate';
 import TicketStatusChip from '@/app/components/apps/customer_service/TicketStatusChip';
+import FormSelect from '@/app/components/forms/form-custom/FormSelect';
+import projectService from '@/services/projectService';
 
 export default function CustomerServiceTab({ projectId, viewOnly = false, ticketId = null }) {
   const { enqueueSnackbar } = useSnackbar();
@@ -23,7 +25,21 @@ export default function CustomerServiceTab({ projectId, viewOnly = false, ticket
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [openTicketFormModal, setOpenTicketFormModal] = useState(!!ticketId);
   const [selectedTicket, setSelectedTicket] = useState(ticketId);
+  const [monitoringAppStatus, setMonitoringAppStatus] = useState('P');
   const [refreshKey, setRefreshKey] = useState(0);
+
+  useEffect(() => {
+    if (projectId) {
+      projectService.find(projectId, { fields: 'monitoring_app_status' })
+        .then((response) => {
+          setMonitoringAppStatus(response.monitoring_app_status || 'P');
+        })
+        .catch((error) => {
+          console.error('Erro ao carregar status do app de monitoramento:', error);
+          enqueueSnackbar('Erro ao carregar status do app de monitoramento', { variant: 'error' });
+        });
+    }
+  }, [projectId, enqueueSnackbar]);
 
   const params = useMemo(
     () => ({
@@ -55,6 +71,19 @@ export default function CustomerServiceTab({ projectId, viewOnly = false, ticket
     enqueueSnackbar(ticketsError, { variant: 'error' });
     return null;
   }
+  
+  const handleMonitoringAppStatusChange = (value) => {
+    setMonitoringAppStatus(value);
+    projectService.update(projectId, { monitoring_app_status: value })
+      .then(() => {
+        enqueueSnackbar('Status do app de monitoramento atualizado com sucesso!', { variant: 'success' });
+        setRefreshKey((prev) => prev + 1);
+      })
+      .catch((error) => {
+        console.error('Erro ao atualizar status do app de monitoramento:', error);
+        enqueueSnackbar('Erro ao atualizar status do app de monitoramento', { variant: 'error' });
+      });
+  };
 
   const ticketsColumns = [
     { field: 'subject.subject', headerName: 'Título', render: (r) => r.subject?.subject },
@@ -103,6 +132,21 @@ export default function CustomerServiceTab({ projectId, viewOnly = false, ticket
       </Typography>
 
       <Grid container spacing={2}>
+        <Grid item xs={12}>
+          <FormSelect
+            label="Status da Entrega do App de Monitoramento"
+            options={[
+              { value: 'C', label: 'Criado' },
+              { value: 'E', label: 'Criado e Entregue' },
+              { value: 'S', label: 'Cliente sem Internet' },
+              { value: 'P', label: 'Pendente' }
+            ]}
+            value={monitoringAppStatus}
+            onChange={(e) =>
+              handleMonitoringAppStatusChange(e.target.value)
+            }
+          />
+        </Grid>
         <Grid item xs={12}>
           <TableHeader.Root>
             <TableHeader.Title
