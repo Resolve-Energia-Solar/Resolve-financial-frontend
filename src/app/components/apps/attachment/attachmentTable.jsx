@@ -58,8 +58,6 @@ const AttachmentTable = ({
     fetchContentTypeId();
   }, [appLabel, model]);
 
-  console.log('contentTypeId', contentTypeId);
-
   useEffect(() => {
     if (objectId) {
       fetchAttachments();
@@ -67,7 +65,6 @@ const AttachmentTable = ({
   }, [objectId, contentTypeId]);
 
   const handleEditAttachment = (id) => {
-    console.log('id', id);
     setSelectedAttachmentId(id);
     setEditModalOpen(true);
   };
@@ -101,8 +98,6 @@ const AttachmentTable = ({
     }
     return '';
   };
-
-  console.log('fetchedAttachments', fetchedAttachments);
 
   return (
     <TableContainer component={Paper} elevation={3} sx={{ boxShadow: 3, border: '1px solid #e0e0e0' }}>
@@ -230,6 +225,7 @@ const AttachmentTable = ({
             onAddAttachment && onAddAttachment(attachment);
           } else {
             setFetchedAttachments((prev) => [...prev, attachment]);
+            fetchAttachments();
           }
         }}
         showFields={{ description: true }}
