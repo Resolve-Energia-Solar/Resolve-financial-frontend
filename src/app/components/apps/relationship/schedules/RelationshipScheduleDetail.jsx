@@ -370,7 +370,7 @@ const RelationshipScheduleDetail = ({ open, onClose, scheduleId, dialogMode = fa
                         <History appLabel={'field_services'} model={'schedule'} objectId={scheduleId} />
                     </Box>
                 )}
-                {answers && answers.results?.length > 0 && tabValue === 3 && (
+                {answers && answers.results?.length > 0 && tabValue === 4 && (
                     <Box sx={{ p: 2 }}>
                         <AnswerForm answerData={answers} />
                     </Box>
