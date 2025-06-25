@@ -152,7 +152,7 @@ export default function CustomerServiceSchedules() {
     },
     {
       field: 'schedule_agent', headerName: 'Agente', sx: { minWidth: 380 },
-      render: ({ schedule_agent }) => schedule_agent ? <UserCard userData={schedule_agent} /> : 'Sem agente'
+      render: ({ schedule_agent }) => schedule_agent ? <UserCard userData={schedule_agent} showPhone={true} showEmail={false} /> : 'Sem agente'
     },
     {
       field: 'service_opinion', headerName: 'Parecer Inicial', sortable: true,
