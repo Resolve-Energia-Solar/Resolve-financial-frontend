@@ -25,6 +25,7 @@ import StatusChip from '@/utils/status/ProjectStatusChip';
 import StatusFinancialChip from '@/utils/status/FinancialChip';
 import ScheduleOpinionChip from '../../inspections/schedule/StatusChip';
 import ChipRequestStatus from '../../request/components/auto-complete/ChipRequestStatus';
+import MonitoringAppStatusChip from '../../relationship/schedules/MonitoringAppStatusChip';
 
 const ProjectList = ({ onClick, defaultfilters }) => {
   const [projectsList, setProjectsList] = useState([]);
@@ -243,6 +244,17 @@ const ProjectList = ({ onClick, defaultfilters }) => {
       ],
     },
     {
+      key: 'monitoring_app_status__in',
+      label: 'Status do App de Monitoramento',
+      type: 'multiselect',
+      options: [
+        { value: 'P', label: 'Pendente' },
+        { value: 'C', label: 'Criado' },
+        { value: 'E', label: 'Criado e Entregue' },
+        { value: 'S', label: 'Cliente sem Internet' },
+      ],
+    },
+    {
       key: 'product_kwp',
       label: 'Kwp',
       type: 'number',
@@ -336,7 +348,7 @@ const ProjectList = ({ onClick, defaultfilters }) => {
           expand:
             'sale,sale.customer,designer,homologator,product,sale,sale.branch,requests_energy_company,requests_energy_company.type,inspection.final_service_opinion',
           fields:
-            'id,journey_counter,sale.id,sale.customer.complete_name,sale.signature_date,sale.total_value,sale.payment_status,sale.branch.name,is_documentation_completed,homologator.complete_name,designer_status,material_list_is_completed,trt_pending,peding_request,access_opnion,product.name,product.params,status,sale.status,is_released_to_engineering,requests_energy_company.status,requests_energy_company.type.name,delivery_status,installation_status,final_inspection_status,inspection.final_service_opinion.name',
+            'id,journey_counter,sale.id,sale.customer.complete_name,sale.signature_date,sale.total_value,sale.payment_status,sale.branch.name,is_documentation_completed,homologator.complete_name,designer_status,material_list_is_completed,trt_pending,peding_request,access_opnion,product.name,product.params,status,sale.status,is_released_to_engineering,requests_energy_company.status,requests_energy_company.type.name,delivery_status,installation_status,final_inspection_status,inspection.final_service_opinion.name,monitoring_app_status',
           metrics: 'journey_counter,delivery_status,installation_status,final_inspection_status',
           is_pre_sale: false,
           ordering,
@@ -460,6 +472,11 @@ const ProjectList = ({ onClick, defaultfilters }) => {
       field: 'final_inspection_status',
       headerName: 'Status Homologação',
       render: (r) => <ChipRequestStatus status={r.final_inspection_status} />,
+    },
+    {
+      field: 'monitoring_app_status',
+      headerName: 'Status App Monitoramento',
+      render: (r) => <MonitoringAppStatusChip status={r.monitoring_app_status} />,
     },
   ];
 
