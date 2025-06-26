@@ -332,7 +332,6 @@ export default function TicketForm({ projectId, ticketId = null, onSave }) {
                                 />
                             </Grid>
 
-                            {/* Description */}
                             <Grid item xs={12}>
                                 <TextField
                                     fullWidth
@@ -342,6 +341,7 @@ export default function TicketForm({ projectId, ticketId = null, onSave }) {
                                     minRows={4}
                                     value={formData.description}
                                     onChange={handleChange}
+                                    disabled={ticketId && user.id !== formData.created_by}
                                     error={!!errors.description}
                                     helperText={errors.description?.[0]}
                                     sx={{
@@ -351,8 +351,6 @@ export default function TicketForm({ projectId, ticketId = null, onSave }) {
                                     }}
                                 />
                             </Grid>
-
-                            {/* Status: só aparece quando ticketId for truthy */}
                             {ticketId && (
                                 <Grid item xs={12} md={6} sm={6}>
                                     <TextField

@@ -97,9 +97,9 @@ const InstallationsDashboard = () => {
     try {
       const response = await projectService.index({
         fields:
-          'id,project_number,designer_status,sale.customer.complete_name,sale.signature_date,sale.status,journey_counter,sale.branch.name,installation_status,sale.id,sale.customer.address,sale.customer.neighborhood,inspection.final_service_opinion.name,team,supervisor,purchase_order_number,panels_count,delivery_status,is_released_to_installation,latest_installation,sale.financiers',
+          'id,project_number,designer_status,sale.customer.complete_name,sale.signature_date,sale.status,journey_counter,sale.branch.name,installation_status,sale.id,sale.customer.address,sale.customer.neighborhood,inspection.final_service_opinion.name,team,supervisor,purchase_order_number,panels_count,delivery_status,is_released_to_installation,latest_installation,sale.financiers,address.complete_address',
         expand:
-          'sale,sale.customer,sale.branch,inspection.final_service_opinion',
+          'sale,sale.customer,sale.branch,inspection.final_service_opinion,address',
         metrics: 'journey_counter,installation_status,delivery_status,is_released_to_installation,latest_installation',
         page: page + 1,
         limit: rowsPerPage,
@@ -207,6 +207,12 @@ const InstallationsDashboard = () => {
       render: (r) => r.latest_installation?.schedule_agent ? <UserCard userId={r.latest_installation?.schedule_agent} /> : '-',
     },
     {
+      field: 'address.complete_address',
+      headerName: 'Endereço Do Checklist da Unidade Geradora',
+      render: (r) => r.address?.complete_address || '-',
+      sx: { opacity: 0.7 },
+    },
+    {
       field: 'latest_installation.final_service_opinion_user',
       headerName: 'Fiscal',
       render: (r) => r.latest_installation?.final_service_opinion_user ? <UserCard userId={r.latest_installation?.final_service_opinion_user} /> : '-',
@@ -216,16 +222,16 @@ const InstallationsDashboard = () => {
       headerName: 'Qtd. de Módulos',
       render: (r) => r.latest_installation?.panel_count || '-',
     },
-    {
-      field: 'latest_installation.complete_address',
-      headerName: 'Endereço',
-      render: (r) => r.latest_installation?.complete_address || '-',
-    },
-    {
-      field: 'latest_installation.neighborhood',
-      headerName: 'Bairro',
-      render: (r) => r.latest_installation?.neighborhood || '-',
-    },
+    // {
+    //   field: 'latest_installation.complete_address',
+    //   headerName: 'Endereço',
+    //   render: (r) => r.latest_installation?.complete_address || '-',
+    // },
+    // {
+    //   field: 'latest_installation.neighborhood',
+    //   headerName: 'Bairro',
+    //   render: (r) => r.latest_installation?.neighborhood || '-',
+    // },
   ];
 
   const handleKPIClick = (kpiType) => {
