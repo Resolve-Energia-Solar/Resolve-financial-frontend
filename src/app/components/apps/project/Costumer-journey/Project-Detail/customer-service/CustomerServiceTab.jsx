@@ -44,8 +44,8 @@ export default function CustomerServiceTab({ projectId, viewOnly = false, ticket
   const params = useMemo(
     () => ({
       fields:
-        'id,subject.subject,priority,status,created_at,responsible.complete_name,responsible_user.complete_name,project.id,responsible_department.name,ticket_type.name,conclusion_date,deadline',
-      expand: 'responsible,responsible_user,project,ticket_type,subject',
+        'id,subject.subject,priority,status,created_at,responsible.complete_name,created_by.complete_name,project.id,responsible_department.name,ticket_type.name,conclusion_date,deadline',
+      expand: 'responsible,created_by,project,ticket_type,subject',
       project__in: projectId,
       page: page + 1,
       page_size: rowsPerPage,
