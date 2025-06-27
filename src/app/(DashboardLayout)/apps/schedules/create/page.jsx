@@ -484,7 +484,7 @@ const CreateSchedulePage = () => {
                           </Typography>
                           <Typography variant="body2">
                             <strong>Status da Venda:</strong>{' '}
-                            {option.status ? (
+                            {option.status && saleStatusMap[option.status] ? (
                               <Chip
                                 label={saleStatusMap[option.status][0] || 'Status Desconhecido'}
                                 size="small"
