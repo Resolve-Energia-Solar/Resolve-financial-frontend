@@ -17,7 +17,6 @@ import {
     Dialog,
     DialogTitle,
     DialogContent,
-    Paper,
     useTheme
 } from '@mui/material';
 import { useSnackbar } from 'notistack';
@@ -35,10 +34,12 @@ import History from '../../history';
 import { Close, ArrowDropUp, ArrowDropDown, ArrowRightOutlined } from '@mui/icons-material';
 import ScheduleTimeline from '../../schedule/ScheduleTimeline';
 import AttachmentTable from '../../attachment/attachmentTable';
+import { GenerateSchedulePDF } from '../../schedule/GenerateSchedulePDF';
 
 
 const RelationshipScheduleDetail = ({ open, onClose, scheduleId, dialogMode = false }) => {
     const [loading, setLoading] = useState(true);
+    const [loadingPDF, setLoadingPDF] = useState(false);
     const [schedule, setSchedule] = useState(null);
     const [answers, setAnswers] = useState(null);
     const [error, setError] = useState(null);
@@ -226,6 +227,7 @@ const RelationshipScheduleDetail = ({ open, onClose, scheduleId, dialogMode = fa
                         label={new Date(schedule.created_at).toLocaleString('pt-BR')}
                         sx={{ mt: 1 }}
                     />
+                    <GenerateSchedulePDF scheduleId={schedule.id} />
                 </Box>
                 <Box sx={{ textAlign: 'right' }}>
                     <Logo />

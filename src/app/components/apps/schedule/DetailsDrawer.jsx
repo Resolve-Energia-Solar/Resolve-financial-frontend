@@ -34,6 +34,7 @@ import History from '../history';
 import { Close } from '@mui/icons-material';
 import ScheduleTimeline from './ScheduleTimeline';
 import AttachmentTable from '../attachment/attachmentTable';
+import { GenerateSchedulePDF } from './GenerateSchedulePDF';
 
 const DetailsDrawer = ({ open, onClose, scheduleId, dialogMode = false }) => {
   const [loading, setLoading] = useState(true);
@@ -221,6 +222,7 @@ const DetailsDrawer = ({ open, onClose, scheduleId, dialogMode = false }) => {
             label={new Date(schedule.created_at).toLocaleString('pt-BR')}
             sx={{ mt: 1 }}
           />
+          <GenerateSchedulePDF scheduleId={schedule.id} />
         </Box>
         <Box sx={{ textAlign: 'right' }}>
           <Logo />

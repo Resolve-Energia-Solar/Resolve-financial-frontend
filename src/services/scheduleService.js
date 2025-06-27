@@ -51,6 +51,18 @@ const scheduleService = {
     }
   },
 
+  generatePDF: async (id) => {
+    try {
+      const response = await apiClient.get(`/api/schedule/${id}/pdf/`, {
+        responseType: 'blob',
+      });
+      return response.data;
+    } catch (error) {
+      console.error(`Erro ao gerar PDF do agendamento com id ${id}:`, error);
+      throw error;
+    }
+  },
+
   getSchedules: async ({
     ordering,
     nextPage,
@@ -134,8 +146,7 @@ const scheduleService = {
     const urlNextPage = nextPage ? `&page=${nextPage}` : '';
     try {
       const response = await apiClient.get(
-        `/api/schedule/?schedule_agent=${userId}&ordering=${
-          ordering || ''
+        `/api/schedule/?schedule_agent=${userId}&ordering=${ordering || ''
         }${urlParams}${urlNextPage}&fields=${fields}`,
       );
       return response.data;
