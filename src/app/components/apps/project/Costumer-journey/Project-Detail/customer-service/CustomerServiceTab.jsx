@@ -99,14 +99,14 @@ export default function CustomerServiceTab({ projectId, viewOnly = false, ticket
       render: (r) => { <TicketStatusChip status={r.status} /> },
     },
     {
-      field: 'responsible_user',
+      field: 'responsible',
       headerName: 'Responsável',
-      render: (r) => r.responsible_user?.complete_name,
+      render: (r) => r.responsible?.complete_name,
     },
     {
-      field: 'responsible',
+      field: 'created_by',
       headerName: 'Criado por',
-      render: (r) => r.responsible?.complete_name,
+      render: (r) => r.created_by?.complete_name,
     },
     {
       field: 'created_at',
