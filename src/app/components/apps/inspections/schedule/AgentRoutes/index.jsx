@@ -112,8 +112,8 @@ export default function AgentRoutes({ projectId = null }) {
           limit: rowsPerPage,
           page: page + 1,
           fields: 'id,complete_name,free_time_agent',
-          date: dateStr,
-          order_by_inspections: 'desc',
+          schedule_date: dateStr,
+          date_schedule_inspection_count: 'asc',
           view_all: true,
         });
 
