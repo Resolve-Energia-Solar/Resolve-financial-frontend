@@ -47,6 +47,7 @@ const ConstructionsDashboard = () => {
   const [indicators, setIndicators] = useState({});
   const [loadingIndicators, setLoadingIndicators] = useState(true);
   const { filters, setFilters, clearFilters, refresh } = useContext(FilterContext);
+  const [ordering, setOrdering] = useState('-created_at');
   const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -100,6 +101,15 @@ const ConstructionsDashboard = () => {
     },
   ];
 
+  const handleSort = (field) => {
+    setPage(0);
+    if (ordering === field) {
+      setOrdering(`-${field}`);
+    } else {
+      setOrdering(field);
+    }
+  };
+
   const fetchProjects = useCallback(async () => {
     setLoading(true);
     try {
@@ -113,6 +123,7 @@ const ConstructionsDashboard = () => {
         page: page + 1,
         limit: rowsPerPage,
         remove_termination_cancelled_and_pre_sale: true,
+        ordering,
         ...filters,
       });
       setProjects(response.results);
@@ -122,7 +133,7 @@ const ConstructionsDashboard = () => {
     } finally {
       setLoading(false);
     }
-  }, [page, rowsPerPage, filters, enqueueSnackbar]);
+  }, [page, rowsPerPage, filters, ordering, enqueueSnackbar]);
 
   const fetchIndicators = useCallback(async () => {
     setLoadingIndicators(true);
@@ -156,7 +167,8 @@ const ConstructionsDashboard = () => {
     {
       field: 'journey_counter',
       headerName: 'Contador',
-      render: (r) => <JourneyCounterChip count={r.journey_counter} />
+      render: (r) => <JourneyCounterChip count={r.journey_counter} />,
+      sortable: true,
     },
     {
       field: 'inspection.final_service_opinion.name',
@@ -497,7 +509,7 @@ const ConstructionsDashboard = () => {
       />
 
       {/* Tabela de Projetos */}
-      <TableHeader.Root>
+      <TableHeader.Root >
         <TableHeader.Title
           title="Total"
           totalItems={totalRows}
@@ -529,7 +541,7 @@ const ConstructionsDashboard = () => {
         noWrap={true}
       >
         <Table.Head
-          columns={columns}
+          columns={columns} onSort={handleSort} ordering={ordering}
         />
         <Table.Body
           loading={loading}
