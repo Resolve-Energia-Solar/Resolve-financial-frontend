@@ -83,13 +83,13 @@ export default function ProjectDetailDrawer({ projectId, saleId, open, onClose, 
       ]);
       setProject(proj);
       setProcessId(proc);
-      const constructionKeywords = ['obra', 'sombreamento'];
+     const constructionKeywords = ['obra', 'sombreamento' ];
       const hasConstruction = proj.field_services?.some((fs) => {
-        if (!fs.service?.name?.toLowerCase().includes('vistoria')) return false;
-
+        const serviceName = fs.service?.name?.toLowerCase() || '';
         const opinionName = fs.final_service_opinion?.name?.toLowerCase() || '';
-        return constructionKeywords.some((keyword) => opinionName.includes(keyword));
+        return constructionKeywords.some(keyword => serviceName.includes(keyword) || opinionName.includes(keyword));
       });
+
       setHasConstructionTab(hasConstruction);
     } catch (error) {
       console.error(error);
