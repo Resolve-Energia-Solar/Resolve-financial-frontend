@@ -45,7 +45,7 @@ const BCrumb = [{ to: '/', title: 'Início' }, { title: 'Agendamentos' }];
 
 const ScheduleTable = () => {
   const { filters, setFilters, clearFilters, refresh } = useContext(FilterContext);
-  const activeCount = Object.keys(filters || {}).filter(key => {
+  const activeCount = Object.keys(filters || {}).filter((key) => {
     const v = filters[key];
     return v !== null && v !== undefined && !(Array.isArray(v) && v.length === 0);
   }).length;
@@ -64,6 +64,28 @@ const ScheduleTable = () => {
   const [detailsDrawerOpen, setDetailsDrawerOpen] = useState(false);
   const [selectedScheduleId, setSelectedScheduleId] = useState(null);
 
+  const STORAGE_KEY = 'schedules-selected-services';
+
+  // Função para salvar serviços selecionados no localStorage
+  const saveSelectedServices = useCallback((services) => {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(services));
+    } catch (error) {
+      console.warn('Erro ao salvar serviços selecionados no localStorage:', error);
+    }
+  }, []);
+
+  // Função para recuperar serviços selecionados do localStorage
+  const loadSelectedServices = useCallback(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      return saved ? JSON.parse(saved) : [];
+    } catch (error) {
+      console.warn('Erro ao carregar serviços selecionados do localStorage:', error);
+      return [];
+    }
+  }, []);
+
   const hasPermission = useCallback(
     (permissions) => !permissions || permissions.some((p) => userPermissions?.includes(p)),
     [userPermissions],
@@ -75,12 +97,31 @@ const ScheduleTable = () => {
       .then((data) => {
         const list = data.results || [];
         setServices(list);
-        if (list.length > 0) {
-          setSelectedServices(list.map((s) => s.id));
+
+        // Carregar serviços selecionados do localStorage
+        const savedSelectedServices = loadSelectedServices();
+
+        if (savedSelectedServices.length > 0) {
+          // Se há serviços salvos, usar apenas os que ainda existem
+          const validSavedServices = savedSelectedServices.filter((savedId) =>
+            list.some((service) => service.id === savedId),
+          );
+
+          if (validSavedServices.length > 0) {
+            setSelectedServices(validSavedServices);
+          } else {
+            // Se nenhum serviço salvo é válido, selecionar todos
+            setSelectedServices(list.map((s) => s.id));
+          }
+        } else {
+          // Se não há serviços salvos, selecionar todos
+          if (list.length > 0) {
+            setSelectedServices(list.map((s) => s.id));
+          }
         }
       })
       .catch((err) => console.error('Erro ao buscar serviços:', err));
-  }, []);
+  }, [loadSelectedServices]);
 
   useEffect(() => {
     if (selectedServices.length === 0) return;
@@ -89,7 +130,16 @@ const ScheduleTable = () => {
       .index({
         page,
         limit: rowsPerPage,
-        expand: ['customer', 'service_opinion', 'final_service_opinion', 'branch', 'address', 'service', 'project.sale', 'schedule_agent.phone_numbers'],
+        expand: [
+          'customer',
+          'service_opinion',
+          'final_service_opinion',
+          'branch',
+          'address',
+          'service',
+          'project.sale',
+          'schedule_agent.phone_numbers',
+        ],
         service__in: selectedServices.join(','),
         fields: [
           'id',
@@ -287,8 +337,10 @@ const ScheduleTable = () => {
                   multiple
                   value={selectedServices}
                   onChange={(e) => {
-                    setSelectedServices(e.target.value);
+                    const newSelectedServices = e.target.value;
+                    setSelectedServices(newSelectedServices);
                     setPage(1);
+                    saveSelectedServices(newSelectedServices);
                   }}
                   renderValue={(selected) => (
                     <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
@@ -311,7 +363,9 @@ const ScheduleTable = () => {
             <Grid container xs={2} justifyContent="flex-end" alignItems="center">
               {activeCount > 0 && (
                 <Chip
-                  label={`${activeCount} filtro${activeCount > 1 ? 's' : ''} ativo${activeCount > 1 ? 's' : ''}`}
+                  label={`${activeCount} filtro${activeCount > 1 ? 's' : ''} ativo${
+                    activeCount > 1 ? 's' : ''
+                  }`}
                   onDelete={clearFilters}
                   variant="outlined"
                   size="small"
@@ -407,16 +461,25 @@ const ScheduleTable = () => {
                         setDetailsDrawerOpen(true);
                       }}
                     >
-                      {selectedServices.length > 1 && <TableCell>{schedule.service.name}</TableCell>}
+                      {selectedServices.length > 1 && (
+                        <TableCell>{schedule.service.name}</TableCell>
+                      )}
                       <TableCell>
                         {`${formatDate(schedule.schedule_date)} - ${schedule.schedule_start_time}`}
                       </TableCell>
-                      <TableCell>{schedule?.customer?.complete_name || "Sem cliente"}</TableCell>
-                      <TableCell>{schedule?.branch?.name || "Sem unidade"}</TableCell>
+                      <TableCell>{schedule?.customer?.complete_name || 'Sem cliente'}</TableCell>
+                      <TableCell>{schedule?.branch?.name || 'Sem unidade'}</TableCell>
                       <TableCell>
-                        {schedule.schedule_agent
-                          ? <UserCard userData={schedule.schedule_agent} showPhone showEmail={false} />
-                          : <span>Sem agente</span>}
+                        {schedule.schedule_agent ? (
+                          <UserCard
+                            userData={schedule.schedule_agent}
+                            showPhone
+                            showEmail={false}
+                            fullName={true}
+                          />
+                        ) : (
+                          <span>Sem agente</span>
+                        )}
                       </TableCell>
                       <TableCell sx={{ textWrap: 'wrap' }}>
                         {schedule.address.complete_address}
@@ -434,10 +497,11 @@ const ScheduleTable = () => {
                       </TableCell>
                       <TableCell>{new Date(schedule.created_at).toLocaleString('pt-BR')}</TableCell>
                       <TableCell>
-                        {schedule.project?.sale?.financiers && schedule.project?.sale?.financiers.length > 0
+                        {schedule.project?.sale?.financiers &&
+                        schedule.project?.sale?.financiers.length > 0
                           ? schedule.project?.sale?.financiers.map((f) => (
-                            <Chip key={f.id} label={f.name} sx={{ mr: 0.5 }} />
-                          ))
+                              <Chip key={f.id} label={f.name} sx={{ mr: 0.5 }} />
+                            ))
                           : 'Nenhuma financiadora'}
                       </TableCell>
                       <TableCell sx={{ textWrap: 'wrap' }}>{schedule.observation}</TableCell>
