@@ -20,6 +20,8 @@ const useSaleForm = (initialData, id) => {
     cancellationReasonsIds: [],
     reference_table: null,
     reward: null,
+    financier_id: null,
+    financier_date: null,
   });
 
   const [formErrors, setFormErrors] = useState({});
@@ -48,6 +50,8 @@ const useSaleForm = (initialData, id) => {
           : [],
         reference_table: initialData.reference_table || '',
         reward: initialData.reward || null,
+        financier_id: initialData.financier_id || null,
+        financier_date: initialData.financier_date || null,
       });
     }
   }, [initialData]);
@@ -93,6 +97,8 @@ const useSaleForm = (initialData, id) => {
       cancellation_reasons: formData.cancellationReasonsIds,
       reference_table: formData.reference_table,
       reward: formData.reward,
+      financier_id: formData.financier_id || null,
+      financier_date: formData.financier_date || null,
     };
 
     try {

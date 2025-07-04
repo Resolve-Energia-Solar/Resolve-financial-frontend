@@ -457,6 +457,34 @@ const EditSaleTabs = ({
                   />
                 </Grid>
 
+                <Grid item xs={12} sm={12} lg={4}>
+                  <CustomFormLabel htmlFor="name">Id da Financiadora</CustomFormLabel>
+                  <CustomTextField
+                    name="financier_id"
+                    variant="outlined"
+                    fullWidth
+                    value={formData.financier_id}
+                    onChange={(e) => handleChange('financier_id', e.target.value)}
+                    disabled={!hasPermission(['resolve_crm.can_change_billing_date'])}
+                  />
+                </Grid>
+
+                  <Grid item xs={12} sm={12} lg={4}>
+                    <CustomFormLabel htmlFor="financier_date">Data do Financiamento</CustomFormLabel>
+                    <CustomTextField
+                      type="date"
+                      name="financier_date"
+                      variant="outlined"
+                      fullWidth
+                      value={formData.financier_date}
+                      onChange={(e) => handleChange('financier_date', e.target.value)}
+                      {...(formErrors.financier_date && {
+                        error: true,
+                        helperText: formErrors.financier_date,
+                      })}
+                    />
+                  </Grid>
+
                 <HasPermission
                   permissions={['accounts.change_pre_sale_field']}
                   userPermissions={userPermissions}

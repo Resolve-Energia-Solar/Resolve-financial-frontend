@@ -77,6 +77,8 @@ const useSale = (id) => {
             "projects.id",
             "projects.product",
             "projects.delivery_type",
+            "financier_id",
+            "financier_date",
           ]
         }
       );
