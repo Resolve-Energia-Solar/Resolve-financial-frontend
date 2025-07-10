@@ -234,6 +234,7 @@ const ConstructionsDashboard = () => {
       field: 'civil_construction.end_date',
       headerName: 'Previsão de término',
       render: (r) => formatDate(r?.civil_construction[0]?.end_date),
+      sortable: true,
     },
     {
       field: 'civil_construction.status',
