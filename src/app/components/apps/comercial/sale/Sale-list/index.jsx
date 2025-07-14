@@ -23,7 +23,7 @@ import {
   Chip,
   Grid,
   TextField,
-  Tooltip
+  Tooltip,
 } from '@mui/material';
 import { AddBoxRounded, Lock as LockIcon, LockOpen as LockOpenIcon } from '@mui/icons-material';
 import { useRouter } from 'next/navigation';
@@ -127,7 +127,8 @@ const SaleList = () => {
         limit: rowsPerPage,
         page: page + 1,
         expand: 'customer,branch,documents_under_analysis,projects',
-        fields: 'id,documents_under_analysis,customer.complete_name,contract_number,signature_date,total_value,signature_status,is_pre_sale,status,final_service_opinion,is_released_to_engineering,created_at,branch.name,projects.project_number,projects.journey_counter',
+        fields:
+          'id,documents_under_analysis,customer.complete_name,contract_number,signature_date,total_value,signature_status,is_pre_sale,status,final_service_opinion,is_released_to_engineering,created_at,branch.name,projects.project_number,projects.journey_counter',
         ...filters,
       });
 
@@ -215,7 +216,7 @@ const SaleList = () => {
     };
 
     return debounce((value) => {
-      setFilters(prev => ({ ...prev, q: value }));
+      setFilters((prev) => ({ ...prev, q: value }));
     }, 1000);
   });
 
@@ -306,8 +307,9 @@ const SaleList = () => {
         <Grid container xs={2} justifyContent="flex-end" alignItems="center">
           {activeCount > 0 && (
             <Chip
-              label={`${activeCount} filtro${activeCount > 1 ? 's' : ''} ativo${activeCount > 1 ? 's' : ''
-                }`}
+              label={`${activeCount} filtro${activeCount > 1 ? 's' : ''} ativo${
+                activeCount > 1 ? 's' : ''
+              }`}
               onDelete={clearFilters}
               variant="outlined"
               size="small"
@@ -315,20 +317,23 @@ const SaleList = () => {
             />
           )}
           <Box sx={{ display: 'flex', alignItems: 'center', width: '100%' }}>
-            <Tooltip title={
-              <div>
-                Pesquise por:
-                <ul>
-                  <li>Número do contrato</li>
-                  <li>Nome, CPF/CNPJ ou email do cliente</li>
-                  <li>Nome, CPF/CNPJ ou email do homologador</li>
-                  <li>Nome, CPF/CNPJ ou email do vendedor</li>
-                  <li>Nome, CPF/CNPJ ou email do supervisor de vendas</li>
-                  <li>Nome, CPF/CNPJ ou email do gerente de vendas</li>
-                  <li>Nome, CPF/CNPJ ou email do fornecedor</li>
-                </ul>
-              </div>
-            } arrow>
+            <Tooltip
+              title={
+                <div>
+                  Pesquise por:
+                  <ul>
+                    <li>Número do contrato</li>
+                    <li>Nome, CPF/CNPJ ou email do cliente</li>
+                    <li>Nome, CPF/CNPJ ou email do homologador</li>
+                    <li>Nome, CPF/CNPJ ou email do vendedor</li>
+                    <li>Nome, CPF/CNPJ ou email do supervisor de vendas</li>
+                    <li>Nome, CPF/CNPJ ou email do gerente de vendas</li>
+                    <li>Nome, CPF/CNPJ ou email do fornecedor</li>
+                  </ul>
+                </div>
+              }
+              arrow
+            >
               <TextField
                 variant="outlined"
                 size="small"
@@ -495,7 +500,11 @@ const SaleList = () => {
                         <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                           {item.projects.map((project) => {
                             return (
-                              <JourneyCounterChip key={project.id} count={project.journey_counter} tooltip_text={project.project_number} />
+                              <JourneyCounterChip
+                                key={project.id}
+                                count={project.journey_counter}
+                                tooltip_text={project.project_number}
+                              />
                             );
                           })}
                         </Box>
@@ -525,7 +534,7 @@ const SaleList = () => {
                     </TableCell>
                     <TableCell>
                       {Array.isArray(item.final_service_opinion) &&
-                        item.final_service_opinion[0].name ? (
+                      item.final_service_opinion[0].name ? (
                         <Chip
                           label={item.final_service_opinion[0].name}
                           color={

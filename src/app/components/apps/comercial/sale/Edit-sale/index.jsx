@@ -127,7 +127,7 @@ const EditSaleTabs = ({
 
   const { formattedValue, numericValue, handleValueChange } = useCurrencyFormatter(
     formData.totalValue,
-    (newValue) => handleChange('totalValue', newValue)
+    (newValue) => handleChange('totalValue', newValue),
   );
 
   const statusOptions = [
@@ -287,23 +287,20 @@ const EditSaleTabs = ({
                     {...(formErrors.branch_id && { error: true, helperText: formErrors.branch_id })}
                   />
                 </Grid>
-                <HasPermission
-                  permissions={['accounts.change_seller_field']}
-                  userPermissions={userPermissions}
-                >
-                  <Grid item xs={12} sm={12} lg={4}>
-                    <CustomFormLabel htmlFor="name">Vendedor</CustomFormLabel>
-                    <AutoCompleteUser
-                      onChange={(id) => handleChange('sellerId', id)}
-                      value={formData.sellerId}
-                      disabled={!hasPermission(['accounts.change_seller_field'])}
-                      {...(formErrors.seller_id && {
-                        error: true,
-                        helperText: formErrors.seller_id,
-                      })}
-                    />
-                  </Grid>
-                </HasPermission>
+
+                <Grid item xs={12} sm={12} lg={4}>
+                  <CustomFormLabel htmlFor="name">Vendedor</CustomFormLabel>
+                  <AutoCompleteUser
+                    onChange={(id) => handleChange('sellerId', id)}
+                    value={formData.sellerId}
+                    disabled={!hasPermission(['accounts.change_seller_field'])}
+                    {...(formErrors.seller_id && {
+                      error: true,
+                      helperText: formErrors.seller_id,
+                    })}
+                  />
+                </Grid>
+                
                 <Grid item xs={12} sm={12} lg={4}>
                   <CustomFormLabel htmlFor="name">Supervisor de Vendas</CustomFormLabel>
                   <AutoCompleteUser
@@ -445,15 +442,17 @@ const EditSaleTabs = ({
                   <GenericAsyncAutocompleteInput
                     name="reward"
                     label="Premiação"
-                    endpoint='api/rewards'
-                    queryParam='name__icontains'
+                    endpoint="api/rewards"
+                    queryParam="name__icontains"
                     extraParams={{ fields: ['id', 'name', 'is_active'], limit: 30 }}
                     value={formData.reward?.id || formData.reward}
                     onChange={(value) => handleChange('reward', value?.value || value)}
-                    mapResponse={(response => response.results.map(r => ({
-                      value: r.id,
-                      label: `${r.name}${r.is_active ? '' : ' (Inativo)'}`,
-                    })))}
+                    mapResponse={(response) =>
+                      response.results.map((r) => ({
+                        value: r.id,
+                        label: `${r.name}${r.is_active ? '' : ' (Inativo)'}`,
+                      }))
+                    }
                   />
                 </Grid>
 
@@ -469,21 +468,21 @@ const EditSaleTabs = ({
                   />
                 </Grid>
 
-                  <Grid item xs={12} sm={12} lg={4}>
-                    <CustomFormLabel htmlFor="financier_date">Data do Financiamento</CustomFormLabel>
-                    <CustomTextField
-                      type="date"
-                      name="financier_date"
-                      variant="outlined"
-                      fullWidth
-                      value={formData.financier_date}
-                      onChange={(e) => handleChange('financier_date', e.target.value)}
-                      {...(formErrors.financier_date && {
-                        error: true,
-                        helperText: formErrors.financier_date,
-                      })}
-                    />
-                  </Grid>
+                <Grid item xs={12} sm={12} lg={4}>
+                  <CustomFormLabel htmlFor="financier_date">Data do Financiamento</CustomFormLabel>
+                  <CustomTextField
+                    type="date"
+                    name="financier_date"
+                    variant="outlined"
+                    fullWidth
+                    value={formData.financier_date}
+                    onChange={(e) => handleChange('financier_date', e.target.value)}
+                    {...(formErrors.financier_date && {
+                      error: true,
+                      helperText: formErrors.financier_date,
+                    })}
+                  />
+                </Grid>
 
                 <HasPermission
                   permissions={['accounts.change_pre_sale_field']}
@@ -521,7 +520,6 @@ const EditSaleTabs = ({
                     />
                   ));
                 })()}
-
               </Grid>
             </Box>
           </TabPanel>
