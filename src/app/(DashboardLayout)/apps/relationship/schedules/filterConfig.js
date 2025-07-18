@@ -20,7 +20,7 @@ export default [
         label: 'Parecer do Serviço',
         type: 'async-multiselect',
         endpoint: '/api/service-opinions/',
-        queryParam: 'name__icontains',
+        queryParam: 'search',
         extraParams: {
             is_final_opinion: false,
             limit: 10,
@@ -38,7 +38,7 @@ export default [
         label: 'Parecer Final do Serviço',
         type: 'async-multiselect',
         endpoint: '/api/service-opinions/',
-        queryParam: 'name__icontains',
+        queryParam: 'search',
         extraParams: {
             is_final_opinion: true,
             limit: 10,

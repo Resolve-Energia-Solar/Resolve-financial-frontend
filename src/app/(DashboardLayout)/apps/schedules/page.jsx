@@ -280,7 +280,7 @@ const ScheduleTable = () => {
       queryParam: 'search',
       extraParams: {
         is_final_opinion: false,
-        limit: 10,
+        limit: 20,
         fields: ['id', 'name', 'service.name'],
         expand: 'service',
       },
@@ -298,7 +298,7 @@ const ScheduleTable = () => {
       queryParam: 'search',
       extraParams: {
         is_final_opinion: true,
-        limit: 10,
+        limit: 20,
         fields: ['id', 'name', 'service.name'],
         expand: 'service',
       },

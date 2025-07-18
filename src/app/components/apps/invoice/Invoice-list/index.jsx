@@ -258,7 +258,7 @@ export default function InvoiceList({ onClick }) {
       label: 'Parecer Final do Serviço',
       type: 'async-autocomplete',
       endpoint: '/api/service-opinions/',
-      queryParam: 'name__icontains',
+      queryParam: 'search',
       extraParams: {
         is_final_opinion: true,
         limit: 10,

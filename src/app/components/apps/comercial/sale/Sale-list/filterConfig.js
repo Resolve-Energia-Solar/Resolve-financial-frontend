@@ -63,7 +63,7 @@ export default [
         label: 'Parecer Final da Vistoria',
         type: 'async-multiselect',
         endpoint: '/api/service-opinions/',
-        queryParam: 'name__icontains',
+        queryParam: 'search',
         extraParams: {
             is_final_opinion: true,
             limit: 20,
