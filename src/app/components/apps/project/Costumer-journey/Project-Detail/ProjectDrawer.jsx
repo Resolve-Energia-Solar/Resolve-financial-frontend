@@ -263,7 +263,7 @@ export default function ProjectDetailDrawer({ projectId, saleId, open, onClose, 
                   Cliente: {project.sale.customer.complete_name}
                 </Typography>
                 <Typography variant="caption" color="text.secondary">
-                  Data: {formatDateTime(project.created_at)}
+                  Data do Contrato: {formatDateTime(project.sale.signature_date)}
                 </Typography>
                 {project.distance_to_matriz_km != null && (
                   <Typography variant="caption" color="text.secondary">
