@@ -47,6 +47,7 @@ const ScheduleStatusChip = ({ status }) => {
 
       // Status de agendamento
       case 'Confirmado':
+      case 'confirmado':
       case 'Liberado':
         return { 
           label: status, 
@@ -55,6 +56,7 @@ const ScheduleStatusChip = ({ status }) => {
         };
       
       case 'Pendente':
+      case 'pendente':
         return { 
           label: status, 
           color: 'warning', 
@@ -70,6 +72,7 @@ const ScheduleStatusChip = ({ status }) => {
 
       // Status negativos
       case 'Cancelado':
+      case 'cancelado':
         return { 
           label: status, 
           color: 'error', 

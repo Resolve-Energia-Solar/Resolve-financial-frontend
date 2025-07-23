@@ -43,6 +43,8 @@ const CreateSchedulePage = () => {
     address: null,
     observation: '',
     parent_schedules: [],
+    datalogger_serial_number: '',
+    inverter_serial_number: '',
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -68,6 +70,9 @@ const CreateSchedulePage = () => {
     address: 'Endereço',
     observation: 'Observação',
     schedule_creator: 'Criador do Agendamento',
+    parent_schedules: 'Agendamentos Relacionados',
+    datalogger_serial_number: 'Número de Série do Datalogger',
+    inverter_serial_number: 'Número de Série do Inversor'
   };
 
   const handleSubmit = async (e) => {
@@ -107,6 +112,8 @@ const CreateSchedulePage = () => {
       parent_schedules: Array.isArray(formData.parent_schedules)
         ? formData.parent_schedules.filter((ps) => ps && ps.value).map((ps) => ps.value)
         : [],
+      inverter_serial_number: formData.inverter_serial_number,
+      datalogger_serial_number: formData.datalogger_serial_number,
     };
 
     try {
@@ -781,6 +788,26 @@ const CreateSchedulePage = () => {
                 />
               </Grid>
             )}
+
+            <Grid item xs={12} sm={6}>
+              <TextField
+                label="Numero de Série do inversor"
+                name="inverter_serial_number"
+                value={formData.inverter_serial_number}
+                onChange={handleInputChange}
+                fullWidth
+              />
+            </Grid>
+
+            <Grid item xs={12} sm={6}>
+              <TextField
+                label="Número de Série do Datalogger"
+                name="inverter_serial_number"
+                value={formData.datalogger_serial_number}
+                onChange={handleInputChange}
+                fullWidth
+              />
+            </Grid>
 
             <Grid item xs={12}>
               <TextField

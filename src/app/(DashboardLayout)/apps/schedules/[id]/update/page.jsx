@@ -58,6 +58,11 @@ const UpdateSchedulePage = ({ scheduleId = null, onClosedModal = null, onRefresh
     parent_schedules: null,
     attachments: [],
     schedule_creator: null,
+    status: '',
+    service_opinion: null,
+    final_service_opinion: null,
+    inverter_serial_number: '',
+    datalogger_serial_number: '',
   });
   const [loading, setLoading] = useState(false);
   const [loadingForm, setLoadingForm] = useState(false);
@@ -89,29 +94,8 @@ const UpdateSchedulePage = ({ scheduleId = null, onClosedModal = null, onRefresh
       setLoadingForm(true);
       scheduleService
         .find(id, {
-          fields: [
-            'schedule_date',
-            'schedule_start_time',
-            'schedule_end_date',
-            'schedule_end_time',
-            'service.id',
-            'service.category',
-            'customer',
-            'project',
-            'schedule_agent',
-            'branch',
-            'address',
-            'value',
-            'observation',
-            'products',
-            'parent_schedules',
-            'status',
-            'attachments',
-            'service_opinion',
-            'final_service_opinion',
-            'schedule_creator',
-          ],
-          expand: ['service'],
+          fields: "schedule_date,schedule_start_time,schedule_end_date,schedule_end_time,status,service,customer,project,schedule_agent,branch,address,value,observation,products,parent_schedules,attachments,schedule_creator,service_opinion,final_service_opinion,inverter_serial_number,datalogger_serial_number",
+          expand: ['service', 'service_opinion', 'final_service_opinion'],
         })
         .then((data) => {
           setFormData({
@@ -120,8 +104,12 @@ const UpdateSchedulePage = ({ scheduleId = null, onClosedModal = null, onRefresh
             schedule_end_date: data.schedule_end_date ? data.schedule_end_date.split('T')[0] : '',
             schedule_end_time: data.schedule_end_time || '',
             service: data.service,
-            service_opinion: data.service_opinion,
-            final_service_opinion: data.final_service_opinion,
+            service_opinion: data.service_opinion 
+              ? { label: data.service_opinion.name, value: data.service_opinion.id } 
+              : null,
+            final_service_opinion: data.final_service_opinion 
+              ? { label: data.final_service_opinion.name, value: data.final_service_opinion.id } 
+              : null,
             customer: data.customer,
             project: data.project,
             schedule_agent: data.schedule_agent,
@@ -134,6 +122,8 @@ const UpdateSchedulePage = ({ scheduleId = null, onClosedModal = null, onRefresh
             status: data.status,
             attachments: data.attachments || [],
             schedule_creator: data.schedule_creator,
+            inverter_serial_number: data.inverter_serial_number || '',
+            datalogger_serial_number: data.datalogger_serial_number || '',
           });
         })
         .catch((err) => {
@@ -189,6 +179,11 @@ const UpdateSchedulePage = ({ scheduleId = null, onClosedModal = null, onRefresh
     branch: 'Unidade',
     address: 'Endereço',
     observation: 'Observação',
+    status: 'Status',
+    final_service_opinion: 'Parecer Final',
+    service_opinion: 'Parecer de Serviço',
+    inverter_serial_number: 'Numero de Série do inversor',
+    datalogger_serial_number: 'Numero de Série do Datalogger',
   };
 
   useEffect(() => {
@@ -265,6 +260,8 @@ const UpdateSchedulePage = ({ scheduleId = null, onClosedModal = null, onRefresh
       parent_schedules: Array.isArray(formData.parent_schedules)
         ? formData.parent_schedules.filter((ps) => ps).map((ps) => ps.value || ps)
         : [],
+      inverter_serial_number: formData.inverter_serial_number,
+      datalogger_serial_number: formData.datalogger_serial_number,
     };
 
     try {
@@ -603,6 +600,8 @@ const UpdateSchedulePage = ({ scheduleId = null, onClosedModal = null, onRefresh
                       'sale.status',
                       'sale.homologator.complete_name',
                       'address.complete_address',
+                      'datalogger_serial_number',
+                      'inverter_serial_number',
                     ],
                     status__in: 'C,P,EA',
                   }}
@@ -862,6 +861,25 @@ const UpdateSchedulePage = ({ scheduleId = null, onClosedModal = null, onRefresh
                   />
                 </Grid>
               )}
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  label="Numero de Série do inversor"
+                  name="inverter_serial_number"
+                  value={formData.inverter_serial_number}
+                  onChange={handleInputChange}
+                  fullWidth
+                />
+              </Grid>
+
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  label="Número de Série do Datalogger"
+                  name="datalogger_serial_number"
+                  value={formData.datalogger_serial_number}
+                  onChange={handleInputChange}
+                  fullWidth
+                />
+              </Grid>
               <Grid item xs={12}>
                 <CustomTextField
                   label="Observação"
