@@ -56,32 +56,21 @@ import filterConfig from './filterConfig';
 import { FilterContext } from '@/context/FilterContext';
 import JourneyCounterChip from '../../../project/Costumer-journey/JourneyCounterChip';
 import { useTheme } from '@mui/material/styles';
+import { useSalesQuery } from '@/hooks/sales/useSalesQuery';
+import { useQueryClient } from '@tanstack/react-query';
 
 const SaleList = () => {
-  const [salesList, setSalesList] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [page, setPage] = useState(0);
   const [openCreateSale, setOpenCreateSale] = useState(false);
-  const [indicators, setIndicators] = useState({});
-
   const { handleRowClick, openDrawer, rowSelected, toggleDrawerClosed } = useSale();
-
   const { filters, setFilters, clearFilters, refresh } = useContext(FilterContext);
   const activeCount = Object.keys(filters || {}).filter((key) => {
     const v = filters[key];
     return v !== null && v !== undefined && !(Array.isArray(v) && v.length === 0);
   }).length;
   const [openFilterDrawer, setOpenFilterDrawer] = useState(false);
-
   const user = useSelector((state) => state?.user?.user);
-
-  const userRole = {
-    user: user?.id,
-    role: user?.is_superusers ? 'Superuser' : user?.employee?.role?.name,
-    branch: user?.employee?.branch?.id,
-  };
-
+  const queryClient = useQueryClient();
   const {
     isSendingContract,
     error: errorContract,
@@ -89,6 +78,9 @@ const SaleList = () => {
     success: successContract,
     setSuccess: setSuccessContract,
   } = useSendContract();
+  const refeshData = () => {
+    queryClient.invalidateQueries({ queryKey: ['salesList'] });
+  }
 
   const [alertMessage, setAlertMessage] = useState('');
   const [alertType, setAlertType] = useState('success');
@@ -104,51 +96,23 @@ const SaleList = () => {
   const [saleToDelete, setSaleToDelete] = useState(null);
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const [totalRows, setTotalRows] = useState(0);
 
   const router = useRouter();
 
   const theme = useTheme();
   const isDark = theme.palette.mode === 'dark';
 
-  useEffect(() => {
-    setPage(0);
-    setSalesList([]);
-  }, [order, orderDirection, filters, refresh]);
+  const { data, isLoading, isError, error, isFetching } = useSalesQuery(
+    filters,
+    page,
+    rowsPerPage,
+    order,
+    orderDirection
+  );
 
-  const fetchSales = async () => {
-    const orderingParam = order ? `${orderDirection === 'asc' ? '' : '-'}${order}` : '';
-    try {
-      setLoading(true);
-
-      const data = await saleService.index({
-        userRole,
-        ordering: orderingParam,
-        limit: rowsPerPage,
-        page: page + 1,
-        expand: 'customer,branch,documents_under_analysis,projects',
-        fields:
-          'id,documents_under_analysis,customer.complete_name,contract_number,signature_date,total_value,signature_status,is_pre_sale,status,final_service_opinion,is_released_to_engineering,created_at,branch.name,projects.project_number,projects.journey_counter',
-        ...filters,
-      });
-
-      setIndicators(data?.meta?.indicators);
-      setSalesList(data?.results);
-      setTotalRows(data?.meta?.pagination?.total_count);
-      setIndicators(data?.meta?.indicators);
-      setSalesList(data?.results);
-      setTotalRows(data?.meta?.pagination?.total_count);
-    } catch (err) {
-      console.error('Erro ao carregar Vendas:', err);
-      setError('Erro ao carregar Vendas');
-      showAlert('Erro ao carregar Vendas', 'error');
-    } finally {
-      setLoading(false);
-    }
-  };
-  useEffect(() => {
-    fetchSales();
-  }, [page, rowsPerPage, order, orderDirection, filters, refresh]);
+  const salesList = data?.results || [];
+  const totalRows = data?.meta?.pagination?.total_count || 0;
+  const indicators = data?.meta?.indicators || {};
 
   const handlePageChange = (event, newPage) => {
     setPage(newPage);
@@ -355,7 +319,22 @@ const SaleList = () => {
           </Box>
         </Grid>
       </Box>
-      <Box>
+      <Box sx={{
+          position: 'relative',
+          transition: 'opacity 300ms',
+          opacity: isFetching ? 0.7 : 1,
+        }}>
+        {isFetching && (
+          <Box sx={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            zIndex: 2,
+          }}>
+            <CircularProgress />
+          </Box>
+        )}
         <TableContainer sx={{ overflowX: 'auto' }}>
           <Table>
             <TableHead>
@@ -478,88 +457,57 @@ const SaleList = () => {
             </TableHead>
 
             <TableBody>
-              {loading ? (
-                <TableSkeleton rows={rowsPerPage} columns={12} />
-              ) : error && page === 1 ? (
-                <Typography color="error">{error}</Typography>
+              {/* 1. Lógica de carregamento e erro aprimorada com dados do useSalesQuery */}
+              {isLoading && salesList.length === 0 ? (
+                <TableSkeleton rows={rowsPerPage} columns={13} />
+              ) : isError ? (
+                <TableRow>
+                  <TableCell colSpan={13} align="center">
+                    <Typography color="error">Erro ao carregar vendas: {error.message}</Typography>
+                  </TableCell>
+                </TableRow>
               ) : (
-                (salesList || []).map((item) => (
+                /* 2. Mapeamento da lista de vendas com a nova estrutura de dados */
+                salesList.map((item) => (
                   <TableRow
                     key={item.id}
                     onClick={() => handleRowClick(item)}
                     hover
-                    sx={{ backgroundColor: rowSelected?.id === item.id && '#cecece' }}
+                    sx={{ backgroundColor: rowSelected?.id === item.id ? '#cecece' : 'inherit' }}
                   >
+                    {/* Célula de Documentos: usa a contagem direta da API */}
                     <TableCell align="center">
-                      {item.documents_under_analysis?.length > 0 && (
-                        <PulsingBadge color="#FFC008" />
-                      )}
+                      {item.documents_under_analysis_count > 0 && <PulsingBadge color="#FFC008" />}
                     </TableCell>
+                    {/* Célula do Contador: usa o novo array 'projects_info' */}
                     <TableCell>
-                      {Array.isArray(item.projects) && item.projects.length > 0 ? (
-                        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                          {item.projects.map((project) => {
-                            return (
-                              <JourneyCounterChip
-                                key={project.id}
-                                count={project.journey_counter}
-                                tooltip_text={project.project_number}
-                              />
-                            );
-                          })}
-                        </Box>
-                      ) : (
-                        <Chip label="-" size="small" variant="outlined" />
-                      )}
+                      {item.projects_info?.map((p) => (
+                        <JourneyCounterChip key={p.id} count={p.journey_counter} tooltip_text={p.project_number} />
+                      ))}
                     </TableCell>
-                    <TableCell>{item.customer.complete_name}</TableCell>
+                    {/* Célula do Cliente: usa o campo 'achatado' */}
+                    <TableCell>{item.customer_name}</TableCell>
                     <TableCell>{item.contract_number}</TableCell>
+                    <TableCell><StatusChip status={item.status} /></TableCell>
+                    <TableCell>{item.signature_date ? new Date(item.signature_date).toLocaleString() : 'N/A'}</TableCell>
+                    <TableCell>{Number(item.total_value).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</TableCell>
+                    <TableCell><ChipSigned status={item.signature_status} /></TableCell>
+                    <TableCell><StatusPreSale status={item.is_pre_sale} /></TableCell>
+                    {/* Célula de Parecer: lógica simplificada, pois o campo agora é um objeto ou nulo */}
                     <TableCell>
-                      <StatusChip status={item.status} />
-                    </TableCell>
-                    <TableCell>
-                      {item.signature_date
-                        ? new Date(item.signature_date).toLocaleString()
-                        : 'Sem contrato assinado'}
-                    </TableCell>
-                    <TableCell>
-                      {Number(item.total_value).toLocaleString('pt-BR', {
-                        style: 'currency',
-                        currency: 'BRL',
-                      })}
-                    </TableCell>
-                    <TableCell>{<ChipSigned status={item?.signature_status} />}</TableCell>
-                    <TableCell>
-                      <StatusPreSale status={item.is_pre_sale} />
-                    </TableCell>
-                    <TableCell>
-                      {Array.isArray(item.final_service_opinion) &&
-                      item.final_service_opinion[0].name ? (
-                        <Chip
-                          label={item.final_service_opinion[0].name}
-                          color={
-                            item.final_service_opinion[0].name.toLowerCase().includes('aprovado')
-                              ? 'success'
-                              : 'default'
-                          }
-                        />
+                      {item.final_service_opinion ? (
+                        <Chip label={item.final_service_opinion.name} color={item.final_service_opinion.name.toLowerCase().includes('aprovado') ? 'success' : 'default'} />
                       ) : (
                         <Chip label="Sem P.F" color="warning" />
                       )}
                     </TableCell>
+                    {/* Célula de Engenharia: usa o booleano direto da API */}
                     <TableCell>
-                      <Chip
-                        label={
-                          item.is_released_to_engineering === true ? 'Liberado' : 'Não-Liberado'
-                        }
-                        color={item.is_released_to_engineering === true ? 'success' : 'default'}
-                        icon={
-                          item.is_released_to_engineering === true ? <LockOpenIcon /> : <LockIcon />
-                        }
-                      />
+                      <Chip label={item.is_released_to_engineering ? 'Liberado' : 'Bloqueado'} color={item.is_released_to_engineering ? 'success' : 'default'} icon={item.is_released_to_engineering ? <LockOpenIcon /> : <LockIcon />} />
                     </TableCell>
-                    <TableCell>{new Date(item.created_at).toLocaleString() || '-'}</TableCell>
-                    <TableCell>{item.branch.name}</TableCell>
+                    <TableCell>{new Date(item.created_at).toLocaleString()}</TableCell>
+                    {/* Célula da Unidade: usa o campo 'achatado' */}
+                    <TableCell>{item.branch_name}</TableCell>
                   </TableRow>
                 ))
               )}
@@ -666,7 +614,7 @@ const SaleList = () => {
         onClose={() => toggleDrawerClosed(false)}
         title="Detalhamento da Venda"
       >
-        <EditSaleTabs saleId={rowSelected?.id} onRefresh={fetchSales} />
+        <EditSaleTabs saleId={rowSelected?.id} onRefresh={refeshData} />
       </SideDrawer>
       <GenericFilterDrawer
         open={openFilterDrawer}

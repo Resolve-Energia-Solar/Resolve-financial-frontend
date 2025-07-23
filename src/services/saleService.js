@@ -2,6 +2,11 @@ import apiClient from './apiClient';
 
 const DEFAULT_ROUTER = '/api/sales';
 const saleService = {
+  getOptimizedSales: (params) => {
+    const { expand, fields, ...queryParams } = params;
+    return apiClient.get('/api/v2/sales/', { params: queryParams });
+  },
+
   index: async (params) => {
     try {
       const response = await apiClient.get(`${DEFAULT_ROUTER}/`, { params });
