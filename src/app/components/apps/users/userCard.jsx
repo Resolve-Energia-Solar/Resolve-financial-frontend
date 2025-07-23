@@ -110,7 +110,7 @@ const UserCard = memo(function UserCard({
           {user.profile_picture ? (
             <Image src={user.profile_picture} alt={user.complete_name} width={64} height={64} />
           ) : (
-            user.complete_name.charAt(0).toUpperCase()
+            user.complete_name?.charAt(0).toUpperCase()
           )}
         </Avatar>
       </MuiLink>

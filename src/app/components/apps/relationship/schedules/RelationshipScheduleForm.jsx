@@ -34,6 +34,8 @@ const initialState = {
   requester: null
 };
 
+const fields = "schedule_date,schedule_start_time,schedule_end_time,service,customer,project,schedule_agent,branch,address,observation,parent_schedules,severity,schedule_creator,service_opinion,final_service_opinion,requester";
+
 function formReducer(state, { field, value }) {
   return { ...state, [field]: value };
 }
@@ -50,7 +52,7 @@ export default function RelationshipScheduleForm({ scheduleId = null, breadcrumb
     if (!scheduleId) return;
     setLoading(true);
     try {
-      const data = await scheduleService.find(scheduleId, { fields: Object.keys(initialState) });
+      const data = await scheduleService.find(scheduleId, { fields: fields });
       console.log('Schedule data:', data);
       const payload = {
         ...data,
@@ -93,7 +95,7 @@ export default function RelationshipScheduleForm({ scheduleId = null, breadcrumb
       address: formData.address.value,
       products: formData.product ? [formData.product.value] : [],
       schedule_creator: formData.schedule_creator?.value || user.id,
-      parent_schedules: formData.parent_schedules.map(ps => ps.value),
+      parent_schedules: formData.parent_schedules.map(ps => ps?.value ?? ps),
       requester: formData.requester?.value || null,
       service_opinion: formData.service_opinion?.value || null,
       final_service_opinion: formData.final_service_opinion?.value || null,
