@@ -6,15 +6,15 @@ export default function ScheduleOpinionChip({ status }) {
   }
 
   const lowerStatus = String(status).toLowerCase();
-  let color = "default"; // Cor padrão
+  let color = "default";
   if (["aprovado", "concluído", "entregue"].some(term => lowerStatus.includes(term))) {
-    color = "success"; // Verde 🟢
+    color = "success";
   } else if (["reprovado", "cancelado"].some(term => lowerStatus.includes(term))) {
-    color = "error"; // Vermelho 🔴
+    color = "error";
   } else if (["andamento", "agendado"].some(term => lowerStatus.includes(term))) {
-    color = "info"; // Azul 🔵
+    color = "info";
   } else if (["solicitado", "confirmado"].some(term => lowerStatus.includes(term))) {
-    color = "primary"; // Azul principal 🔵
+    color = "primary";
   }
 
   return <Chip label={status} color={color} />;

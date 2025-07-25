@@ -63,6 +63,18 @@ const projectService = {
       throw error;
     }
   },
+  generateMaterialPdf: async (id) => {
+    try {
+      const response = await apiClient.get(
+        `/api/project/${id}/generate-pdf-materials/`,
+        { responseType: 'blob' }
+      );
+      return response.data;
+    } catch (error) {
+      console.error(`Erro ao gerar PDF de materiais do projeto com id ${id}:`, error);
+      throw error;
+    }
+  },
 
   getIndicators: async (params) => {
     try {

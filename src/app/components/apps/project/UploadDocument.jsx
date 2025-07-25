@@ -37,6 +37,7 @@ import projectService from '@/services/projectService';
 import { AddBoxRounded } from '@mui/icons-material';
 import AddMaterialList from './modal/AddMaterialList';
 import { useTheme } from '@mui/material/styles';
+import { GenerateMaterialsPDF } from '../materials/GenerateMaterialPdf';
 
 const UploadDocument = ({ projectId }) => {
   const [file, setFile] = useState(null);
@@ -317,11 +318,14 @@ const UploadDocument = ({ projectId }) => {
         <Button
           variant="outlined"
           startIcon={<AddBoxRounded />}
-          sx={{ marginTop: 1, marginBottom: 2 }}
+          sx={{ marginTop: 2, marginBottom: 2 }}
           onClick={() => setAddMaterialListModal(true)}
         >
           Adicionar Material
         </Button>
+
+        <GenerateMaterialsPDF projectId={projectId} />
+
         <Table stickyHeader>
           <TableHead>
             <TableRow>

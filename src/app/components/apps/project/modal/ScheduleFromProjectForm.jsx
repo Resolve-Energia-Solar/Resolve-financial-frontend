@@ -57,6 +57,8 @@ const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = (
     service_opinion: null,
     final_service_opinion: null,
     status: 'Pendente',
+    datalogger_serial_number: null,
+    inverter_serial_number: null,
   });
   const [formErrors, setFormErrors] = useState({});
   const [loading, setLoading] = useState(false);
@@ -103,7 +105,7 @@ const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = (
       if (!scheduleId) return;
       try {
         const data = await scheduleService.find(scheduleId, {
-          fields: 'id,protocol,schedule_date,schedule_start_time,schedule_end_date,schedule_end_time,schedule_creator,observation,address.id,service.id,service.name,schedule_agent,service_opinion,final_service_opinion,status,attachments',
+          fields: 'id,protocol,schedule_date,schedule_start_time,schedule_end_date,schedule_end_time,schedule_creator,observation,address.id,service.id,service.name,schedule_agent,service_opinion,final_service_opinion,status,attachments,datalogger_serial_number,inverter_serial_number',
           expand: 'address,service',
         });
         setSchedule(data);
@@ -125,6 +127,8 @@ const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = (
           final_service_opinion: data.final_service_opinion || prev.final_service_opinion,
           status: data.status || prev.status,
           attachments: data.attachments || [],
+          datalogger_serial_number: data.datalogger_serial_number || prev.datalogger_serial_number,
+          inverter_serial_number: data.inverter_serial_number || prev.inverter_serial_number,
         }));
       } catch (err) {
         console.error('Erro ao carregar agendamento:', err);
@@ -270,6 +274,8 @@ const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = (
         products,
         branch,
         attachments: formData.attachments,
+        datalogger_serial_number: formData.datalogger_serial_number,
+        inverter_serial_number: formData.inverter_serial_number,
       };
       const resp = scheduleId
         ? await scheduleService.update(scheduleId, payload)
@@ -363,6 +369,28 @@ const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = (
                 onChange={val => handleChange('schedule_start_time', val)}
                 error={!!formErrors?.schedule_start_time}
                 helperText={formErrors?.schedule_start_time?.[0]}
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <CustomTextField
+                fullWidth
+                label="Número do Datalogger"
+                name="datalogger_serial_number"
+                value={formData.datalogger_serial_number || ''}
+                onChange={e => handleChange('datalogger_serial_number', e.target.value)}
+                error={!!formErrors?.datalogger_serial_number}
+                helperText={formErrors?.datalogger_serial_number?.[0]}
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <CustomTextField
+                fullWidth
+                label="Número do Inversor"
+                name="inverter_serial_number"
+                value={formData.inverter_serial_number || ''}
+                onChange={e => handleChange('inverter_serial_number', e.target.value)}
+                error={!!formErrors?.inverter_serial_number}
+                helperText={formErrors?.inverter_serial_number?.[0]}
               />
             </Grid>
             {formData.schedule_date && formData.schedule_start_time && (
