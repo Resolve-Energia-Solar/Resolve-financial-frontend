@@ -165,6 +165,12 @@ const ProjectList = ({ onClick, defaultfilters }) => {
         })),
     },
     {
+      key: 'installation_date',
+      label: 'Data de Instalação',
+      type: 'range',
+      inputType: 'date',
+    },
+    {
       key: 'state__in',
       label: 'Estado',
       type: 'multiselect',

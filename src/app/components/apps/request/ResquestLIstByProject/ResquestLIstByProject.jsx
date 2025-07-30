@@ -248,6 +248,12 @@ const ResquestLIstByProject = () => {
       ],
     },
     {
+      key: 'installation_date',
+      label: 'Data de Instalação',
+      type: 'range',
+      inputType: 'date',
+    },
+    {
       key: 'access_opnion_status',
       label: 'Parecer de Acesso',
       type: 'multiselect',
