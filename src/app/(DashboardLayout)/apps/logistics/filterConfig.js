@@ -51,6 +51,7 @@ export default [
       { value: 'Pendente', label: 'Pendente' },
       { value: 'Compra Realizada', label: 'Compra Realizada' },
       { value: 'Cancelado', label: 'Cancelado' },
+      { value: 'Liberado', label: 'Liberado' },
       { value: 'Distrato', label: 'Distrato' },
       { value: 'Aguardando Previsão de Entrega', label: 'Aguardando Previsão de Entrega' },
       { value: 'Aguardando Pagamento', label: 'Aguardando Pagamento' },
