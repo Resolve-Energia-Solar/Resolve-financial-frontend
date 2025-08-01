@@ -79,8 +79,8 @@ export default [
     ],
   },
   {
-    key: 'expected_delivery_date__range',
-    label: 'Data de Previsão',
+    key: 'delivery_forecast__range',
+    label: 'Data de Previsão de Entrega',
     type: 'range',
     inputType: 'date',
   },
