@@ -34,6 +34,12 @@ import { useSelector } from 'react-redux';
 import FinalServiceOpinionChip from '../../inspections/schedule/StatusChip/FinalServiceOpinionChip';
 import { useTheme } from '@mui/material/styles';
 
+
+const SOLARZ_CHOICES = [
+  { label: 'Sim', value: 'Sim' },
+  { label: 'Não', value: 'Não' },
+];
+
 const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = () => { }, errors = {}, displayAgent = true, useSupplier = false }) => {
   const { enqueueSnackbar } = useSnackbar();
   const [project, setProject] = useState(null);
@@ -59,6 +65,8 @@ const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = (
     status: 'Pendente',
     datalogger_serial_number: null,
     inverter_serial_number: null,
+    planta: null,
+    solarz: null,
   });
   const [formErrors, setFormErrors] = useState({});
   const [loading, setLoading] = useState(false);
@@ -105,7 +113,7 @@ const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = (
       if (!scheduleId) return;
       try {
         const data = await scheduleService.find(scheduleId, {
-          fields: 'id,protocol,schedule_date,schedule_start_time,schedule_end_date,schedule_end_time,schedule_creator,observation,address.id,service.id,service.name,schedule_agent,service_opinion,final_service_opinion,status,attachments,datalogger_serial_number,inverter_serial_number',
+          fields: 'id,protocol,schedule_date,schedule_start_time,schedule_end_date,schedule_end_time,schedule_creator,observation,address.id,service.id,service.name,schedule_agent,service_opinion,final_service_opinion,status,attachments,datalogger_serial_number,inverter_serial_number,planta,solarz',
           expand: 'address,service',
         });
         setSchedule(data);
@@ -129,6 +137,8 @@ const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = (
           attachments: data.attachments || [],
           datalogger_serial_number: data.datalogger_serial_number || prev.datalogger_serial_number,
           inverter_serial_number: data.inverter_serial_number || prev.inverter_serial_number,
+          planta: data.planta || prev.planta,
+          solarz: data.solarz || prev.solarz,
         }));
       } catch (err) {
         console.error('Erro ao carregar agendamento:', err);
@@ -276,6 +286,8 @@ const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = (
         attachments: formData.attachments,
         datalogger_serial_number: formData.datalogger_serial_number,
         inverter_serial_number: formData.inverter_serial_number,
+        planta: formData.planta,
+        solarz: formData.solarz,
       };
       const resp = scheduleId
         ? await scheduleService.update(scheduleId, payload)
@@ -391,6 +403,37 @@ const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = (
                 onChange={e => handleChange('inverter_serial_number', e.target.value)}
                 error={!!formErrors?.inverter_serial_number}
                 helperText={formErrors?.inverter_serial_number?.[0]}
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <CustomTextField
+                select
+                fullWidth
+                label="Solarz"
+                name="solarz"
+                value={formData.solarz || ''}
+                onChange={e => handleChange('solarz', e.target.value)}
+                error={!!formErrors?.solarz}
+                helperText={formErrors?.solarz?.[0]}
+              >
+                {SOLARZ_CHOICES.map(option => (
+                  <MenuItem key={option.value} value={option.value}>
+                    {option.label}
+                  </MenuItem>
+                ))}
+              </CustomTextField>
+            </Grid>
+            <Grid item xs={12}>
+              <CustomTextField
+                multiline
+                rows={3}
+                fullWidth
+                label="Plata"
+                name="planta"
+                value={formData.planta || ''}
+                onChange={e => handleChange('planta', e.target.value)}
+                error={!!formErrors?.planta}
+                helperText={formErrors?.planta?.[0]}
               />
             </Grid>
             {formData.schedule_date && formData.schedule_start_time && (
