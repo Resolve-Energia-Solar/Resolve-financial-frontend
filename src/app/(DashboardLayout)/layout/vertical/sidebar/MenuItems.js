@@ -184,6 +184,13 @@ const Menuitems = [
       },
       {
         id: uniqueId(),
+        title: 'Compras',
+        icon: IconShoppingCart,
+        href: '/apps/purchase',
+        permissions: ['resolve_crm.can_manage_journey'], 
+      },
+      {
+        id: uniqueId(),
         title: 'Instalação',
         icon: IconSolarPanel2,
         href: '/apps/installation',
@@ -260,6 +267,6 @@ const Menuitems = [
         permissions: ['core.view_documenttype'],
       },
     ],
-  }
+  },
 ];
 export default Menuitems;
