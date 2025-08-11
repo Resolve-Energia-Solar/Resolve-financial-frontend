@@ -20,6 +20,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import dayjs from 'dayjs';
 import { usePurchaseForm } from '@/hooks/purchase/usePurchaseForm';
+import GenericAsyncAutocompleteInput from '@/app/components/filters/GenericAsyncAutocompleteInput';
 
 const statusOptions = [
   { value: 'R', label: 'Compra realizada' },
@@ -31,27 +32,12 @@ const statusOptions = [
 ];
 
 export default function PurchaseEditModal({ open, onClose, purchase, onSave, onDelete }) {
-  console.log('PurchaseEditModal props:', {
-    purchase: !!purchase,
-    onDelete: !!onDelete,
-    purchaseId: purchase?.id,
-  });
-
-  const {
-    formData,
-    errors,
-    loading,
-    suppliers,
-    projects,
-    loadingSuppliers,
-    loadingProjects,
-    handleChange,
-    handleSubmit,
-    resetForm,
-  } = usePurchaseForm(purchase);
+  const { formData, errors, loading, handleChange, handleSubmit, resetForm } =
+    usePurchaseForm(purchase);
 
   const handleClose = () => {
-    resetForm();
+    // Não chamar resetForm aqui, pois pode estar limpando os dados
+    // resetForm();
     onClose();
   };
 
@@ -137,67 +123,64 @@ export default function PurchaseEditModal({ open, onClose, purchase, onSave, onD
               onChange={(e) => handleChange('delivery_number', e.target.value)}
             />
 
-            <FormControl fullWidth margin="dense" error={!!errors.project}>
-              <InputLabel>Projeto *</InputLabel>
-              <Select
-                value={formData.project}
-                onChange={(e) => handleChange('project', e.target.value)}
-                label="Projeto *"
-                disabled={loadingProjects}
-              >
-                {loadingProjects ? (
-                  <MenuItem disabled>
-                    <CircularProgress size={20} />
-                    <Typography sx={{ ml: 1 }}>Carregando projetos...</Typography>
-                  </MenuItem>
-                ) : (
-                  projects.map((project) => (
-                    <MenuItem key={project.id} value={project.id}>
-                      {project.name} -{' '}
-                      {project.sale?.customer?.complete_name || 'Cliente não informado'}
-                    </MenuItem>
-                  ))
-                )}
-              </Select>
-              {errors.project && (
-                <Typography variant="caption" color="error" sx={{ mt: 0.5 }}>
-                  {errors.project}
-                </Typography>
-              )}
-            </FormControl>
+            <GenericAsyncAutocompleteInput
+              label="Projeto *"
+              value={formData.project || null}
+              onChange={(option) => {
+                handleChange('project', option?.value || null);
+              }}
+              endpoint="/api/projects/"
+              queryParam="q"
+              extraParams={{
+                expand: ['sale.customer', 'product'],
+                fields: ['id', 'project_number', 'sale.customer.complete_name', 'product.name'],
+                limit: 15,
+                page: 1,
+              }}
+              mapResponse={(data) =>
+                data.results.map((p) => ({
+                  label: `${p.project_number} - ${
+                    p.sale?.customer?.complete_name || 'Cliente não informado'
+                  } - ${p.product?.name || 'Produto não informado'}`,
+                  value: p.id,
+                }))
+              }
+              error={!!errors.project}
+              helperText={errors.project}
+              margin="dense"
+            />
 
-            <FormControl fullWidth margin="dense" error={!!errors.supplier}>
-              <InputLabel>Fornecedor *</InputLabel>
-              <Select
-                value={formData.supplier}
-                onChange={(e) => handleChange('supplier', e.target.value)}
-                label="Fornecedor *"
-              >
-                {suppliers.map((supplier) => (
-                  <MenuItem key={supplier.id} value={supplier.id}>
-                    {supplier.complete_name}
-                  </MenuItem>
-                ))}
-              </Select>
-              {errors.supplier && (
-                <Typography variant="caption" color="error" sx={{ mt: 0.5 }}>
-                  {errors.supplier}
-                </Typography>
-              )}
-            </FormControl>
+            <GenericAsyncAutocompleteInput
+              label="Fornecedor *"
+              value={formData.supplier || null}
+              onChange={(option) => {
+                handleChange('supplier', option?.value || null);
+              }}
+              endpoint="/api/users/"
+              queryParam="complete_name__icontains"
+              extraParams={{
+                fields: ['id', 'complete_name'],
+                limit: 15,
+                page: 1,
+              }}
+              mapResponse={(data) =>
+                data.results.map((u) => ({
+                  label: u.complete_name,
+                  value: u.id,
+                }))
+              }
+              error={!!errors.supplier}
+              helperText={errors.supplier}
+              margin="dense"
+            />
           </Box>
         </DialogContent>
         <DialogActions>
           {purchase && onDelete && (
             <Button
               onClick={() => {
-                console.log('🔴 Botão excluir clicado no modal!');
-                console.log('🔴 onDelete function:', onDelete);
                 if (onDelete) {
-                  console.log('🔴 Chamando onDelete...');
                   onDelete();
-                } else {
-                  console.error('🔴 onDelete não está definido!');
                 }
               }}
               disabled={loading}

@@ -123,11 +123,12 @@ const PurchaseDashboard = () => {
       const response = await purchaseService.index({
         expand: 'project,project.sale.customer,project.product,supplier',
         fields:
-          'project.sale.customer.complete_name,project.product.name,purchase_date,status,supplier.complete_name,project.address,purchase_value',
+          'id,purchase_date,status,purchase_value,delivery_forecast,delivery_number,project,project.sale.customer.complete_name,project.product.name,project.address,supplier,supplier.complete_name,project.id,supplier.id',
         page: page + 1,
         limit: rowsPerPage,
         ...filters,
       });
+
       setPurchases(response.results);
       setTotalRows(response.meta.pagination.total_count);
     } catch (error) {
@@ -247,8 +248,6 @@ const PurchaseDashboard = () => {
       return;
     }
 
-    console.log('Tentando excluir compra:', selectedPurchase);
-
     const purchaseValue = selectedPurchase.purchase_value
       ? parseFloat(selectedPurchase.purchase_value).toLocaleString('pt-BR', {
           style: 'currency',
@@ -265,7 +264,6 @@ const PurchaseDashboard = () => {
     if (!confirmed) return;
 
     try {
-      console.log('Enviando requisição de exclusão para ID:', selectedPurchase.id);
       await purchaseService.delete(selectedPurchase.id);
       enqueueSnackbar('Compra excluída com sucesso', { variant: 'success' });
       fetchPurchases();
@@ -452,7 +450,9 @@ const PurchaseDashboard = () => {
 
       <PurchaseEditModal
         open={editModalOpen}
-        onClose={() => setEditModalOpen(false)}
+        onClose={() => {
+          setEditModalOpen(false);
+        }}
         purchase={selectedPurchase}
         onSave={fetchPurchases}
         onDelete={handleDelete}

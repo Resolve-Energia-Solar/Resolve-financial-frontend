@@ -90,13 +90,15 @@ export default function PurchaseCreateModal({ open, onClose, onSave }) {
                     <CircularProgress size={20} />
                     <Typography sx={{ ml: 1 }}>Carregando projetos...</Typography>
                   </MenuItem>
-                ) : (
+                ) : projects && projects.length > 0 ? (
                   projects.map((project) => (
                     <MenuItem key={project.id} value={project.id}>
                       {project.name} -{' '}
                       {project.sale?.customer?.complete_name || 'Cliente não informado'}
                     </MenuItem>
                   ))
+                ) : (
+                  <MenuItem disabled>Nenhum projeto disponível</MenuItem>
                 )}
               </Select>
               {errors.project && (
@@ -113,11 +115,15 @@ export default function PurchaseCreateModal({ open, onClose, onSave }) {
                 onChange={(e) => handleChange('supplier', e.target.value)}
                 label="Fornecedor *"
               >
-                {suppliers.map((supplier) => (
-                  <MenuItem key={supplier.id} value={supplier.id}>
-                    {supplier.complete_name}
-                  </MenuItem>
-                ))}
+                {suppliers && suppliers.length > 0 ? (
+                  suppliers.map((supplier) => (
+                    <MenuItem key={supplier.id} value={supplier.id}>
+                      {supplier.complete_name}
+                    </MenuItem>
+                  ))
+                ) : (
+                  <MenuItem disabled>Nenhum fornecedor disponível</MenuItem>
+                )}
               </Select>
               {errors.supplier && (
                 <Typography variant="caption" color="error" sx={{ mt: 0.5 }}>

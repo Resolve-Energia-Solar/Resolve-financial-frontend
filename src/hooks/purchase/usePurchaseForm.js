@@ -2,15 +2,9 @@ import { useState, useEffect } from 'react';
 import { useSnackbar } from 'notistack';
 import dayjs from 'dayjs';
 import purchaseService from '@/services/purchaseService';
-import projectService from '@/services/projectService';
 
 export const usePurchaseForm = (purchase = null) => {
   const { enqueueSnackbar } = useSnackbar();
-  const [loading, setLoading] = useState(false);
-  const [suppliers, setSuppliers] = useState([]);
-  const [projects, setProjects] = useState([]);
-  const [loadingSuppliers, setLoadingSuppliers] = useState(false); // Mantido só para compatibilidade visual
-  const [loadingProjects, setLoadingProjects] = useState(false);
 
   const [formData, setFormData] = useState({
     purchase_date: null,
@@ -23,60 +17,72 @@ export const usePurchaseForm = (purchase = null) => {
   });
 
   const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
+  const [suppliers, setSuppliers] = useState([]);
+  const [projects, setProjects] = useState([]);
+  const [loadingSuppliers, setLoadingSuppliers] = useState(false);
+  const [loadingProjects, setLoadingProjects] = useState(false);
 
-  // Preenche form e fornecedores ao receber purchase
+  // Carrega suppliers e projects
+  useEffect(() => {
+    const loadSuppliers = async () => {
+      setLoadingSuppliers(true);
+      try {
+        // Aqui você pode fazer uma chamada para a API para buscar suppliers
+        // Por enquanto, vou usar um array vazio
+        setSuppliers([]);
+      } catch (error) {
+        console.error('Erro ao carregar suppliers:', error);
+      } finally {
+        setLoadingSuppliers(false);
+      }
+    };
+
+    const loadProjects = async () => {
+      setLoadingProjects(true);
+      try {
+        // Aqui você pode fazer uma chamada para a API para buscar projects
+        // Por enquanto, vou usar um array vazio
+        setProjects([]);
+      } catch (error) {
+        console.error('Erro ao carregar projects:', error);
+      } finally {
+        setLoadingProjects(false);
+      }
+    };
+
+    loadSuppliers();
+    loadProjects();
+  }, []);
+
+  // Preenche form ao receber purchase
   useEffect(() => {
     if (purchase) {
-      setFormData({
+      const newFormData = {
         purchase_date: purchase.purchase_date ? dayjs(purchase.purchase_date) : null,
         status: purchase.status || '',
         purchase_value: purchase.purchase_value || '',
         delivery_forecast: purchase.delivery_forecast ? dayjs(purchase.delivery_forecast) : null,
         delivery_number: purchase.delivery_number || '',
+        // Garantir que sempre sejam IDs, não objetos
         project: purchase.project?.id || purchase.project || '',
         supplier: purchase.supplier?.id || purchase.supplier || '',
-      });
+      };
 
-      // 🔹 Define fornecedores apenas com base no purchase
-      if (purchase.supplier) {
-        setSuppliers([purchase.supplier]);
-      } else {
-        setSuppliers([]);
-      }
-    } else {
-      resetForm();
-      setSuppliers([]);
+      setFormData(newFormData);
     }
   }, [purchase]);
 
-  const fetchProjects = async () => {
-    setLoadingProjects(true);
-    try {
-      const response = await projectService.index({
-        fields: 'id,name,sale.customer.complete_name',
-        expand: 'sale.customer',
-        limit: 100,
-      });
+  const handleChange = (field, value) => {
+    setFormData((prev) => {
+      const newData = { ...prev, [field]: value };
+      return newData;
+    });
 
-      let list = response.results || [];
-
-      // 🔹 Garante que o projeto atual da compra apareça na lista
-      if (purchase?.project && !list.some(p => p.id === purchase.project.id)) {
-        list = [...list, purchase.project];
-      }
-
-      setProjects(list);
-    } catch (error) {
-      console.error('Erro ao carregar projetos:', error);
-      enqueueSnackbar('Erro ao carregar projetos', { variant: 'error' });
-    } finally {
-      setLoadingProjects(false);
+    if (errors[field]) {
+      setErrors((prev) => ({ ...prev, [field]: '' }));
     }
   };
-
-  useEffect(() => {
-    fetchProjects();
-  }, [purchase]);
 
   const validateForm = () => {
     const newErrors = {};
@@ -87,19 +93,18 @@ export const usePurchaseForm = (purchase = null) => {
       newErrors.purchase_date = 'Data da compra deve ser uma data válida';
     }
 
-    if (
-      formData.purchase_value &&
-      (isNaN(formData.purchase_value) || parseFloat(formData.purchase_value) <= 0)
-    ) {
-      newErrors.purchase_value = 'Valor da compra deve ser um número positivo';
-    }
-
+    // Validar que project seja um ID válido
     if (!formData.project) {
       newErrors.project = 'Projeto é obrigatório';
+    } else if (typeof formData.project === 'object') {
+      newErrors.project = 'Projeto deve ser um ID válido';
     }
 
+    // Validar que supplier seja um ID válido
     if (!formData.supplier) {
       newErrors.supplier = 'Fornecedor é obrigatório';
+    } else if (typeof formData.supplier === 'object') {
+      newErrors.supplier = 'Fornecedor deve ser um ID válido';
     }
 
     if (formData.delivery_forecast && formData.purchase_date) {
@@ -112,13 +117,6 @@ export const usePurchaseForm = (purchase = null) => {
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
-  };
-
-  const handleChange = (field, value) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-    if (errors[field]) {
-      setErrors((prev) => ({ ...prev, [field]: '' }));
-    }
   };
 
   const handleSubmit = async () => {
@@ -136,6 +134,9 @@ export const usePurchaseForm = (purchase = null) => {
           ? formData.delivery_forecast.format('YYYY-MM-DD')
           : null,
         purchase_value: parseFloat(formData.purchase_value),
+        // Garantir que apenas os IDs sejam enviados
+        project: typeof formData.project === 'object' ? formData.project.id : formData.project,
+        supplier: typeof formData.supplier === 'object' ? formData.supplier.id : formData.supplier,
       };
 
       if (purchase?.id) {
@@ -173,7 +174,7 @@ export const usePurchaseForm = (purchase = null) => {
   };
 
   const resetForm = () => {
-    setFormData({
+    const initialData = {
       purchase_date: null,
       status: '',
       purchase_value: '',
@@ -181,7 +182,9 @@ export const usePurchaseForm = (purchase = null) => {
       delivery_number: '',
       project: '',
       supplier: '',
-    });
+    };
+
+    setFormData(initialData);
     setErrors({});
   };
 
