@@ -7,19 +7,17 @@ import {
   DialogActions,
   TextField,
   Button,
-  MenuItem,
-  FormControl,
-  InputLabel,
-  Select,
   Box,
   CircularProgress,
   Typography,
+  MenuItem,
 } from '@mui/material';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import dayjs from 'dayjs';
 import { usePurchaseForm } from '@/hooks/purchase/usePurchaseForm';
+import GenericAsyncAutocompleteInput from '@/app/components/filters/GenericAsyncAutocompleteInput';
 
 const statusOptions = [
   { value: 'R', label: 'Compra realizada' },
@@ -31,18 +29,7 @@ const statusOptions = [
 ];
 
 export default function PurchaseCreateModal({ open, onClose, onSave }) {
-  const {
-    formData,
-    errors,
-    loading,
-    suppliers,
-    projects,
-    loadingSuppliers,
-    loadingProjects,
-    handleChange,
-    handleSubmit,
-    resetForm,
-  } = usePurchaseForm(); // null = modo criação
+  const { formData, errors, loading, handleChange, handleSubmit, resetForm } = usePurchaseForm(); // null = modo criação
 
   const handleClose = () => {
     resetForm();
@@ -77,83 +64,76 @@ export default function PurchaseCreateModal({ open, onClose, onSave }) {
               }}
             />
 
-            <FormControl fullWidth margin="dense" error={!!errors.project}>
-              <InputLabel>Projeto *</InputLabel>
-              <Select
-                value={formData.project}
-                onChange={(e) => handleChange('project', e.target.value)}
-                label="Projeto *"
-                disabled={loadingProjects}
-              >
-                {loadingProjects ? (
-                  <MenuItem disabled>
-                    <CircularProgress size={20} />
-                    <Typography sx={{ ml: 1 }}>Carregando projetos...</Typography>
-                  </MenuItem>
-                ) : projects && projects.length > 0 ? (
-                  projects.map((project) => (
-                    <MenuItem key={project.id} value={project.id}>
-                      {project.name} -{' '}
-                      {project.sale?.customer?.complete_name || 'Cliente não informado'}
-                    </MenuItem>
-                  ))
-                ) : (
-                  <MenuItem disabled>Nenhum projeto disponível</MenuItem>
-                )}
-              </Select>
-              {errors.project && (
-                <Typography variant="caption" color="error" sx={{ mt: 0.5 }}>
-                  {errors.project}
-                </Typography>
-              )}
-            </FormControl>
+            <GenericAsyncAutocompleteInput
+              label="Projeto *"
+              value={formData.project || null}
+              onChange={(option) => {
+                handleChange('project', option?.value || null);
+              }}
+              endpoint="/api/projects/"
+              queryParam="q"
+              extraParams={{
+                expand: ['sale.customer', 'product'],
+                fields: ['id', 'project_number', 'sale.customer.complete_name', 'product.name'],
+                limit: 15,
+                page: 1,
+              }}
+              mapResponse={(data) =>
+                data.results.map((p) => ({
+                  label: `${p.project_number} - ${
+                    p.sale?.customer?.complete_name || 'Cliente não informado'
+                  } - ${p.product?.name || 'Produto não informado'}`,
+                  value: p.id,
+                }))
+              }
+              error={!!errors.project}
+              helperText={errors.project}
+              margin="dense"
+            />
 
-            <FormControl fullWidth margin="dense" error={!!errors.supplier}>
-              <InputLabel>Fornecedor *</InputLabel>
-              <Select
-                value={formData.supplier}
-                onChange={(e) => handleChange('supplier', e.target.value)}
-                label="Fornecedor *"
-              >
-                {suppliers && suppliers.length > 0 ? (
-                  suppliers.map((supplier) => (
-                    <MenuItem key={supplier.id} value={supplier.id}>
-                      {supplier.complete_name}
-                    </MenuItem>
-                  ))
-                ) : (
-                  <MenuItem disabled>Nenhum fornecedor disponível</MenuItem>
-                )}
-              </Select>
-              {errors.supplier && (
-                <Typography variant="caption" color="error" sx={{ mt: 0.5 }}>
-                  {errors.supplier}
-                </Typography>
-              )}
-            </FormControl>
+            <GenericAsyncAutocompleteInput
+              label="Fornecedor *"
+              value={formData.supplier || null}
+              onChange={(option) => {
+                handleChange('supplier', option?.value || null);
+              }}
+              endpoint="/api/users/"
+              queryParam="complete_name__icontains"
+              extraParams={{
+                fields: ['id', 'complete_name'],
+                limit: 15,
+                page: 1,
+              }}
+              mapResponse={(data) =>
+                data.results.map((u) => ({
+                  label: u.complete_name,
+                  value: u.id,
+                }))
+              }
+              error={!!errors.supplier}
+              helperText={errors.supplier}
+              margin="dense"
+            />
 
-            <FormControl fullWidth margin="dense" error={!!errors.status}>
-              <InputLabel>Status</InputLabel>
-              <Select
-                value={formData.status}
-                onChange={(e) => handleChange('status', e.target.value)}
-                label="Status"
-              >
-                <MenuItem value="">
-                  <em>Selecione um status</em>
+            <TextField
+              select
+              label="Status"
+              fullWidth
+              margin="dense"
+              value={formData.status}
+              onChange={(e) => handleChange('status', e.target.value)}
+              error={!!errors.status}
+              helperText={errors.status}
+            >
+              <MenuItem value="">
+                <em>Selecione um status</em>
+              </MenuItem>
+              {statusOptions.map((opt) => (
+                <MenuItem key={opt.value} value={opt.value}>
+                  {opt.label}
                 </MenuItem>
-                {statusOptions.map((opt) => (
-                  <MenuItem key={opt.value} value={opt.value}>
-                    {opt.label}
-                  </MenuItem>
-                ))}
-              </Select>
-              {errors.status && (
-                <Typography variant="caption" color="error" sx={{ mt: 0.5 }}>
-                  {errors.status}
-                </Typography>
-              )}
-            </FormControl>
+              ))}
+            </TextField>
 
             <TextField
               label="Valor da Compra"
