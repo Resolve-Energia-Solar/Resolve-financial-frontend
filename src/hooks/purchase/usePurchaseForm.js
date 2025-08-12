@@ -1,7 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useSnackbar } from 'notistack';
 import dayjs from 'dayjs';
+import 'dayjs/locale/pt-br';
 import purchaseService from '@/services/purchaseService';
+
+// Configurar dayjs para usar locale brasileiro
+dayjs.locale('pt-br');
 
 export const usePurchaseForm = (purchase = null) => {
   const { enqueueSnackbar } = useSnackbar();

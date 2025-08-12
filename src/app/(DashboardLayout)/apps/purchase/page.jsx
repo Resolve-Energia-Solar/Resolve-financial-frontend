@@ -26,7 +26,7 @@ import { Chip, Tooltip, Box, Typography, useTheme, TextField, InputAdornment } f
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import GenericFilterDrawer from '@/app/components/filters/GenericFilterDrawer';
 import filterConfig from './filterConfig';
-import { formatDate } from '@/utils/dateUtils';
+import { formatDate, formatDateBR } from '@/utils/dateUtils';
 import { formatToBRL } from '@/utils/currency';
 import { FilterContext } from '@/context/FilterContext';
 import { IconBuilding, IconUserBolt } from '@tabler/icons-react';
@@ -51,6 +51,7 @@ const PurchaseDashboard = () => {
   const [purchases, setPurchases] = useState([]);
   const [indicators, setIndicators] = useState({});
   const [loadingIndicators, setLoadingIndicators] = useState(true);
+  const [paginationLoading, setPaginationLoading] = useState(false);
   const { filters, setFilters, clearFilters, refresh } = useContext(FilterContext);
   const [ordering, setOrdering] = useState('-created_at');
   const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
@@ -121,7 +122,11 @@ const PurchaseDashboard = () => {
   };
 
   const fetchPurchases = useCallback(async () => {
-    setLoading(true);
+    // Se não é uma mudança de paginação, usar loading geral
+    if (!paginationLoading) {
+      setLoading(true);
+    }
+
     try {
       const params = {
         expand: 'project,project.sale.customer,project.product,supplier',
@@ -142,8 +147,9 @@ const PurchaseDashboard = () => {
       enqueueSnackbar('Erro ao carregar compras', { variant: 'error' });
     } finally {
       setLoading(false);
+      setPaginationLoading(false);
     }
-  }, [page, rowsPerPage, filters, searchTerm, enqueueSnackbar]);
+  }, [page, rowsPerPage, filters, searchTerm, paginationLoading, enqueueSnackbar]);
 
   const fetchIndicators = useCallback(async () => {
     setLoadingIndicators(true);
@@ -160,15 +166,11 @@ const PurchaseDashboard = () => {
     }
   }, [enqueueSnackbar, filters]);
 
+  // useEffect principal para carregar dados
   useEffect(() => {
     fetchPurchases();
     fetchIndicators();
-  }, [refresh, filters]);
-
-  // useEffect específico para searchTerm para garantir que a busca seja executada
-  useEffect(() => {
-    fetchPurchases();
-  }, [searchTerm]);
+  }, [refresh, filters, page, rowsPerPage, searchTerm]);
 
   const BCrumb = [{ to: '/', title: 'Home' }, { title: 'Compras' }];
 
@@ -176,47 +178,127 @@ const PurchaseDashboard = () => {
     {
       field: 'purchase_date',
       headerName: 'Data da Compra',
-      render: (row) => formatDate(row.purchase_date),
+      render: (row) => (
+        <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+          <Typography variant="body2" sx={{ fontWeight: 500 }}>
+            {formatDateBR(row.purchase_date)}
+          </Typography>
+        </Box>
+      ),
     },
     {
       field: 'project',
-      headerName: 'Nome do Cliente',
-      render: (row) => row.project?.sale?.customer?.complete_name || 'N/A',
+      headerName: 'Cliente',
+      render: (row) => (
+        <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+          <Typography variant="body2" sx={{ fontWeight: 600, color: theme.palette.primary.main }}>
+            {row.project?.sale?.customer?.complete_name || 'N/A'}
+          </Typography>
+        </Box>
+      ),
     },
     {
       field: 'product',
       headerName: 'Produto',
-      render: (row) => row.project.product.name || 'N/A',
+      render: (row) => (
+        <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+          <Typography variant="body2" sx={{ fontWeight: 500 }}>
+            {row.project.product.name || 'N/A'}
+          </Typography>
+        </Box>
+      ),
     },
     {
       field: 'purchase_value',
-      headerName: 'Valor da Compra',
-      render: (row) => formatToBRL(row.purchase_value || 0),
+      headerName: 'Valor',
+      render: (row) => (
+        <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+          <Typography
+            variant="body2"
+            sx={{
+              fontWeight: 600,
+              color: theme.palette.success.main,
+              fontSize: '0.95rem',
+            }}
+          >
+            {formatToBRL(row.purchase_value || 0)}
+          </Typography>
+        </Box>
+      ),
+    },
+    {
+      field: 'delivery_forecast',
+      headerName: 'Previsão de Entrega',
+      render: (row) => (
+        <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+          <Typography variant="body2" sx={{ fontWeight: 500 }}>
+            {row.delivery_forecast ? formatDateBR(row.delivery_forecast) : '-'}
+          </Typography>
+        </Box>
+      ),
     },
     {
       field: 'status',
-      headerName: 'Status da Compra',
+      headerName: 'Status',
       render: (row) => {
-        const map = {
-          R: 'Compra realizada',
-          C: 'Cancelada',
-          D: 'Distrato',
-          A: 'Aguardando pagamento',
-          P: 'Pendente',
-          F: 'Aguardando Previsão de Entrega',
+        const statusConfig = {
+          R: { label: 'Realizada', color: 'success', bgColor: theme.palette.success.light },
+          C: { label: 'Cancelada', color: 'error', bgColor: theme.palette.error.light },
+          D: { label: 'Distrato', color: 'warning', bgColor: theme.palette.warning.light },
+          A: { label: 'Aguardando Pagamento', color: 'info', bgColor: theme.palette.info.light },
+          P: { label: 'Pendente', color: 'default', bgColor: theme.palette.grey[300] },
+          F: {
+            label: 'Aguardando Entrega',
+            color: 'secondary',
+            bgColor: theme.palette.secondary.light,
+          },
         };
-        return map[row.status] || row.status;
+
+        const config = statusConfig[row.status] || {
+          label: row.status,
+          color: 'default',
+          bgColor: theme.palette.grey[300],
+        };
+
+        return (
+          <Chip
+            label={config.label}
+            size="small"
+            sx={{
+              backgroundColor: config.bgColor,
+              color: theme.palette.getContrastText(config.bgColor),
+              fontWeight: 500,
+              fontSize: '0.75rem',
+              height: 24,
+            }}
+          />
+        );
       },
     },
     {
       field: 'supplier',
       headerName: 'Fornecedor',
-      render: (row) => row.supplier?.complete_name || 'N/A',
+      render: (row) => (
+        <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+          <Typography variant="body2" sx={{ fontWeight: 500 }}>
+            {row.supplier?.complete_name || 'N/A'}
+          </Typography>
+        </Box>
+      ),
     },
     {
       field: 'address',
       headerName: 'Endereço',
-      render: (row) => row.project?.address || '-',
+      render: (row) => (
+        <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+          <Typography
+            variant="body2"
+            sx={{ color: theme.palette.text.secondary, fontSize: '0.85rem' }}
+          >
+            {row.project?.address || '-'}
+          </Typography>
+        </Box>
+      ),
     },
   ];
 
@@ -272,45 +354,47 @@ const PurchaseDashboard = () => {
     handleSearchSubmit();
   };
 
-  const handleDelete = async () => {
-    if (!selectedPurchase?.id) {
-      console.error('Nenhuma compra selecionada ou ID não encontrado');
-      enqueueSnackbar('Erro: Nenhuma compra selecionada', { variant: 'error' });
-      return;
-    }
+  // const handleDelete = async () => {
+  //   if (!selectedPurchase?.id) {
+  //     console.error('Nenhuma compra selecionada ou ID não encontrado');
+  //     enqueueSnackbar('Erro: Nenhuma compra selecionada', { variant: 'error' });
+  //     return;
+  //   }
 
-    const purchaseValue = selectedPurchase.purchase_value
-      ? parseFloat(selectedPurchase.purchase_value).toLocaleString('pt-BR', {
-          style: 'currency',
-          currency: 'BRL',
-        })
-      : 'R$ 0,00';
+  //   const purchaseValue = selectedPurchase.purchase_value
+  //     ? parseFloat(selectedPurchase.purchase_value).toLocaleString('pt-BR', {
+  //         style: 'currency',
+  //         currency: 'BRL',
+  //       })
+  //     : 'R$ 0,00';
 
-    const confirmed = window.confirm(
-      `Tem certeza que deseja excluir esta compra?\n\nCliente: ${
-        selectedPurchase.project?.sale?.customer?.complete_name || 'N/A'
-      }\nValor: ${purchaseValue}\nData: ${formatDate(selectedPurchase.purchase_date) || 'N/A'}`,
-    );
+  //   const confirmed = window.confirm(
+  //     `Tem certeza que deseja excluir esta compra?\n\nCliente: ${
+  //       selectedPurchase.project?.sale?.customer?.complete_name || 'N/A'
+  //     }\nValor: ${purchaseValue}\nData: ${formatDateBR(selectedPurchase.purchase_date) || 'N/A'}`,
+  //   );
 
-    if (!confirmed) return;
+  //   if (!confirmed) return;
 
-    try {
-      await purchaseService.delete(selectedPurchase.id);
-      enqueueSnackbar('Compra excluída com sucesso', { variant: 'success' });
-      fetchPurchases();
-      setEditModalOpen(false);
-      setSelectedPurchase(null);
-    } catch (error) {
-      console.error('Erro ao excluir compra:', error);
-      enqueueSnackbar('Erro ao excluir compra', { variant: 'error' });
-    }
-  };
+  //   try {
+  //     await purchaseService.delete(selectedPurchase.id);
+  //     enqueueSnackbar('Compra excluída com sucesso', { variant: 'success' });
+  //     fetchPurchases();
+  //     setEditModalOpen(false);
+  //     setSelectedPurchase(null);
+  //   } catch (error) {
+  //     console.error('Erro ao excluir compra:', error);
+  //     enqueueSnackbar('Erro ao excluir compra', { variant: 'error' });
+  //   }
+  // };
 
   const handlePageChange = useCallback((event, newPage) => {
+    setPaginationLoading(true); // Ativar loading específico da paginação
     setPage(newPage);
   }, []);
 
   const handleRowsPerPageChange = useCallback((event) => {
+    setPaginationLoading(true); // Ativar loading específico da paginação
     setRowsPerPage(parseInt(event.target?.value, 10));
     setPage(0);
   }, []);
@@ -318,6 +402,55 @@ const PurchaseDashboard = () => {
   return (
     <PageContainer title={'Compras'} description={'Dashboard de Compras'}>
       <Breadcrumb items={BCrumb} />
+
+      {/* Header da página */}
+      <Box
+        sx={{
+          background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`,
+          borderRadius: 2,
+          p: 3,
+          mb: 3,
+          color: 'white',
+          boxShadow: theme.shadows[4],
+        }}
+      >
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            flexWrap: 'wrap',
+            gap: 2,
+          }}
+        >
+          <Box>
+            <Typography variant="h4" sx={{ fontWeight: 600, mb: 1 }}>
+              Gestão de Compras
+            </Typography>
+            <Typography variant="body1" sx={{ opacity: 0.9 }}>
+              Gerencie todas as compras do sistema de forma eficiente
+            </Typography>
+          </Box>
+          <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
+            <Box
+              sx={{
+                background: 'rgba(255, 255, 255, 0.1)',
+                borderRadius: 1,
+                p: 2,
+                textAlign: 'center',
+                minWidth: 120,
+              }}
+            >
+              <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                {totalRows}
+              </Typography>
+              <Typography variant="body2" sx={{ opacity: 0.8 }}>
+                {totalRows === 1 ? 'Compra' : 'Compras'}
+              </Typography>
+            </Box>
+          </Box>
+        </Box>
+      </Box>
 
       {/* Indicadores */}
       {/* <Box sx={{ width: '100%', mb: 2 }}>
@@ -421,79 +554,250 @@ const PurchaseDashboard = () => {
         onApply={(newFilters) => setFilters(newFilters)}
       />
 
-      {/* Tabela de Compras */}
-      <TableHeader.Root>
-        <TableHeader.Title
-          title="Total"
-          totalItems={totalRows}
-          objNameNumberReference={totalRows === 1 ? 'Compra' : 'Compras'}
-          loading={loading}
-        />
-        <TableHeader.Button
-          buttonLabel="Nova Compra"
-          icon={<Add />}
-          onButtonClick={handleCreateNew}
-          sx={{ width: 100 }}
-        />
-        <TextField
-          placeholder="Buscar compras..."
-          value={searchInput}
-          onChange={handleSearchChange}
-          onKeyPress={handleSearchKeyPress}
-          onBlur={handleSearchBlur}
-          size="small"
-          sx={{
-            width: 250,
-            marginRight: 2,
-            '& .MuiOutlinedInput-root': {
-              backgroundColor: theme.palette.background.paper,
-            },
-          }}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <Search />
-              </InputAdornment>
-            ),
-          }}
-        />
-        <TableHeader.Button
-          buttonLabel="Filtros"
-          icon={<FilterAlt />}
-          onButtonClick={() => {
-            setFilterDrawerOpen(true);
-          }}
-          sx={{ width: 100, marginRight: 20 }}
-        />
-      </TableHeader.Root>
-
-      <Table.Root
-        data={purchases}
-        totalRows={totalRows}
-        page={page}
-        rowsPerPage={rowsPerPage}
-        onPageChange={handlePageChange}
-        onRowsPerPageChange={handleRowsPerPageChange}
-        onRowClick={handleRowClick}
-        onClose={() => {
-          setOpenDrawer(false);
-          setSelectedRow(null);
+      {/* Controles e Busca */}
+      <Box
+        sx={{
+          background: theme.palette.background.paper,
+          borderRadius: 2,
+          p: 3,
+          mb: 3,
+          boxShadow: theme.shadows[1],
+          border: `1px solid ${theme.palette.divider}`,
         }}
-        noWrap={true}
       >
-        <Table.Head columns={columns} onSort={handleSort} ordering={ordering} />
-        <Table.Body
-          loading={loading}
-          columns={columns.length}
-          onRowClick={handleRowClick}
-          sx={{ cursor: 'pointer', '&:hover': { backgroundColor: 'rgba(236, 242, 255, 0.35)' } }}
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            flexWrap: 'wrap',
+            gap: 2,
+          }}
         >
-          {columns.map((col) => (
-            <Table.Cell key={col.field} render={col.render} sx={col.sx} />
-          ))}
-        </Table.Body>
-        <Table.Pagination />
-      </Table.Root>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap', flex: 1 }}>
+            <TextField
+              placeholder="Buscar compras por cliente, fornecedor, número..."
+              value={searchInput}
+              onChange={handleSearchChange}
+              onKeyPress={handleSearchKeyPress}
+              onBlur={handleSearchBlur}
+              size="small"
+              sx={{
+                minWidth: 300,
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: 2,
+                  backgroundColor: theme.palette.background.default,
+                  '&:hover': {
+                    backgroundColor: theme.palette.action.hover,
+                  },
+                  '&.Mui-focused': {
+                    backgroundColor: theme.palette.background.paper,
+                    boxShadow: `0 0 0 2px ${theme.palette.primary.main}20`,
+                  },
+                },
+              }}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Search sx={{ color: theme.palette.text.secondary }} />
+                  </InputAdornment>
+                ),
+              }}
+            />
+          </Box>
+          <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
+            <TableHeader.Button
+              buttonLabel="Filtros Avançados"
+              icon={<FilterAlt />}
+              onButtonClick={() => {
+                setFilterDrawerOpen(true);
+              }}
+              sx={{
+                background: theme.palette.grey[100],
+                color: theme.palette.text.primary,
+                border: `1px solid ${theme.palette.divider}`,
+                '&:hover': {
+                  background: theme.palette.grey[200],
+                },
+              }}
+            />
+            <TableHeader.Button
+              buttonLabel="Nova Compra"
+              icon={<Add />}
+              onButtonClick={handleCreateNew}
+              sx={{
+                background: `linear-gradient(135deg, ${theme.palette.success.main} 0%, ${theme.palette.success.dark} 100%)`,
+                color: 'white',
+                boxShadow: theme.shadows[2],
+                '&:hover': {
+                  background: `linear-gradient(135deg, ${theme.palette.success.dark} 0%, ${theme.palette.success.main} 100%)`,
+                  boxShadow: theme.shadows[4],
+                },
+              }}
+            />
+          </Box>
+        </Box>
+      </Box>
+
+      {/* Tabela de Compras */}
+      <Box
+        sx={{
+          background: theme.palette.background.paper,
+          borderRadius: 2,
+          overflow: 'hidden',
+          boxShadow: theme.shadows[1],
+          border: `1px solid ${theme.palette.divider}`,
+          minHeight: 400,
+        }}
+      >
+        {loading && (
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              height: 200,
+              flexDirection: 'column',
+              gap: 2,
+            }}
+          >
+            <Box
+              sx={{
+                width: 40,
+                height: 40,
+                border: `3px solid ${theme.palette.primary.light}`,
+                borderTop: `3px solid ${theme.palette.primary.main}`,
+                borderRadius: '50%',
+                animation: 'spin 1s linear infinite',
+                '@keyframes spin': {
+                  '0%': { transform: 'rotate(0deg)' },
+                  '100%': { transform: 'rotate(360deg)' },
+                },
+              }}
+            />
+            <Typography variant="body2" color="text.secondary">
+              Carregando compras...
+            </Typography>
+          </Box>
+        )}
+
+        {!loading && purchases.length === 0 && (
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              height: 200,
+              flexDirection: 'column',
+              gap: 2,
+            }}
+          >
+            <Box
+              sx={{
+                width: 80,
+                height: 80,
+                borderRadius: '50%',
+                background: `linear-gradient(135deg, ${theme.palette.grey[200]} 0%, ${theme.palette.grey[300]} 100%)`,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                mb: 2,
+              }}
+            >
+              <Search sx={{ fontSize: 40, color: theme.palette.grey[500] }} />
+            </Box>
+            <Typography variant="h6" color="text.secondary" sx={{ fontWeight: 500 }}>
+              Nenhuma compra encontrada
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center' }}>
+              {searchTerm || Object.keys(filters).length > 0
+                ? 'Tente ajustar os filtros ou termos de busca'
+                : 'Comece criando sua primeira compra'}
+            </Typography>
+          </Box>
+        )}
+        {!loading && purchases.length > 0 && (
+          <Box sx={{ position: 'relative' }}>
+            {paginationLoading && (
+              <Box
+                sx={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  zIndex: 1,
+                  borderRadius: 1,
+                }}
+              >
+                <Box
+                  sx={{
+                    width: 40,
+                    height: 40,
+                    border: `3px solid ${theme.palette.primary.light}`,
+                    borderTop: `3px solid ${theme.palette.primary.main}`,
+                    borderRadius: '50%',
+                    animation: 'spin 1s linear infinite',
+                    '@keyframes spin': {
+                      '0%': { transform: 'rotate(0deg)' },
+                      '100%': { transform: 'rotate(360deg)' },
+                    },
+                  }}
+                />
+              </Box>
+            )}
+            <Table.Root
+              data={purchases}
+              totalRows={totalRows}
+              page={page}
+              rowsPerPage={rowsPerPage}
+              onPageChange={handlePageChange}
+              onRowsPerPageChange={handleRowsPerPageChange}
+              onRowClick={handleRowClick}
+              onClose={() => {
+                setOpenDrawer(false);
+                setSelectedRow(null);
+              }}
+              noWrap={true}
+              loading={paginationLoading}
+            >
+              <Table.Head columns={columns} onSort={handleSort} ordering={ordering} />
+              <Table.Body
+                loading={loading || paginationLoading}
+                columns={columns.length}
+                onRowClick={handleRowClick}
+                sx={{
+                  cursor: 'pointer',
+                  '& tr:hover': {
+                    backgroundColor: theme.palette.action.hover,
+                    transform: 'translateY(-1px)',
+                    boxShadow: theme.shadows[2],
+                    transition: 'all 0.2s ease-in-out',
+                  },
+                  '& tr': {
+                    transition: 'all 0.2s ease-in-out',
+                  },
+                }}
+              >
+                {columns.map((col) => (
+                  <Table.Cell key={col.field} render={col.render} sx={col.sx} />
+                ))}
+              </Table.Body>
+              <Table.Pagination
+                disabled={paginationLoading}
+                sx={{
+                  opacity: paginationLoading ? 0.6 : 1,
+                  pointerEvents: paginationLoading ? 'none' : 'auto',
+                }}
+              />
+            </Table.Root>
+          </Box>
+        )}
+      </Box>
       <ProjectDetailDrawer
         projectId={selectedRow}
         saleId={selectedSaleId}
@@ -508,7 +812,7 @@ const PurchaseDashboard = () => {
         }}
         purchase={selectedPurchase}
         onSave={fetchPurchases}
-        onDelete={handleDelete}
+        // onDelete={handleDelete}
       />
 
       <PurchaseCreateModal

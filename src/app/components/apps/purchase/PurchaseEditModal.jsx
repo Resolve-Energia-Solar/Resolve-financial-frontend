@@ -19,6 +19,10 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import dayjs from 'dayjs';
+import 'dayjs/locale/pt-br';
+
+// Configurar dayjs para usar locale brasileiro
+dayjs.locale('pt-br');
 import { usePurchaseForm } from '@/hooks/purchase/usePurchaseForm';
 import GenericAsyncAutocompleteInput from '@/app/components/filters/GenericAsyncAutocompleteInput';
 
@@ -59,12 +63,14 @@ export default function PurchaseEditModal({ open, onClose, purchase, onSave, onD
               label="Data da Compra *"
               value={formData.purchase_date ? dayjs(formData.purchase_date) : null}
               onChange={(newValue) => handleChange('purchase_date', newValue)}
+              format="DD/MM/YYYY"
               slotProps={{
                 textField: {
                   fullWidth: true,
                   error: !!errors.purchase_date,
                   helperText: errors.purchase_date,
                   margin: 'dense',
+                  placeholder: 'DD/MM/AAAA',
                 },
               }}
             />
@@ -105,12 +111,14 @@ export default function PurchaseEditModal({ open, onClose, purchase, onSave, onD
               label="Previsão de Entrega"
               value={formData.delivery_forecast ? dayjs(formData.delivery_forecast) : null}
               onChange={(newValue) => handleChange('delivery_forecast', newValue)}
+              format="DD/MM/YYYY"
               slotProps={{
                 textField: {
                   fullWidth: true,
                   error: !!errors.delivery_forecast,
                   helperText: errors.delivery_forecast,
                   margin: 'dense',
+                  placeholder: 'DD/MM/AAAA',
                 },
               }}
             />
@@ -176,7 +184,7 @@ export default function PurchaseEditModal({ open, onClose, purchase, onSave, onD
           </Box>
         </DialogContent>
         <DialogActions>
-          {purchase && onDelete && (
+          {/* {purchase && onDelete && (
             <Button
               onClick={() => {
                 if (onDelete) {
@@ -189,7 +197,7 @@ export default function PurchaseEditModal({ open, onClose, purchase, onSave, onD
             >
               Excluir
             </Button>
-          )}
+          )} */}
           <Button onClick={handleClose} disabled={loading}>
             Cancelar
           </Button>
