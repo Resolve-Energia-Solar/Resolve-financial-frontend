@@ -124,7 +124,7 @@ export default function PurchaseEditModal({ open, onClose, purchase, onSave, onD
             />
 
             <TextField
-              label="Número de Entrega"
+              label="Número do Pedido"
               fullWidth
               margin="dense"
               value={formData.delivery_number}
