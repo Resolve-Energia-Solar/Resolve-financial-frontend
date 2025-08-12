@@ -1,5 +1,18 @@
 export default [
   {
+    key: 'customer__in',
+    label: 'Cliente',
+    type: 'async-multiselect',
+    endpoint: '/api/users',
+    queryParam: 'complete_name__icontains',
+    extraParams: { fields: ['id', 'complete_name'], limit: 20 },
+    mapResponse: (data) =>
+      data.results.map((customer) => ({
+        label: customer.complete_name,
+        value: customer.id,
+      })),
+  },
+  {
     key: 'supplier__in',
     label: 'Fornecedor',
     type: 'async-multiselect',
