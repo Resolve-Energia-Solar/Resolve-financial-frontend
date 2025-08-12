@@ -19,9 +19,10 @@ import {
   HourglassEmpty,
   RemoveCircleOutline,
   Add,
+  Search,
 } from '@mui/icons-material';
 import ProjectDetailDrawer from '@/app/components/apps/project/Costumer-journey/Project-Detail/ProjectDrawer';
-import { Chip, Tooltip, Box, Typography, useTheme } from '@mui/material';
+import { Chip, Tooltip, Box, Typography, useTheme, TextField, InputAdornment } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import GenericFilterDrawer from '@/app/components/filters/GenericFilterDrawer';
 import filterConfig from './filterConfig';
@@ -64,6 +65,8 @@ const PurchaseDashboard = () => {
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [selectedPurchase, setSelectedPurchase] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [searchInput, setSearchInput] = useState('');
 
   // const statusStats = [
   //   {
@@ -120,14 +123,17 @@ const PurchaseDashboard = () => {
   const fetchPurchases = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await purchaseService.index({
+      const params = {
         expand: 'project,project.sale.customer,project.product,supplier',
         fields:
           'id,purchase_date,status,purchase_value,delivery_forecast,delivery_number,project,project.sale.customer.complete_name,project.product.name,project.address,supplier,supplier.complete_name,project.id,supplier.id',
         page: page + 1,
         limit: rowsPerPage,
         ...filters,
-      });
+        ...(searchTerm && { q: searchTerm }),
+      };
+
+      const response = await purchaseService.index(params);
 
       setPurchases(response.results);
       setTotalRows(response.meta.pagination.total_count);
@@ -137,7 +143,7 @@ const PurchaseDashboard = () => {
     } finally {
       setLoading(false);
     }
-  }, [page, rowsPerPage, filters, enqueueSnackbar]);
+  }, [page, rowsPerPage, filters, searchTerm, enqueueSnackbar]);
 
   const fetchIndicators = useCallback(async () => {
     setLoadingIndicators(true);
@@ -157,7 +163,12 @@ const PurchaseDashboard = () => {
   useEffect(() => {
     fetchPurchases();
     fetchIndicators();
-  }, [fetchIndicators, refresh, filters]);
+  }, [refresh, filters]);
+
+  // useEffect específico para searchTerm para garantir que a busca seja executada
+  useEffect(() => {
+    fetchPurchases();
+  }, [searchTerm]);
 
   const BCrumb = [{ to: '/', title: 'Home' }, { title: 'Compras' }];
 
@@ -241,6 +252,26 @@ const PurchaseDashboard = () => {
     setCreateModalOpen(true);
   };
 
+  const handleSearchChange = (event) => {
+    setSearchInput(event.target.value);
+  };
+
+  const handleSearchSubmit = () => {
+    setSearchTerm(searchInput);
+    setPage(0); // Reset para primeira página quando buscar
+  };
+
+  const handleSearchKeyPress = (event) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      handleSearchSubmit();
+    }
+  };
+
+  const handleSearchBlur = () => {
+    handleSearchSubmit();
+  };
+
   const handleDelete = async () => {
     if (!selectedPurchase?.id) {
       console.error('Nenhuma compra selecionada ou ID não encontrado');
@@ -289,7 +320,7 @@ const PurchaseDashboard = () => {
       <Breadcrumb items={BCrumb} />
 
       {/* Indicadores */}
-      <Box sx={{ width: '100%', mb: 2 }}>
+      {/* <Box sx={{ width: '100%', mb: 2 }}>
         <Typography variant="h6">Indicadores</Typography>
         <Box
           sx={{
@@ -307,7 +338,7 @@ const PurchaseDashboard = () => {
           <Typography variant="h6" sx={{ width: '100%' }}>
             Indicadores
           </Typography>
-          {/* {statusStats.map(({ key, label, value, icon, color, filter, format }) => {
+          {statusStats.map(({ key, label, value, icon, color, filter, format }) => {
             const isActive =
               filter &&
               Object.entries(filter).some(
@@ -327,9 +358,9 @@ const PurchaseDashboard = () => {
                 loading={loadingIndicators}
               />
             );
-          })} */}
+          })}
         </Box>
-      </Box>
+      </Box> */}
 
       {/* <Box
         sx={{
@@ -403,6 +434,28 @@ const PurchaseDashboard = () => {
           icon={<Add />}
           onButtonClick={handleCreateNew}
           sx={{ width: 100 }}
+        />
+        <TextField
+          placeholder="Buscar compras..."
+          value={searchInput}
+          onChange={handleSearchChange}
+          onKeyPress={handleSearchKeyPress}
+          onBlur={handleSearchBlur}
+          size="small"
+          sx={{
+            width: 250,
+            marginRight: 2,
+            '& .MuiOutlinedInput-root': {
+              backgroundColor: theme.palette.background.paper,
+            },
+          }}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <Search />
+              </InputAdornment>
+            ),
+          }}
         />
         <TableHeader.Button
           buttonLabel="Filtros"
