@@ -34,20 +34,27 @@ import { useSelector } from 'react-redux';
 import FinalServiceOpinionChip from '../../inspections/schedule/StatusChip/FinalServiceOpinionChip';
 import { useTheme } from '@mui/material/styles';
 
-
 const SOLARZ_CHOICES = [
   { label: 'Sim', value: 'Sim' },
   { label: 'Não', value: 'Não' },
 ];
 
-const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = () => { }, errors = {}, displayAgent = true, useSupplier = false }) => {
+const ScheduleFromProjectForm = ({
+  projectId,
+  categoryId,
+  scheduleId,
+  onSave = () => {},
+  errors = {},
+  displayAgent = true,
+  useSupplier = false,
+}) => {
   const { enqueueSnackbar } = useSnackbar();
   const [project, setProject] = useState(null);
   const [schedule, setSchedule] = useState(null);
   const [tabValue, setTabValue] = useState('form');
   const [projectAttachments, setProjectAttachments] = useState([]);
   const [saleAttachments, setSaleAttachments] = useState([]);
-  const userId = useSelector(state => state.user?.user?.id);
+  const userId = useSelector((state) => state.user?.user?.id);
   const [formData, setFormData] = useState({
     schedule_date: null,
     schedule_start_time: null,
@@ -67,6 +74,7 @@ const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = (
     inverter_serial_number: null,
     planta: null,
     solarz: null,
+    financiers_voucher: null,
   });
   const [formErrors, setFormErrors] = useState({});
   const [loading, setLoading] = useState(false);
@@ -75,7 +83,6 @@ const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = (
   const [minEndTime, setMinEndTime] = useState(null);
   const [startChanged, setStartChanged] = useState(false);
   const theme = useTheme();
-
 
   const getFileName = (file) => {
     if (typeof file === 'string') {
@@ -91,11 +98,12 @@ const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = (
     const fetchProject = async () => {
       if (!projectId) return;
       const data = await projectService.find(projectId, {
-        fields: 'id,project_number,sale.customer.complete_name,sale.id,sale.customer.id,address.id,product,sale.branch',
+        fields:
+          'id,project_number,sale.customer.complete_name,sale.id,sale.customer.id,address.id,product,sale.branch',
         expand: 'sale,sale.customer',
       });
       setProject(data);
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
         address: data?.address?.id ?? prev.address,
         customer: data?.sale?.customer?.id ?? prev.customer,
@@ -113,11 +121,12 @@ const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = (
       if (!scheduleId) return;
       try {
         const data = await scheduleService.find(scheduleId, {
-          fields: 'id,protocol,schedule_date,schedule_start_time,schedule_end_date,schedule_end_time,schedule_creator,observation,address.id,service.id,service.name,schedule_agent,service_opinion,final_service_opinion,status,attachments,datalogger_serial_number,inverter_serial_number,planta,solarz',
+          fields:
+            'id,protocol,schedule_date,schedule_start_time,schedule_end_date,schedule_end_time,schedule_creator,observation,address.id,service.id,service.name,schedule_agent,service_opinion,final_service_opinion,status,attachments,datalogger_serial_number,inverter_serial_number,planta,solarz,financiers_voucher',
           expand: 'address,service',
         });
         setSchedule(data);
-        setFormData(prev => ({
+        setFormData((prev) => ({
           ...prev,
           schedule_date: data?.schedule_date,
           schedule_start_time: data?.schedule_start_time
@@ -139,6 +148,7 @@ const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = (
           inverter_serial_number: data.inverter_serial_number || prev.inverter_serial_number,
           planta: data.planta || prev.planta,
           solarz: data.solarz || prev.solarz,
+          financiers_voucher: data.financiers_voucher || prev.financiers_voucher,
         }));
       } catch (err) {
         console.error('Erro ao carregar agendamento:', err);
@@ -181,7 +191,7 @@ const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = (
     const [hr, mn, sc] = ts.split(':').map(Number);
     const [YYYY, MM, DD] = schedule_date.split('-').map(Number);
     const startDT = new Date(YYYY, MM - 1, DD, hr, mn, sc);
-    const minEndDT = new Date(startDT.getTime() + ((hours * 3600 + minutes * 60 + seconds) * 1000));
+    const minEndDT = new Date(startDT.getTime() + (hours * 3600 + minutes * 60 + seconds) * 1000);
     if (!isNaN(minEndDT.getTime())) {
       setMinEndDate(minEndDT.toISOString().split('T')[0]);
       setMinEndTime(minEndDT);
@@ -192,7 +202,7 @@ const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = (
     // atualiza data/hora fim em novo ou após mudança de início
     if (scheduleId && !startChanged) return;
     if (!minEndDate || !minEndTime) return;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       schedule_end_date: minEndDate,
       schedule_end_time: minEndTime,
@@ -205,10 +215,13 @@ const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = (
   };
   const handleTabChange = (_, newValue) => setTabValue(newValue);
 
-  const handleToggleAttachment = id => {
-    setFormData(prev => {
+  const handleToggleAttachment = (id) => {
+    setFormData((prev) => {
       const curr = prev.attachments || [];
-      return { ...prev, attachments: curr.includes(id) ? curr.filter(x => x !== id) : [...curr, id] };
+      return {
+        ...prev,
+        attachments: curr.includes(id) ? curr.filter((x) => x !== id) : [...curr, id],
+      };
     });
   };
 
@@ -248,7 +261,18 @@ const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = (
 
   const handleSubmit = async () => {
     setLoading(true);
-    const { schedule_date, schedule_start_time, schedule_end_date, schedule_end_time, observation, service, address, customer, products, branch } = formData;
+    const {
+      schedule_date,
+      schedule_start_time,
+      schedule_end_date,
+      schedule_end_time,
+      observation,
+      service,
+      address,
+      customer,
+      products,
+      branch,
+    } = formData;
     const missingFields = [];
     if (!schedule_date) missingFields.push('Data Início');
     if (!schedule_start_time) missingFields.push('Hora Início');
@@ -258,14 +282,13 @@ const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = (
     if (!address) missingFields.push('Endereço');
 
     if (missingFields.length > 0) {
-      enqueueSnackbar(
-        `Preencha os campos obrigatórios: ${missingFields.join(', ')}`,
-        { variant: 'warning' }
-      );
+      enqueueSnackbar(`Preencha os campos obrigatórios: ${missingFields.join(', ')}`, {
+        variant: 'warning',
+      });
       return;
     }
     try {
-      const fmt = t => (t instanceof Date ? t.toTimeString().split(' ')[0] : String(t));
+      const fmt = (t) => (t instanceof Date ? t.toTimeString().split(' ')[0] : String(t));
       const payload = {
         project: projectId,
         schedule_creator: schedule?.schedule_creator || userId,
@@ -276,9 +299,21 @@ const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = (
         observation,
         service: service.value || service.id || service,
         address: address?.value || address.id || address,
-        schedule_agent: formData.schedule_agent?.value || formData.schedule_agent?.id || formData.schedule_agent || null,
-        service_opinion: formData.service_opinion?.value || formData.service_opinion?.id || formData.service_opinion || null,
-        final_service_opinion: formData.final_service_opinion?.value || formData.final_service_opinion?.id || formData.final_service_opinion || null,
+        schedule_agent:
+          formData.schedule_agent?.value ||
+          formData.schedule_agent?.id ||
+          formData.schedule_agent ||
+          null,
+        service_opinion:
+          formData.service_opinion?.value ||
+          formData.service_opinion?.id ||
+          formData.service_opinion ||
+          null,
+        final_service_opinion:
+          formData.final_service_opinion?.value ||
+          formData.final_service_opinion?.id ||
+          formData.final_service_opinion ||
+          null,
         status: formData.status,
         customer,
         products,
@@ -288,6 +323,7 @@ const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = (
         inverter_serial_number: formData.inverter_serial_number,
         planta: formData.planta,
         solarz: formData.solarz,
+        financiers_voucher: formData.financiers_voucher,
       };
       const resp = scheduleId
         ? await scheduleService.update(scheduleId, payload)
@@ -297,7 +333,9 @@ const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = (
     } catch (err) {
       setFormErrors(err.response?.data || null);
       console.error('Erro ao salvar agendamento:', err);
-      enqueueSnackbar(err.response?.data?.error || 'Erro ao salvar agendamento.', { variant: 'error' });
+      enqueueSnackbar(err.response?.data?.error || 'Erro ao salvar agendamento.', {
+        variant: 'error',
+      });
     }
     setLoading(false);
   };
@@ -308,7 +346,7 @@ const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = (
         backgroundColor: theme.palette.background.paper,
       }}
     >
-      <Tabs value={tabValue} onChange={handleTabChange} sx={{ mb: 2}}>
+      <Tabs value={tabValue} onChange={handleTabChange} sx={{ mb: 2 }}>
         <Tab label="Formulário" value="form" />
         {project && <Tab label="Anexos" value="attachments" />}
       </Tabs>
@@ -338,10 +376,17 @@ const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = (
               <GenericAsyncAutocompleteInput
                 label="Serviço"
                 value={formData.service}
-                onChange={val => handleChange('service', val)}
+                onChange={(val) => handleChange('service', val)}
                 endpoint="api/services"
-                extraParams={{ fields: ['id', 'name'], ordering: ['name'], limit: 50, category__in: categoryId }}
-                mapResponse={data => data?.results.map(it => ({ label: it.name, value: it.id }))}
+                extraParams={{
+                  fields: ['id', 'name'],
+                  ordering: ['name'],
+                  limit: 50,
+                  category__in: categoryId,
+                }}
+                mapResponse={(data) =>
+                  data?.results.map((it) => ({ label: it.name, value: it.id }))
+                }
                 error={!!formErrors?.service}
                 helperText={formErrors?.service?.[0]}
               />
@@ -350,13 +395,23 @@ const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = (
               <GenericAsyncAutocompleteInput
                 label="Endereço"
                 value={formData.address}
-                onChange={val => handleChange('address', val)}
+                onChange={(val) => handleChange('address', val)}
                 endpoint="api/addresses"
                 queryParam="q"
                 extraParams={{ fields: ['id', 'complete_address'], customer_id: formData.customer }}
-                mapResponse={data => data?.results.map(it => ({ label: it.complete_address || it.name, value: it.id }))}
+                mapResponse={(data) =>
+                  data?.results.map((it) => ({
+                    label: it.complete_address || it.name,
+                    value: it.id,
+                  }))
+                }
                 renderCreateModal={({ onClose, onCreate, newObjectData, setNewObjectData }) => (
-                  <CreateAddressPage onClose={onClose} onCreate={onCreate} newObjectData={newObjectData} setNewObjectData={setNewObjectData} />
+                  <CreateAddressPage
+                    onClose={onClose}
+                    onCreate={onCreate}
+                    newObjectData={newObjectData}
+                    setNewObjectData={setNewObjectData}
+                  />
                 )}
                 error={!!formErrors?.address}
                 helperText={formErrors?.address?.[0]}
@@ -367,7 +422,7 @@ const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = (
                 label="Data Início"
                 name="schedule_date"
                 value={formData.schedule_date}
-                onChange={val => handleChange('schedule_date', val)}
+                onChange={(val) => handleChange('schedule_date', val)}
                 error={!!formErrors?.schedule_date}
                 helperText={formErrors?.schedule_date?.[0]}
               />
@@ -378,7 +433,7 @@ const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = (
                 label="Hora Início"
                 name="schedule_start_time"
                 value={formData.schedule_start_time}
-                onChange={val => handleChange('schedule_start_time', val)}
+                onChange={(val) => handleChange('schedule_start_time', val)}
                 error={!!formErrors?.schedule_start_time}
                 helperText={formErrors?.schedule_start_time?.[0]}
               />
@@ -389,7 +444,7 @@ const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = (
                 label="Número do Datalogger"
                 name="datalogger_serial_number"
                 value={formData.datalogger_serial_number || ''}
-                onChange={e => handleChange('datalogger_serial_number', e.target.value)}
+                onChange={(e) => handleChange('datalogger_serial_number', e.target.value)}
                 error={!!formErrors?.datalogger_serial_number}
                 helperText={formErrors?.datalogger_serial_number?.[0]}
               />
@@ -400,7 +455,7 @@ const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = (
                 label="Número do Inversor"
                 name="inverter_serial_number"
                 value={formData.inverter_serial_number || ''}
-                onChange={e => handleChange('inverter_serial_number', e.target.value)}
+                onChange={(e) => handleChange('inverter_serial_number', e.target.value)}
                 error={!!formErrors?.inverter_serial_number}
                 helperText={formErrors?.inverter_serial_number?.[0]}
               />
@@ -412,16 +467,27 @@ const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = (
                 label="Solarz"
                 name="solarz"
                 value={formData.solarz || ''}
-                onChange={e => handleChange('solarz', e.target.value)}
+                onChange={(e) => handleChange('solarz', e.target.value)}
                 error={!!formErrors?.solarz}
                 helperText={formErrors?.solarz?.[0]}
               >
-                {SOLARZ_CHOICES.map(option => (
+                {SOLARZ_CHOICES.map((option) => (
                   <MenuItem key={option.value} value={option.value}>
                     {option.label}
                   </MenuItem>
                 ))}
               </CustomTextField>
+            </Grid>
+            <Grid item xs={6}>
+              <CustomTextField
+                fullWidth
+                label="Voucher da financiadora"
+                name="financiers_voucher"
+                value={formData.financiers_voucher || ''}
+                onChange={(e) => handleChange('financiers_voucher', e.target.value)}
+                error={!!formErrors?.financiers_voucher}
+                helperText={formErrors?.financiers_voucher?.[0]}
+              />
             </Grid>
             <Grid item xs={12}>
               <CustomTextField
@@ -431,7 +497,7 @@ const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = (
                 label="Plata"
                 name="planta"
                 value={formData.planta || ''}
-                onChange={e => handleChange('planta', e.target.value)}
+                onChange={(e) => handleChange('planta', e.target.value)}
                 error={!!formErrors?.planta}
                 helperText={formErrors?.planta?.[0]}
               />
@@ -443,7 +509,7 @@ const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = (
                     label="Data Fim"
                     name="schedule_end_date"
                     value={formData.schedule_end_date}
-                    onChange={val => handleChange('schedule_end_date', val)}
+                    onChange={(val) => handleChange('schedule_end_date', val)}
                     error={!!formErrors?.schedule_end_date}
                     helperText={formErrors?.schedule_end_date?.[0]}
                     minDate={minEndDate}
@@ -455,7 +521,7 @@ const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = (
                     label="Hora Fim"
                     name="schedule_end_time"
                     value={formData.schedule_end_time}
-                    onChange={val => handleChange('schedule_end_time', val)}
+                    onChange={(val) => handleChange('schedule_end_time', val)}
                     error={!!formErrors?.schedule_end_time}
                     helperText={formErrors?.schedule_end_time?.[0]}
                     minTime={minEndTime}
@@ -463,29 +529,42 @@ const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = (
                 </Grid>
               </>
             )}
-            {displayAgent && <Grid item xs={6}>
-              <GenericAsyncAutocompleteInput
-                label={useSupplier ? "Fornecedor" : "Agente"}
-                value={formData.schedule_agent}
-                onChange={val => handleChange('schedule_agent', val)}
-                endpoint="api/users"
-                queryParam="complete_name__icontains"
-                extraParams={{ fields: ['id', 'complete_name'], limit: 10, user_types: useSupplier ? 1 : 5 }}
-                mapResponse={d => d.results.map(u => ({ label: u.complete_name, value: u.id }))}
-                error={!!formErrors?.schedule_agent}
-                helperText={formErrors?.schedule_agent?.[0]}
-              />
-            </Grid>}
+            {displayAgent && (
+              <Grid item xs={6}>
+                <GenericAsyncAutocompleteInput
+                  label={useSupplier ? 'Fornecedor' : 'Agente'}
+                  value={formData.schedule_agent}
+                  onChange={(val) => handleChange('schedule_agent', val)}
+                  endpoint="api/users"
+                  queryParam="complete_name__icontains"
+                  extraParams={{
+                    fields: ['id', 'complete_name'],
+                    limit: 10,
+                    user_types: useSupplier ? 1 : 5,
+                  }}
+                  mapResponse={(d) =>
+                    d.results.map((u) => ({ label: u.complete_name, value: u.id }))
+                  }
+                  error={!!formErrors?.schedule_agent}
+                  helperText={formErrors?.schedule_agent?.[0]}
+                />
+              </Grid>
+            )}
             {scheduleId && (
               <>
                 <Grid item xs={6}>
                   <GenericAsyncAutocompleteInput
                     label="Parecer do Serviço"
                     value={formData.service_opinion}
-                    onChange={val => handleChange('service_opinion', val)}
+                    onChange={(val) => handleChange('service_opinion', val)}
                     endpoint="api/service-opinions"
-                    extraParams={{ limit: 50, fields: ['id', 'name'], is_final_opinion: FinalServiceOpinionChip, service__in: formData.service?.value || formData.service }}
-                    mapResponse={d => d.results.map(it => ({ label: it.name, value: it.id }))}
+                    extraParams={{
+                      limit: 50,
+                      fields: ['id', 'name'],
+                      is_final_opinion: FinalServiceOpinionChip,
+                      service__in: formData.service?.value || formData.service,
+                    }}
+                    mapResponse={(d) => d.results.map((it) => ({ label: it.name, value: it.id }))}
                     error={!!formErrors?.service_opinion}
                     helperText={formErrors?.service_opinion?.[0]}
                   />
@@ -494,10 +573,15 @@ const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = (
                   <GenericAsyncAutocompleteInput
                     label="Parecer Final do Serviço"
                     value={formData.final_service_opinion}
-                    onChange={val => handleChange('final_service_opinion', val)}
+                    onChange={(val) => handleChange('final_service_opinion', val)}
                     endpoint="api/service-opinions"
-                    extraParams={{ limit: 50, fields: ['id', 'name'], is_final_opinion: true, service__in: formData.service?.value || formData.service }}
-                    mapResponse={d => d.results.map(it => ({ label: it.name, value: it.id }))}
+                    extraParams={{
+                      limit: 50,
+                      fields: ['id', 'name'],
+                      is_final_opinion: true,
+                      service__in: formData.service?.value || formData.service,
+                    }}
+                    mapResponse={(d) => d.results.map((it) => ({ label: it.name, value: it.id }))}
                     error={!!formErrors?.final_service_opinion}
                     helperText={formErrors?.final_service_opinion?.[0]}
                   />
@@ -508,12 +592,14 @@ const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = (
                     fullWidth
                     label="Status"
                     value={formData.status || ''}
-                    onChange={e => handleChange('status', e.target.value)}
+                    onChange={(e) => handleChange('status', e.target.value)}
                     error={!!formErrors?.status}
                     helperText={formErrors?.status?.[0]}
                   >
-                    {['Pendente', 'Em Andamento', 'Confirmado', 'Cancelado'].map(opt => (
-                      <MenuItem key={opt} value={opt}>{opt}</MenuItem>
+                    {['Pendente', 'Em Andamento', 'Confirmado', 'Cancelado'].map((opt) => (
+                      <MenuItem key={opt} value={opt}>
+                        {opt}
+                      </MenuItem>
                     ))}
                   </CustomTextField>
                 </Grid>
@@ -527,7 +613,7 @@ const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = (
                 label="Observação"
                 name="observation"
                 value={formData.observation || ''}
-                onChange={e => handleChange('observation', e.target.value)}
+                onChange={(e) => handleChange('observation', e.target.value)}
                 error={!!formErrors?.observation}
                 helperText={formErrors?.observation?.[0]}
               />
@@ -562,11 +648,7 @@ const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = (
                       </TableCell>
                       <TableCell>
                         {typeof attachment.file === 'string' ? (
-                          <Link
-                            href={attachment.file}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
+                          <Link href={attachment.file} target="_blank" rel="noopener noreferrer">
                             {getFileName(attachment.file)}
                           </Link>
                         ) : (
@@ -615,11 +697,7 @@ const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = (
                       </TableCell>
                       <TableCell>
                         {typeof attachment.file === 'string' ? (
-                          <Link
-                            href={attachment.file}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
+                          <Link href={attachment.file} target="_blank" rel="noopener noreferrer">
                             {getFileName(attachment.file)}
                           </Link>
                         ) : (
@@ -645,7 +723,13 @@ const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = (
       )}
 
       <Stack direction="row" justifyContent="flex-end" sx={{ mt: 2 }}>
-        <Button variant="contained" color="primary" onClick={handleSubmit} disabled={loading} endIcon={loading && <CircularProgress size={20} />}>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleSubmit}
+          disabled={loading}
+          endIcon={loading && <CircularProgress size={20} />}
+        >
           Salvar
         </Button>
       </Stack>
