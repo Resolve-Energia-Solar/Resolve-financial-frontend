@@ -29,7 +29,6 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
     useLoginForm();
 
   const handleFormSubmit = async (event) => {
-    console.log('handleFormSubmit', event, dispatch, Cookies);
     await handleSubmit(event, dispatch, Cookies);
   };
 

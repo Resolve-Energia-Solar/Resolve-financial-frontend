@@ -52,7 +52,6 @@ const useLoginForm = () => {
     try {
       const data = await userService.login(formData);
       Cookies.set('access_token', data.access, { expires: 1, sameSite: 'Strict' });
-      console.log('data', data);
 
       dispatch(
         setUser({

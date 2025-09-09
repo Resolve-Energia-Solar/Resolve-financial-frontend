@@ -1,12 +1,6 @@
 'use client';
 import React, { useState, useMemo, useEffect } from 'react';
-import {
-  Chip,
-  Typography,
-  Grid,
-  Dialog,
-  DialogContent,
-} from '@mui/material';
+import { Chip, Typography, Grid, Dialog, DialogContent } from '@mui/material';
 import { Add } from '@mui/icons-material';
 import { useSnackbar } from 'notistack';
 import TableSkeleton from '../../../../comercial/sale/components/TableSkeleton';
@@ -26,17 +20,20 @@ export default function CustomerServiceTab({ projectId, viewOnly = false, ticket
   const [openTicketFormModal, setOpenTicketFormModal] = useState(!!ticketId);
   const [selectedTicket, setSelectedTicket] = useState(ticketId);
   const [monitoringAppStatus, setMonitoringAppStatus] = useState('P');
+  const [financierMonitoringStatus, setFinancierMonitoringStatus] = useState('');
   const [refreshKey, setRefreshKey] = useState(0);
 
   useEffect(() => {
     if (projectId) {
-      projectService.find(projectId, { fields: 'monitoring_app_status' })
+      projectService
+        .find(projectId, { fields: 'monitoring_app_status,financier_monitoring_status' })
         .then((response) => {
           setMonitoringAppStatus(response.monitoring_app_status || 'P');
+          setFinancierMonitoringStatus(response.financier_monitoring_status || '');
         })
         .catch((error) => {
-          console.error('Erro ao carregar status do app de monitoramento:', error);
-          enqueueSnackbar('Erro ao carregar status do app de monitoramento', { variant: 'error' });
+          console.error('Erro ao carregar status do projeto:', error);
+          enqueueSnackbar('Erro ao carregar status do projeto', { variant: 'error' });
         });
     }
   }, [projectId, enqueueSnackbar]);
@@ -51,7 +48,7 @@ export default function CustomerServiceTab({ projectId, viewOnly = false, ticket
       page_size: rowsPerPage,
       _refresh: refreshKey,
     }),
-    [page, rowsPerPage, projectId, refreshKey]
+    [page, rowsPerPage, projectId, refreshKey],
   );
 
   const { loading: loadingTickets, error: ticketsError, ticketData } = useTicket(params);
@@ -71,17 +68,38 @@ export default function CustomerServiceTab({ projectId, viewOnly = false, ticket
     enqueueSnackbar(ticketsError, { variant: 'error' });
     return null;
   }
-  
+
   const handleMonitoringAppStatusChange = (value) => {
     setMonitoringAppStatus(value);
-    projectService.update(projectId, { monitoring_app_status: value })
+    projectService
+      .update(projectId, { monitoring_app_status: value })
       .then(() => {
-        enqueueSnackbar('Status do app de monitoramento atualizado com sucesso!', { variant: 'success' });
+        enqueueSnackbar('Status do app de monitoramento atualizado com sucesso!', {
+          variant: 'success',
+        });
         setRefreshKey((prev) => prev + 1);
       })
       .catch((error) => {
         console.error('Erro ao atualizar status do app de monitoramento:', error);
         enqueueSnackbar('Erro ao atualizar status do app de monitoramento', { variant: 'error' });
+      });
+  };
+
+  const handleFinancierMonitoringStatusChange = (value) => {
+    setFinancierMonitoringStatus(value);
+    projectService
+      .update(projectId, { financier_monitoring_status: value })
+      .then(() => {
+        enqueueSnackbar('Status de monitoramento da financiadora atualizado com sucesso!', {
+          variant: 'success',
+        });
+        setRefreshKey((prev) => prev + 1);
+      })
+      .catch((error) => {
+        console.error('Erro ao atualizar status de monitoramento da financiadora:', error);
+        enqueueSnackbar('Erro ao atualizar status de monitoramento da financiadora', {
+          variant: 'error',
+        });
       });
   };
 
@@ -96,7 +114,9 @@ export default function CustomerServiceTab({ projectId, viewOnly = false, ticket
     {
       field: 'status',
       headerName: 'Status',
-      render: (r) => { <TicketStatusChip status={r.status} /> },
+      render: (r) => {
+        <TicketStatusChip status={r.status} />;
+      },
     },
     {
       field: 'responsible',
@@ -116,7 +136,7 @@ export default function CustomerServiceTab({ projectId, viewOnly = false, ticket
     {
       field: 'deadline',
       headerName: 'Prazo (horas)',
-      render: (r) => r.deadline ? `${r.deadline}h` : '-',
+      render: (r) => (r.deadline ? `${r.deadline}h` : '-'),
     },
     {
       field: 'conclusion_date',
@@ -132,19 +152,35 @@ export default function CustomerServiceTab({ projectId, viewOnly = false, ticket
       </Typography>
 
       <Grid container spacing={2}>
-        <Grid item xs={12}>
+        <Grid item xs={12} md={6}>
           <FormSelect
             label="Status da Entrega do App de Monitoramento"
             options={[
               { value: 'C', label: 'Criado' },
               { value: 'E', label: 'Criado e Entregue' },
               { value: 'S', label: 'Cliente sem Internet' },
-              { value: 'P', label: 'Pendente' }
+              { value: 'P', label: 'Pendente' },
             ]}
             value={monitoringAppStatus}
-            onChange={(e) =>
-              handleMonitoringAppStatusChange(e.target.value)
-            }
+            onChange={(e) => handleMonitoringAppStatusChange(e.target.value)}
+          />
+        </Grid>
+        <Grid item xs={12} md={6}>
+          <FormSelect
+            label="Status de Monitoramento da Financiadora"
+            options={[
+              { value: '', label: 'Selecione...' },
+              { value: 'SFI', label: 'Sem Foto da Instalação' },
+              { value: 'CMK', label: 'Confirmar Mensagem de Kit Entregue' },
+              { value: 'FTA', label: 'Falha na Transferência (Em Análise)' },
+              {
+                value: 'AAD',
+                label: 'Aguardando Aprovação da Documentação de Equipamento Entregue',
+              },
+              { value: 'F', label: 'Finalizado' },
+            ]}
+            value={financierMonitoringStatus}
+            onChange={(e) => handleFinancierMonitoringStatusChange(e.target.value)}
           />
         </Grid>
         <Grid item xs={12}>
@@ -195,16 +231,12 @@ export default function CustomerServiceTab({ projectId, viewOnly = false, ticket
               loading={loadingTickets}
               columns={ticketsColumns.length}
               sx={{
-                cursor: "pointer",
+                cursor: 'pointer',
                 '&:hover': { backgroundColor: 'rgba(236, 242, 255, 0.35)' },
               }}
             >
-              {ticketsColumns.map(col => (
-                <Table.Cell
-                  key={col.field}
-                  render={col.render}
-                  sx={col.sx}
-                />
+              {ticketsColumns.map((col) => (
+                <Table.Cell key={col.field} render={col.render} sx={col.sx} />
               ))}
             </Table.Body>
           </Table.Root>
@@ -224,7 +256,7 @@ export default function CustomerServiceTab({ projectId, viewOnly = false, ticket
             '& .MuiDialog-paper': {
               minWidth: '50vw',
               minHeight: '90vh',
-            }
+            },
           }}
         >
           <DialogContent>
