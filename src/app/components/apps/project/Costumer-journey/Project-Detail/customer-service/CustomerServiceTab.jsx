@@ -177,6 +177,11 @@ export default function CustomerServiceTab({ projectId, viewOnly = false, ticket
                 value: 'AAD',
                 label: 'Aguardando Aprovação da Documentação de Equipamento Entregue',
               },
+              { value: 'PPD', label: 'Pend. Preenchimento de Dados de Monitoramento' },
+              { value: 'ACM', label: 'Aguardando Confirmação de Monitoração' },
+              { value: 'PC', label: 'Projeto Cancelado' },
+              { value: 'ADE', label: 'Aguardando Documentação de Equipamento Entregue' },
+              { value: 'EEA', label: 'Equipamento Entregue (Aguardando Próxima Etapa)' },
               { value: 'F', label: 'Finalizado' },
             ]}
             value={financierMonitoringStatus}
