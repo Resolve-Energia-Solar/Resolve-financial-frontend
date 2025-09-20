@@ -34,11 +34,11 @@ import financialRecordService from '@/services/financialRecordService';
 
 import { FilterContext } from '@/context/FilterContext';
 
-import FinancialRecordDetailDrawer from "@/app/components/apps/financial-record/detailDrawer";
-import GenericFilterDrawer from "@/app/components/filters/GenericFilterDrawer";
-import PulsingBadge from "@/app/components/shared/PulsingBadge";
-import BlankCard from "@/app/components/shared/BlankCard";
-import PageContainer from "@/app/components/container/PageContainer";
+import FinancialRecordDetailDrawer from '@/app/components/apps/financial-record/detailDrawer';
+import GenericFilterDrawer from '@/app/components/filters/GenericFilterDrawer';
+import PulsingBadge from '@/app/components/shared/PulsingBadge';
+import BlankCard from '@/app/components/shared/BlankCard';
+import PageContainer from '@/app/components/container/PageContainer';
 import filterConfig from './filterConfig';
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
@@ -73,7 +73,7 @@ const financialRecordList = () => {
       icon: <InsertDriveFileIcon />,
       color: '#e3f2fd',
       filter: {},
-      format: v => v.toLocaleString('pt-BR'),
+      format: (v) => v.toLocaleString('pt-BR'),
     },
     {
       key: 'total_value',
@@ -82,7 +82,7 @@ const financialRecordList = () => {
       icon: <MonetizationOnIcon />,
       color: '#e8f5e9',
       filter: {},
-      format: v => v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }),
+      format: (v) => v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }),
     },
     {
       key: 'total_in_progress',
@@ -91,7 +91,7 @@ const financialRecordList = () => {
       icon: <HourglassEmptyIcon />,
       color: '#fff3e0',
       filter: { responsible_status__in: 'A', payment_status__in: 'P' },
-      format: v => v.toLocaleString('pt-BR'),
+      format: (v) => v.toLocaleString('pt-BR'),
     },
     {
       key: 'total_with_error',
@@ -100,7 +100,7 @@ const financialRecordList = () => {
       icon: <ErrorOutlineIcon />,
       color: '#ffebee',
       filter: { bug: true },
-      format: v => v.toLocaleString('pt-BR'),
+      format: (v) => v.toLocaleString('pt-BR'),
     },
   ];
 
@@ -208,6 +208,28 @@ const financialRecordList = () => {
     setSelectedRecord(null);
   };
 
+  // Refresh em background: recarrega listagem sem reload da página
+  const handleBackgroundRefresh = async () => {
+    try {
+      const data = await financialRecordService.index({
+        limit: rowsPerPage,
+        page: page + 1,
+        expand: 'bank_details',
+        ...filters,
+      });
+      setFinancialRecordList(data.results);
+      setTotalRows(data.meta.pagination.total_count);
+      // KPIs também podem mudar após alterações de status
+      const kpiData = await financialRecordService.getIndicators({
+        ...filters,
+      });
+      setIndicators(kpiData.indicators);
+    } catch (err) {
+      // Silencioso para não atrapalhar UX do drawer
+      console.error('Erro ao atualizar listagem em background', err);
+    }
+  };
+
   const handleKPIClick = (kpiType) => {
     const kpiFilter = stats.find((stat) => stat.key === kpiType)?.filter;
 
@@ -239,11 +261,22 @@ const financialRecordList = () => {
           {/* Indicadores */}
           <Box sx={{ width: '100%', mb: 2 }}>
             <Typography variant="h6">Indicadores</Typography>
-            <Box sx={{
-              width: '100%', display: 'flex', justifyContent: 'space-evenly', gap: 2, flexWrap: 'wrap', mt: 1, mb: 4, p: 2, background: theme.palette.mode === 'dark' ? '#424242' : '#f5f5f5'
-            }}>
+            <Box
+              sx={{
+                width: '100%',
+                display: 'flex',
+                justifyContent: 'space-evenly',
+                gap: 2,
+                flexWrap: 'wrap',
+                mt: 1,
+                mb: 4,
+                p: 2,
+                background: theme.palette.mode === 'dark' ? '#424242' : '#f5f5f5',
+              }}
+            >
               {stats.map(({ key, label, value, icon, color, filter, format }) => {
-                const isActive = filters && Object.keys(filters).some((filterKey) => filterKey in filter);
+                const isActive =
+                  filters && Object.keys(filters).some((filterKey) => filterKey in filter);
                 return (
                   <KPICard
                     key={key}
@@ -316,9 +349,9 @@ const financialRecordList = () => {
                     <TableRow key={item.id} hover onClick={() => handleRowClick(item)}>
                       <TableCell>
                         {item.paid_at &&
-                          new Date(item.paid_at).getFullYear() === new Date().getFullYear() &&
-                          new Date(item.paid_at).getMonth() === new Date().getMonth() &&
-                          new Date(item.paid_at).getDate() === new Date().getDate() ? (
+                        new Date(item.paid_at).getFullYear() === new Date().getFullYear() &&
+                        new Date(item.paid_at).getMonth() === new Date().getMonth() &&
+                        new Date(item.paid_at).getDate() === new Date().getDate() ? (
                           <PulsingBadge />
                         ) : (
                           <>
@@ -446,6 +479,7 @@ const financialRecordList = () => {
         open={drawerOpen}
         onClose={handleDrawerClose}
         record={selectedRecord}
+        onBackgroundRefresh={handleBackgroundRefresh}
       />
     </PageContainer>
   );

@@ -46,13 +46,22 @@ const responsibleStatusMap = {
   R: <Chip label="Reprovado" color="error" size="small" />,
 };
 
-const FinancialRecordDetailDrawer = ({ open, onClose, record }) => {
+const auditStatusMap = {
+  AA: <Chip label="Aguardando Aprovação" color="warning" size="small" />,
+  EA: <Chip label="Em Análise" color="info" size="small" />,
+  A: <Chip label="Aprovado" color="success" size="small" />,
+  R: <Chip label="Reprovado" color="error" size="small" />,
+  C: <Chip label="Cancelado" color="error" size="small" />,
+};
+
+const FinancialRecordDetailDrawer = ({ open, onClose, record, onBackgroundRefresh }) => {
   const user = useSelector((state) => state.user?.user);
   const [tabIndex, setTabIndex] = useState(0);
   const [currentRecord, setCurrentRecord] = useState(record);
   const [tourActive, setTourActive] = useState(true);
   const { enqueueSnackbar } = useSnackbar();
   const router = useRouter();
+  const userPermissions = useSelector((state) => state.user?.permissions || []);
 
   useEffect(() => {
     setCurrentRecord(record);
@@ -67,6 +76,7 @@ const FinancialRecordDetailDrawer = ({ open, onClose, record }) => {
         paid_at: new Date().toISOString(),
       });
       setCurrentRecord((prev) => ({ ...prev, payment_status: status, status: newStatus }));
+      onBackgroundRefresh && onBackgroundRefresh();
     } catch (error) {
       console.error(error);
       const errorMessages = error.response?.data
@@ -91,6 +101,7 @@ const FinancialRecordDetailDrawer = ({ open, onClose, record }) => {
         responsible_status: status,
         status: newStatus,
       }));
+      onBackgroundRefresh && onBackgroundRefresh();
     } catch (error) {
       console.error(error);
       const errorMessages = error.response?.data
@@ -98,6 +109,28 @@ const FinancialRecordDetailDrawer = ({ open, onClose, record }) => {
         : [error.message];
       errorMessages.forEach((msg) =>
         enqueueSnackbar(`Erro ao atualizar status do gestor: ${msg}`, { variant: 'error' }),
+      );
+    }
+  };
+
+  const handleAuditStatusChange = async (status) => {
+    try {
+      await financialRecordService.update(currentRecord.id, {
+        audit_status: status,
+      });
+      setCurrentRecord((prev) => ({
+        ...prev,
+        audit_status: status,
+      }));
+      enqueueSnackbar('Status de auditoria atualizado com sucesso!', { variant: 'success' });
+      onBackgroundRefresh && onBackgroundRefresh();
+    } catch (error) {
+      console.error(error);
+      const errorMessages = error.response?.data
+        ? Object.values(error.response.data).flat()
+        : [error.message];
+      errorMessages.forEach((msg) =>
+        enqueueSnackbar(`Erro ao atualizar status de auditoria: ${msg}`, { variant: 'error' }),
       );
     }
   };
@@ -142,9 +175,11 @@ const FinancialRecordDetailDrawer = ({ open, onClose, record }) => {
       enqueueSnackbar('Solicitação enviada para o Omie com sucesso!', { variant: 'success' });
     } catch (error) {
       console.error(error);
-      enqueueSnackbar(`Erro ao enviar solicitação para o Omie: ${error.message}`, { variant: 'error' });
+      enqueueSnackbar(`Erro ao enviar solicitação para o Omie: ${error.message}`, {
+        variant: 'error',
+      });
     }
-  }
+  };
 
   if (!currentRecord) return null;
 
@@ -171,7 +206,7 @@ const FinancialRecordDetailDrawer = ({ open, onClose, record }) => {
           display: 'flex',
           flexDirection: 'column',
           ml: 2,
-          position: 'relative'
+          position: 'relative',
         }}
       >
         {/* Cabeçalho e demais conteúdos */}
@@ -186,11 +221,13 @@ const FinancialRecordDetailDrawer = ({ open, onClose, record }) => {
                 <IconPdf size={24} />
               </IconButton>
             </Tooltip>
-            {(user.employee?.department?.name === 'Tecnologia' || user.employee?.department?.name?.toLowerCase().includes('financeiro'))
-              && (record?.responsible_status === 'A' && record?.payment_status === 'P' && record?.integration_code === null)
-              && (
+            {(user.employee?.department?.name === 'Tecnologia' ||
+              user.employee?.department?.name?.toLowerCase().includes('financeiro')) &&
+              record?.responsible_status === 'A' &&
+              record?.payment_status === 'P' &&
+              record?.integration_code === null && (
                 <Tooltip title="Enviar ao Omie">
-                  <IconButton onClick={handleSendToOmieClick} color='warning'>
+                  <IconButton onClick={handleSendToOmieClick} color="warning">
                     <IconCircleArrowUpRight size={24} />
                   </IconButton>
                 </Tooltip>
@@ -268,7 +305,7 @@ const FinancialRecordDetailDrawer = ({ open, onClose, record }) => {
                   <strong>Status do Financeiro:</strong>
                   {(user.employee?.department?.name === 'Tecnologia' ||
                     user.employee?.department?.name?.toLowerCase().includes('financeiro')) &&
-                    currentRecord.payment_status === 'P' ? (
+                  currentRecord.payment_status === 'P' ? (
                     <FormControl variant="outlined" size="small" sx={{ ml: 1 }}>
                       <Select
                         value={currentRecord.payment_status}
@@ -294,7 +331,7 @@ const FinancialRecordDetailDrawer = ({ open, onClose, record }) => {
                 <Typography sx={{ display: 'flex', alignItems: 'center' }}>
                   <strong>Status do Gestor:</strong>
                   {user.id === currentRecord.responsible.id &&
-                    currentRecord.responsible_status === 'P' ? (
+                  currentRecord.responsible_status === 'P' ? (
                     <FormControl sx={{ ml: 1 }} variant="outlined" size="small">
                       <Select
                         value={currentRecord.responsible_status}
@@ -317,6 +354,41 @@ const FinancialRecordDetailDrawer = ({ open, onClose, record }) => {
                 </Typography>
               </Grid>
               <Grid item xs={12} md={6}>
+                <Typography sx={{ display: 'flex', alignItems: 'center' }}>
+                  <strong>Status da Auditoria:</strong>
+                  {userPermissions.includes('financial.can_change_audit_status') &&
+                  currentRecord?.responsible_status === 'A' &&
+                  currentRecord?.status !== 'C' ? (
+                    <FormControl sx={{ ml: 1 }} variant="outlined" size="small">
+                      <Select
+                        value={currentRecord.audit_status || 'AA'}
+                        onChange={(e) => handleAuditStatusChange(e.target.value)}
+                      >
+                        <MenuItem value="AA">
+                          <Chip label="Aguardando Aprovação" color="warning" size="small" />
+                        </MenuItem>
+                        <MenuItem value="EA">
+                          <Chip label="Em Análise" color="info" size="small" />
+                        </MenuItem>
+                        <MenuItem value="A">
+                          <Chip label="Aprovado" color="success" size="small" />
+                        </MenuItem>
+                        <MenuItem value="R">
+                          <Chip label="Reprovado" color="error" size="small" />
+                        </MenuItem>
+                        <MenuItem value="C">
+                          <Chip label="Cancelado" color="error" size="small" />
+                        </MenuItem>
+                      </Select>
+                    </FormControl>
+                  ) : (
+                    auditStatusMap[currentRecord.audit_status] || (
+                      <Chip label="Sem status de auditoria" color="default" size="small" />
+                    )
+                  )}
+                </Typography>
+              </Grid>
+              <Grid item xs={12} md={6}>
                 <Typography>
                   <strong>Data de Criação:</strong>{' '}
                   {new Date(currentRecord.created_at).toLocaleString('pt-BR')}
@@ -329,13 +401,15 @@ const FinancialRecordDetailDrawer = ({ open, onClose, record }) => {
                 <Typography>
                   <strong>Dados Bancários:</strong>{' '}
                   {currentRecord.bank_details.account_type === 'X'
-                    ? `PIX (${{
-                      CPF: 'CPF',
-                      CNPJ: 'CNPJ',
-                      EMAIL: 'E-mail',
-                      PHONE: 'Celular/Telefone',
-                      RANDOM: 'Chave Aleatória'
-                    }[currentRecord.bank_details.pix_key_type]}): ${currentRecord.bank_details.pix_key}`
+                    ? `PIX (${
+                        {
+                          CPF: 'CPF',
+                          CNPJ: 'CNPJ',
+                          EMAIL: 'E-mail',
+                          PHONE: 'Celular/Telefone',
+                          RANDOM: 'Chave Aleatória',
+                        }[currentRecord.bank_details.pix_key_type]
+                      }): ${currentRecord.bank_details.pix_key}`
                     : `${currentRecord.bank_details.financial_instituition} Ag: ${currentRecord.bank_details.agency_number} Conta: ${currentRecord.bank_details.account_number}`}
                 </Typography>
               </Grid>
@@ -392,14 +466,8 @@ const FinancialRecordDetailDrawer = ({ open, onClose, record }) => {
             <Divider sx={{ my: 3 }} />
             <Grid container>
               <Box display="flex" gap={2}>
-                <UserCard
-                  userId={currentRecord.requester}
-                  title="Solicitante"
-                />
-                <UserCard
-                  userId={currentRecord.responsible}
-                  title="Gestor"
-                />
+                <UserCard userId={currentRecord.requester} title="Solicitante" />
+                <UserCard userId={currentRecord.responsible} title="Gestor" />
               </Box>
             </Grid>
           </Box>
