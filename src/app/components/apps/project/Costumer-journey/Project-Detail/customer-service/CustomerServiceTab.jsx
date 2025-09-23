@@ -1,6 +1,14 @@
 'use client';
 import React, { useState, useMemo, useEffect } from 'react';
-import { Chip, Typography, Grid, Dialog, DialogContent } from '@mui/material';
+import {
+  Chip,
+  Typography,
+  Grid,
+  Dialog,
+  DialogContent,
+  Autocomplete,
+  TextField,
+} from '@mui/material';
 import { Add } from '@mui/icons-material';
 import { useSnackbar } from 'notistack';
 import TableSkeleton from '../../../../comercial/sale/components/TableSkeleton';
@@ -52,6 +60,24 @@ export default function CustomerServiceTab({ projectId, viewOnly = false, ticket
   );
 
   const { loading: loadingTickets, error: ticketsError, ticketData } = useTicket(params);
+  const financierStatusOptions = [
+    { value: 'SFI', label: 'Sem Foto da Instalação' },
+    { value: 'CMK', label: 'Confirmar Mensagem de Kit Entregue' },
+    { value: 'FTA', label: 'Falha na Transferência (Em Análise)' },
+    { value: 'AAD', label: 'Aguardando Aprovação da Documentação de Equipamento Entregue' },
+    { value: 'PPD', label: 'Pend. Preenchimento de Dados de Monitoramento' },
+    { value: 'ACM', label: 'Aguardando Confirmação de Monitoração' },
+    { value: 'PC', label: 'Projeto Cancelado' },
+    { value: 'ADE', label: 'Aguardando Documentação de Equipamento Entregue' },
+    { value: 'EEA', label: 'Equipamento Entregue (Aguardando Próxima Etapa)' },
+    { value: 'F', label: 'Finalizado' },
+    { value: 'PCG', label: 'PEND. CLIENTE CONFIRMAR MENSAGEM DE GERAÇÃO' },
+    { value: 'PVI', label: 'Pend. validar instalação com inversor' },
+    { value: 'SGI', label: 'Não foi identificada geração de energia no(s) inversor(es)' },
+    { value: 'EPI', label: 'ERRO NA POTENCIA DO INVERSOR' },
+    { value: 'IVD', label: 'INSTALAÇÃO VALIDADA' },
+    { value: 'PG', label: 'Pago' },
+  ];
 
   const handleTicketFormSuccess = () => {
     setOpenTicketFormModal(false);
@@ -152,7 +178,7 @@ export default function CustomerServiceTab({ projectId, viewOnly = false, ticket
       </Typography>
 
       <Grid container spacing={2}>
-        <Grid item xs={12} md={6}>
+        <Grid item xs={12}>
           <FormSelect
             label="Status da Entrega do App de Monitoramento"
             options={[
@@ -165,27 +191,41 @@ export default function CustomerServiceTab({ projectId, viewOnly = false, ticket
             onChange={(e) => handleMonitoringAppStatusChange(e.target.value)}
           />
         </Grid>
-        <Grid item xs={12} md={6}>
-          <FormSelect
-            label="Status de Monitoramento da Financiadora"
-            options={[
-              { value: '', label: 'Selecione...' },
-              { value: 'SFI', label: 'Sem Foto da Instalação' },
-              { value: 'CMK', label: 'Confirmar Mensagem de Kit Entregue' },
-              { value: 'FTA', label: 'Falha na Transferência (Em Análise)' },
-              {
-                value: 'AAD',
-                label: 'Aguardando Aprovação da Documentação de Equipamento Entregue',
-              },
-              { value: 'PPD', label: 'Pend. Preenchimento de Dados de Monitoramento' },
-              { value: 'ACM', label: 'Aguardando Confirmação de Monitoração' },
-              { value: 'PC', label: 'Projeto Cancelado' },
-              { value: 'ADE', label: 'Aguardando Documentação de Equipamento Entregue' },
-              { value: 'EEA', label: 'Equipamento Entregue (Aguardando Próxima Etapa)' },
-              { value: 'F', label: 'Finalizado' },
-            ]}
-            value={financierMonitoringStatus}
-            onChange={(e) => handleFinancierMonitoringStatusChange(e.target.value)}
+        <Grid item xs={12}>
+          <Autocomplete
+            options={financierStatusOptions}
+            value={
+              financierStatusOptions.find((o) => o.value === financierMonitoringStatus) || null
+            }
+            onChange={(e, newValue) => handleFinancierMonitoringStatusChange(newValue?.value || '')}
+            getOptionLabel={(option) => option?.label || ''}
+            isOptionEqualToValue={(option, value) => option.value === value.value}
+            clearOnEscape
+            fullWidth
+            ListboxProps={{
+              style: { maxHeight: 400, overflow: 'auto' },
+            }}
+            renderOption={(props, option) => (
+              <li
+                {...props}
+                style={{
+                  whiteSpace: 'normal',
+                  wordBreak: 'break-word',
+                  lineHeight: 1.4,
+                  paddingTop: 8,
+                  paddingBottom: 8,
+                }}
+              >
+                {option.label}
+              </li>
+            )}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Status de Monitoramento da Financiadora"
+                placeholder="Pesquise pelo status"
+              />
+            )}
           />
         </Grid>
         <Grid item xs={12}>
