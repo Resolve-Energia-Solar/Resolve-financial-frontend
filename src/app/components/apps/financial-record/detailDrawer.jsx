@@ -14,6 +14,7 @@ import {
   Select,
   MenuItem,
   Tooltip,
+  TextField,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import Comment from '../comment';
@@ -62,9 +63,11 @@ const FinancialRecordDetailDrawer = ({ open, onClose, record, onBackgroundRefres
   const { enqueueSnackbar } = useSnackbar();
   const router = useRouter();
   const userPermissions = useSelector((state) => state.user?.permissions || []);
+  const [auditNotes, setAuditNotes] = useState(record?.audit_notes || '');
 
   useEffect(() => {
     setCurrentRecord(record);
+    setAuditNotes(record?.audit_notes || '');
   }, [record]);
 
   const handlePaymentStatusChange = async (status) => {
@@ -131,6 +134,25 @@ const FinancialRecordDetailDrawer = ({ open, onClose, record, onBackgroundRefres
         : [error.message];
       errorMessages.forEach((msg) =>
         enqueueSnackbar(`Erro ao atualizar status de auditoria: ${msg}`, { variant: 'error' }),
+      );
+    }
+  };
+
+  const handleAuditNotesSave = async () => {
+    try {
+      await financialRecordService.update(currentRecord.id, {
+        audit_notes: auditNotes || '',
+      });
+      setCurrentRecord((prev) => ({ ...prev, audit_notes: auditNotes || '' }));
+      enqueueSnackbar('Motivo atualizado com sucesso!', { variant: 'success' });
+      onBackgroundRefresh && onBackgroundRefresh();
+    } catch (error) {
+      console.error(error);
+      const errorMessages = error.response?.data
+        ? Object.values(error.response.data).flat()
+        : [error.message];
+      errorMessages.forEach((msg) =>
+        enqueueSnackbar(`Erro ao atualizar motivo: ${msg}`, { variant: 'error' }),
       );
     }
   };
@@ -266,6 +288,31 @@ const FinancialRecordDetailDrawer = ({ open, onClose, record, onBackgroundRefres
                   <strong>Protocolo:</strong> {currentRecord.protocol}
                 </Typography>
               </Grid>
+              {(currentRecord.audit_status === 'R' || currentRecord.audit_status === 'C') && (
+                <Grid item xs={12} md={12}>
+                  {userPermissions.includes('financial.can_change_audit_status') &&
+                  currentRecord?.responsible_status === 'A' &&
+                  currentRecord?.status !== 'C' ? (
+                    <TextField
+                      label="Motivo"
+                      placeholder="Descreva o motivo"
+                      value={auditNotes}
+                      onChange={(e) => setAuditNotes(e.target.value)}
+                      onBlur={handleAuditNotesSave}
+                      fullWidth
+                      multiline
+                      minRows={2}
+                    />
+                  ) : currentRecord?.audit_notes ? (
+                    <Box>
+                      <Typography sx={{ fontWeight: 600, mb: 0.5 }}>Motivo:</Typography>
+                      <Typography sx={{ whiteSpace: 'pre-wrap' }}>
+                        {currentRecord.audit_notes}
+                      </Typography>
+                    </Box>
+                  ) : null}
+                </Grid>
+              )}
               <Grid item xs={12} md={6}>
                 <Typography>
                   <strong>Categoria:</strong> {currentRecord.category_name}
