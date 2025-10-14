@@ -114,6 +114,8 @@ const financialRecordList = () => {
   };
 
   useEffect(() => {
+    let isMounted = true;
+
     const fetchFinancialRecords = async () => {
       try {
         setLoading(true);
@@ -124,15 +126,20 @@ const financialRecordList = () => {
           expand: 'bank_details',
           ...filters,
         });
-        setFinancialRecordList(data.results);
-        setTotalRows(data.meta.pagination.total_count);
+        if (isMounted) {
+          setFinancialRecordList(data.results);
+          setTotalRows(data.meta.pagination.total_count);
+        }
       } catch (err) {
-        setError('Erro ao carregar Contas a Receber/Pagar');
+        if (isMounted) {
+          setError('Erro ao carregar Contas a Receber/Pagar');
+        }
       } finally {
-        setLoading(false);
+        if (isMounted) {
+          setLoading(false);
+        }
       }
     };
-    fetchFinancialRecords();
 
     const fetchKPIs = async () => {
       setLoadingIndicators(true);
@@ -140,14 +147,30 @@ const financialRecordList = () => {
         const kpiData = await financialRecordService.getIndicators({
           ...filters,
         });
-        setIndicators(kpiData.indicators);
+        if (isMounted) {
+          setIndicators(kpiData.indicators);
+        }
       } catch (err) {
-        setError('Erro ao carregar KPIs');
+        if (isMounted) {
+          setError('Erro ao carregar KPIs');
+        }
       } finally {
-        setLoadingIndicators(false);
+        if (isMounted) {
+          setLoadingIndicators(false);
+        }
       }
     };
-    fetchKPIs();
+
+    // Pequeno delay para evitar múltiplas chamadas simultâneas
+    const timeoutId = setTimeout(() => {
+      fetchFinancialRecords();
+      fetchKPIs();
+    }, 100);
+
+    return () => {
+      isMounted = false;
+      clearTimeout(timeoutId);
+    };
   }, [filters, rowsPerPage, page]);
 
   const handleCreateClick = () => {
@@ -250,7 +273,7 @@ const financialRecordList = () => {
   useEffect(() => {
     if (!userPermissions.includes('financial.add_financialrecord')) {
       enqueueSnackbar('Você não tem permissão para acessar essa página!', { variant: 'error' });
-      router.push('/apps/project');
+      router.push('/');
     }
   }, [userPermissions, router]);
 

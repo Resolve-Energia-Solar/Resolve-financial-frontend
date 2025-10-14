@@ -1,9 +1,9 @@
-import { useState } from 'react'
-import userService from '@/services/userService'
-import { setUser } from '@/store/user/userSlice'
-import { useDispatch } from 'react-redux'
+import { useState } from 'react';
+import userService from '@/services/userService';
+import { setUser } from '@/store/user/userSlice';
+import { useDispatch } from 'react-redux';
 import { useRouter } from 'next/navigation';
-import Cookies from 'js-cookie'
+import Cookies from 'js-cookie';
 
 const useLoginForm = () => {
   const router = useRouter();
@@ -11,33 +11,33 @@ const useLoginForm = () => {
   const [formData, setFormData] = useState({
     email: '',
     password: '',
-  })
-  const [formErrors, setFormErrors] = useState({})
-  const [success, setSuccess] = useState(false)
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState(null)
-  const dispatch = useDispatch()
+  });
+  const [formErrors, setFormErrors] = useState({});
+  const [success, setSuccess] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const dispatch = useDispatch();
 
   const validateForm = () => {
-    let errors = {}
+    let errors = {};
     if (!formData.email) {
-      errors.email = 'Email é obrigatório'
+      errors.email = 'Email é obrigatório';
     }
     if (!formData.password) {
-      errors.password = 'Senha é obrigatória'
+      errors.password = 'Senha é obrigatória';
     }
-    return errors
-  }
+    return errors;
+  };
 
-  const handleInputChange = e => {
-    const { name, value } = e.target
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
     setFormData({
       ...formData,
       [name]: value,
-    })
-  }
+    });
+  };
 
-  const handleSubmit = async e => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const errors = validateForm();
     if (Object.keys(errors).length > 0) {
@@ -59,20 +59,19 @@ const useLoginForm = () => {
           user_permissions: data?.user?.user_permissions,
           last_login: data?.user?.last_login,
           access_token: data?.access,
-        })
+        }),
       );
 
       setFormErrors({});
       setSuccess(true);
 
-      router.push('/apps/commercial/sale/');
+      router.push('/apps/financial-record');
     } catch (error) {
       setError('Falha ao realizar o login. Verifique suas credenciais.');
       console.error('Erro de login:', error);
       setLoading(false);
     }
   };
-
 
   return {
     formData,
@@ -82,7 +81,7 @@ const useLoginForm = () => {
     error,
     handleInputChange,
     handleSubmit,
-  }
-}
+  };
+};
 
-export default useLoginForm
+export default useLoginForm;

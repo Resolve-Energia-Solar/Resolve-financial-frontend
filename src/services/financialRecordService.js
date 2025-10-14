@@ -3,8 +3,25 @@ import apiClient from './apiClient';
 const DEFAULT_ROUTER = '/api/financial-records';
 const financialRecordService = {
   index: async (params) => {
+    // Rate limiting simples para evitar múltiplas requisições
+    const now = Date.now();
+    if (
+      financialRecordService._lastIndexCall &&
+      now - financialRecordService._lastIndexCall < 500
+    ) {
+      console.log('Rate limiting: pulando chamada de index');
+      return (
+        financialRecordService._lastIndexResponse || {
+          results: [],
+          meta: { pagination: { total_count: 0 } },
+        }
+      );
+    }
+
     try {
+      financialRecordService._lastIndexCall = now;
       const response = await apiClient.get(`${DEFAULT_ROUTER}/`, { params });
+      financialRecordService._lastIndexResponse = response.data;
       return response.data;
     } catch (error) {
       console.error('Erro ao buscar solicitações:', error);
@@ -49,8 +66,22 @@ const financialRecordService = {
     }
   },
   getIndicators: async (params) => {
+    // Rate limiting simples para evitar múltiplas requisições
+    const now = Date.now();
+    if (
+      financialRecordService._lastIndicatorsCall &&
+      now - financialRecordService._lastIndicatorsCall < 1000
+    ) {
+      console.log('Rate limiting: pulando chamada de indicadores');
+      return financialRecordService._lastIndicatorsResponse || { indicators: [] };
+    }
+
     try {
-      const response = await apiClient.get('/api/financial-records/financial-record-indicators/', { params });
+      financialRecordService._lastIndicatorsCall = now;
+      const response = await apiClient.get('/api/financial-records/financial-record-indicators/', {
+        params,
+      });
+      financialRecordService._lastIndicatorsResponse = response.data;
       return response.data;
     } catch (error) {
       console.error('Erro ao buscar indicadores:', error);
@@ -59,7 +90,9 @@ const financialRecordService = {
   },
   sendToOmie: async (ids) => {
     try {
-      const response = await apiClient.post(`/api/financial/omie/send-financial-records/`, { financial_records_ids: ids });
+      const response = await apiClient.post(`/api/financial/omie/send-financial-records/`, {
+        financial_records_ids: ids,
+      });
       return response.data;
     } catch (error) {
       console.error(`Erro ao enviar solicitação(ões) para o Omie:`, error);

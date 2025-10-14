@@ -2,5 +2,5 @@
 import { redirect } from 'next/navigation';
 
 export default function HomePage() {
-  redirect('/apps/project');
+  redirect('/apps/financial-record');
 }

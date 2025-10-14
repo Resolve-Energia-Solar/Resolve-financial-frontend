@@ -5,8 +5,6 @@ import React from 'react';
 import Header from './layout/vertical/header/Header';
 import Sidebar from './layout/vertical/sidebar/Sidebar';
 import Customizer from './layout/shared/customizer/Customizer';
-import Navigation from './layout/horizontal/navbar/Navigation';
-import HorizontalHeader from './layout/horizontal/header/Header';
 import { useSelector } from 'react-redux';
 
 const MainWrapper = styled('div')(() => ({
@@ -37,7 +35,7 @@ export default function RootLayout({ children }) {
       {/* Sidebar */}
       {/* ------------------------------------------- */}
 
-      {customizer.isHorizontal ? '' : <Sidebar />}
+      <Sidebar />
 
       {/* ------------------------------------------- */}
       {/* Main Wrapper */}
@@ -55,9 +53,7 @@ export default function RootLayout({ children }) {
         {/* ------------------------------------------- */}
         {/* Header */}
         {/* ------------------------------------------- */}
-        {customizer.isHorizontal ? <HorizontalHeader /> : <Header />}
-        {/* PageContent */}
-        {customizer.isHorizontal ? <Navigation /> : ''}
+        <Header />
         <Container
           sx={{
             pt: '1px',

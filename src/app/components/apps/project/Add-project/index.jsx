@@ -26,7 +26,7 @@ export default function CreateProject() {
   ];
 
   if (success) {
-    router.push('/apps/project');
+    router.push('/apps/financial-record');
   }
 
   return (

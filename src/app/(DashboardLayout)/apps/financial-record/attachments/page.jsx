@@ -179,7 +179,7 @@ const attachmentList = () => {
       !userPermissions.includes('financial.view_financialrecord_attachment')
     ) {
       enqueueSnackbar('Você não tem permissão para acessar essa página!', { variant: 'error' });
-      router.push('/apps/commercial/sale');
+      router.push('/apps/financial-record');
     }
   }, [userPermissions, router]);
 
