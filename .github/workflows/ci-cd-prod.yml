@@ -72,7 +72,7 @@ jobs:
         with:
           host: ${{ vars.SSH_HOST }}
           username: ${{ vars.SSH_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          key: ${{ vars.SSH_PRIVATE_KEY }}
           script_stop: true
           script: |
             echo "Deploying resolve-erp-frontend..."
