@@ -1,70 +1,87 @@
-name: CI/CD Pipeline for resolve-erp-frontend PROD update v2
+name: CI/CD Pipeline for resolve-financial-frontend (VM)
 
 on:
   push:
     branches:
       - main
 
-env:
-  DOCKER_IMAGE: 'resourceresolve.azurecr.io/resolve-erp-frontend'
-  AKS_CLUSTER_NAME: 'Resolve-AKS-Web'
-  AKS_RESOURCE_GROUP: 'Resolve'
-  NAMESPACE: 'resolve-frontend-erp'
-  DEPLOYMENT_NAME: 'resolve-erp-frontend'
+permissions:
+  contents: read
+  id-token: write
 
+env:
+  DOCKER_IMAGE: resourceresolve.azurecr.io/resolve-financial-frontend
+  APP_PATH: /home/zprouser/resolve-financial-frontend
+  CONTAINER_NAME: resolve-financial-frontend
 jobs:
   build-and-deploy:
     runs-on: ubuntu-24.04
     environment: resolve
 
     steps:
-      # 1. Checkout do Código
-      - name: Checkout Code
-        uses: actions/checkout@v3
+      # 1. Checkout do código
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      # 2. Log in ao Azure Container Registry
-      - name: Log in to Azure Container Registry
-        run: echo "${{ vars.AZURE_ACR_PASSWORD }}" | docker login resourceresolve.azurecr.io -u "${{ vars.AZURE_ACR_USERNAME }}" --password-stdin
+      # 2. Login no Azure Container Registry
+      - name: Azure Container Registry Login
+        uses: azure/docker-login@v2
+        with:
+          login-server: resourceresolve.azurecr.io
+          username: ${{ vars.AZURE_ACR_USERNAME }}
+          password: ${{ vars.AZURE_ACR_PASSWORD }}
 
-      # 3. Criar o arquivo .env com as variáveis do GitHub Secrets
-      - name: Create .env File
-        run: |
-          echo "GENERATE_SOURCEMAP=${{ vars.GENERATE_SOURCEMAP }}" >> .env
-          echo "NEXT_PUBLIC_API_BASE_CLICKSIGN_TEMPLATE_ID=${{ vars.NEXT_PUBLIC_API_BASE_CLICKSIGN_TEMPLATE_ID}}" >> .env
-          echo "NEXT_PUBLIC_API_BASE_CLICKSIGN_TEMPLATE_PRE_ID=${{ vars.NEXT_PUBLIC_API_BASE_CLICKSIGN_TEMPLATE_PRE_ID}}" >> .env
-          echo "NEXT_PUBLIC_CLICKSIGN_TOKEN=${{ vars.NEXT_PUBLIC_CLICKSIGN_TOKEN}}" >> .env
-          echo "NEXT_PUBLIC_API_BASE_CLICKSIGN_URL=${{ vars.NEXT_PUBLIC_API_BASE_CLICKSIGN_URL }}" >> .env
-          echo "NEXT_PUBLIC_API_BASE_URL=${{ vars.NEXT_PUBLIC_API_BASE_URL }}" >> .env
-          echo "NEXT_PUBLIC_CONTENT_TYPE_LEAD_ID=${{ vars.NEXT_PUBLIC_CONTENT_TYPE_LEAD_ID }}" >> .env
-          echo "NEXT_PUBLIC_CONTENT_TYPE_PROJECT_ID=${{ vars.NEXT_PUBLIC_CONTENT_TYPE_PROJECT_ID }}" >> .env
-          echo "NEXT_PUBLIC_SERVICE_INSPECTION_ID=${{ vars.NEXT_PUBLIC_SERVICE_INSPECTION_ID}}" >> .env
-          echo "NEXT_PUBLIC_SUPABASE_KEY=${{ vars.NEXT_PUBLIC_SUPABASE_KEY}}" >> .env
-          echo "NEXT_PUBLIC_CONTENT_TYPE_SALE_ID=${{ vars.NEXT_PUBLIC_CONTENT_TYPE_SALE_ID }}" >> .env
-          echo "NEXT_PUBLIC_SUPABASE_URL=${{ vars.NEXT_PUBLIC_SUPABASE_URL }}" >> .env
-          echo "NEXT_PUBLIC_FINANCIAL_RECORD_CONTENT_TYPE=${{ vars.NEXT_PUBLIC_FINANCIAL_RECORD_CONTENT_TYPE }}" >> .env
-          echo "NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=${{ vars.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY }}" >> .env
-          echo "NEXT_PUBLIC_SENTRY_DSN=${{ vars.NEXT_PUBLIC_SENTRY_DSN }}" >> .env
-          echo "NEXT_PUBLIC_CI=${{ vars.NEXT_PUBLIC_CI }}" >> .env
-          echo "NEXT_PUBLIC_RUNTIME=${{ vars.NEXT_PUBLIC_RUNTIME }}" >> .env
-          echo "NEXT_PUBLIC_GOOGLE_MAPS_API_AGENT_ROUTES_KEY=${{ vars.NEXT_PUBLIC_GOOGLE_MAPS_API_AGENT_ROUTES_KEY }}" >> .env
-          echo "SENTRY_AUTH_TOKEN=${{ vars.SENTRY_AUTH_TOKEN }}" >> .env
+      # 3. Criar arquivo .env (boas práticas, sem shell)
+      - name: Generate .env file
+        uses: SpicyPizza/create-envfile@v2.0
+        with:
+          envkey_GENERATE_SOURCEMAP: ${{ vars.GENERATE_SOURCEMAP }}
+          envkey_NEXT_PUBLIC_API_BASE_CLICKSIGN_TEMPLATE_ID: ${{ vars.NEXT_PUBLIC_API_BASE_CLICKSIGN_TEMPLATE_ID }}
+          envkey_NEXT_PUBLIC_API_BASE_CLICKSIGN_TEMPLATE_PRE_ID: ${{ vars.NEXT_PUBLIC_API_BASE_CLICKSIGN_TEMPLATE_PRE_ID }}
+          envkey_NEXT_PUBLIC_CLICKSIGN_TOKEN: ${{ vars.NEXT_PUBLIC_CLICKSIGN_TOKEN }}
+          envkey_NEXT_PUBLIC_API_BASE_CLICKSIGN_URL: ${{ vars.NEXT_PUBLIC_API_BASE_CLICKSIGN_URL }}
+          envkey_NEXT_PUBLIC_API_BASE_URL: ${{ vars.NEXT_PUBLIC_API_BASE_URL }}
+          envkey_NEXT_PUBLIC_CONTENT_TYPE_LEAD_ID: ${{ vars.NEXT_PUBLIC_CONTENT_TYPE_LEAD_ID }}
+          envkey_NEXT_PUBLIC_CONTENT_TYPE_PROJECT_ID: ${{ vars.NEXT_PUBLIC_CONTENT_TYPE_PROJECT_ID }}
+          envkey_NEXT_PUBLIC_SERVICE_INSPECTION_ID: ${{ vars.NEXT_PUBLIC_SERVICE_INSPECTION_ID }}
+          envkey_NEXT_PUBLIC_SUPABASE_KEY: ${{ vars.NEXT_PUBLIC_SUPABASE_KEY }}
+          envkey_NEXT_PUBLIC_CONTENT_TYPE_SALE_ID: ${{ vars.NEXT_PUBLIC_CONTENT_TYPE_SALE_ID }}
+          envkey_NEXT_PUBLIC_SUPABASE_URL: ${{ vars.NEXT_PUBLIC_SUPABASE_URL }}
+          envkey_NEXT_PUBLIC_FINANCIAL_RECORD_CONTENT_TYPE: ${{ vars.NEXT_PUBLIC_FINANCIAL_RECORD_CONTENT_TYPE }}
+          envkey_NEXT_PUBLIC_GOOGLE_MAPS_API_KEY: ${{ vars.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY }}
+          envkey_NEXT_PUBLIC_SENTRY_DSN: ${{ vars.NEXT_PUBLIC_SENTRY_DSN }}
+          envkey_NEXT_PUBLIC_CI: ${{ vars.NEXT_PUBLIC_CI }}
+          envkey_NEXT_PUBLIC_RUNTIME: ${{ vars.NEXT_PUBLIC_RUNTIME }}
+          envkey_NEXT_PUBLIC_GOOGLE_MAPS_API_AGENT_ROUTES_KEY: ${{ vars.NEXT_PUBLIC_GOOGLE_MAPS_API_AGENT_ROUTES_KEY }}
+          envkey_SENTRY_AUTH_TOKEN: ${{ vars.SENTRY_AUTH_TOKEN }}
+          file_name: .env
 
       # 4. Build e Push da Imagem Docker
-      - name: Build and Push Docker Image
-        run: |
-          docker build --no-cache --build-arg ENV_FILE=.env -t "${DOCKER_IMAGE}:${{ github.sha }}" .
-          docker push "${DOCKER_IMAGE}:${{ github.sha }}"
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: ${{ env.DOCKER_IMAGE }}:${{ github.sha }}
+          build-args: |
+            ENV_FILE=.env
 
-      # 5. Log in ao Azure CLI
-      - name: Log in to Azure CLI
-        run: az login --service-principal -u "${{ vars.AZURE_CLIENT_ID }}" -p "${{ vars.AZURE_CLIENT_SECRET }}" --tenant "${{ vars.AZURE_TENANT_ID }}"
-
-      # 6. Configurar Acesso ao Cluster AKS
-      - name: Configure Access to AKS
-        run: az aks get-credentials --resource-group "$AKS_RESOURCE_GROUP" --name "$AKS_CLUSTER_NAME" --overwrite-existing
-
-      # 7. Atualizar a Imagem do Deployment no AKS
-      - name: Update Deployment on AKS
-        run: |
-          kubectl set image deployment/$DEPLOYMENT_NAME resolve-erp-frontend="${DOCKER_IMAGE}:${{ github.sha }}" -n "$NAMESPACE"
-          kubectl rollout status deployment/$DEPLOYMENT_NAME -n "$NAMESPACE"
+      # 5. Deploy na VM via SSH
+      - name: Deploy to VM
+        uses: appleboy/ssh-action@v1.1.0
+        with:
+          host: ${{ vars.SSH_HOST }}
+          username: ${{ vars.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script_stop: true
+          script: |
+            echo "Deploying resolve-erp-frontend..."
+            docker login resourceresolve.azurecr.io -u "${{ vars.AZURE_ACR_USERNAME }}" -p "${{ vars.AZURE_ACR_PASSWORD }}"
+            docker pull ${{ env.DOCKER_IMAGE }}:${{ github.sha }}
+            docker stop ${{ env.CONTAINER_NAME }} || true
+            docker rm ${{ env.CONTAINER_NAME }} || true
+            docker run -d --restart=always --name ${{ env.CONTAINER_NAME }} \
+              --env-file ${{ env.APP_PATH }}/.env \
+              -p 3001:3000 \
+              ${{ env.DOCKER_IMAGE }}:${{ github.sha }}
+            echo "✅ Deploy completed successfully"

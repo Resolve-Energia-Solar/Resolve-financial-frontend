@@ -5,8 +5,8 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "3000:3000"
+      - "3001:3000"
     environment:
       NODE_ENV: production
-      NEXT_PUBLIC_API_URL: "https://app.resolvenergiasolar.com"
+      NEXT_PUBLIC_API_URL: "https://pagamento.resolvenergiasolar.com"
     
