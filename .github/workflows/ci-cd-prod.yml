@@ -81,7 +81,6 @@ jobs:
             docker stop ${{ env.CONTAINER_NAME }} || true
             docker rm ${{ env.CONTAINER_NAME }} || true
             docker run -d --restart=always --name ${{ env.CONTAINER_NAME }} \
-              --env-file ${{ env.APP_PATH }}/.env \
               -p 3001:3000 \
               ${{ env.DOCKER_IMAGE }}:${{ github.sha }}
             echo "✅ Deploy completed successfully"
