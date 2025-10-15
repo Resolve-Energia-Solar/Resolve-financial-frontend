@@ -1,4 +1,4 @@
-name: CI/CD Pipeline for resolve-financial-frontend (VM)
+name: CI/CD Pipeline for resolve-financial-frontend (VM-AZURE)
 
 on:
   push:
