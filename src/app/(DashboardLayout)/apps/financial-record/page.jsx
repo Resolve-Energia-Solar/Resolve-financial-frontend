@@ -270,12 +270,12 @@ const financialRecordList = () => {
   const user = useSelector((state) => state.user?.user);
   const userPermissions = user?.permissions || user?.user_permissions || [];
 
-  useEffect(() => {
-    if (!userPermissions.includes('financial.add_financialrecord')) {
-      enqueueSnackbar('Você não tem permissão para acessar essa página!', { variant: 'error' });
-      router.push('/');
-    }
-  }, [userPermissions, router]);
+  // useEffect(() => {
+  //   if (!userPermissions.includes('financial.add_financialrecord')) {
+  //     enqueueSnackbar('Você não tem permissão para acessar essa página!', { variant: 'error' });
+  //     router.push('/');
+  //   }
+  // }, [userPermissions, router]);
 
   return (
     <PageContainer title="Contas a Receber/Pagar" description="Lista de Contas a Receber/Pagar">
